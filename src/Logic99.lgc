@@ -1,0 +1,208 @@
+// ****************************************************************************
+//
+// Logic 99: Debug mode
+//
+// ****************************************************************************
+
+#include "defines.txt"
+
+if (controller(menu_gimme)) {
+  print("You gottum!");
+  v255 = 0;
+GetNextObjectMenu:
+  get.v(v255);
+  if (v255 < num_invobjects) {
+    v255 = v255 +1;
+    goto(GetNextObjectMenu);
+  }    
+}
+
+if (controller(key_coords)) {
+  toggle(coords_shown);
+  if (!coords_shown) {
+    clear.lines(24,24,0);
+  }
+}
+
+if (controller(key_ego)) {
+  v255 = 0;
+  obj.status.v(v255);
+}
+
+if ((said("game version") ||
+     controller(key_version))) {
+  print(game_version_message);
+  version();
+}
+
+if (said("debug", "help")) {
+  call(93);
+}
+
+if (said("trace", "on")) {
+  set(trace_enabled);
+}
+
+if ((said("show", "mem") ||
+     controller(key_memory))) {
+  show.mem();
+}
+
+if (said("tp")) { 
+  get.num("new room: ", v255);
+  new.room.v(v255);
+}
+
+if (said("pos")) { 
+  get.num("x: ", v254);
+  get.num("y: ", v255);
+  erase(ego);
+  reposition.to.v(ego, v254, v255);
+  draw(ego);
+}
+
+if (said("show", "var")) { 
+  get.num("var number: ", v255);
+  v254 = *v255;
+  print("var %v255: %v254");
+}
+
+if (said("set", "var")) { 
+  get.num("var number: ", v254);
+  get.num("var value: ", v255);
+  *v254 = v255;
+}
+
+if (said("show", "flag")) { 
+  get.num("flag number: ", v255);
+  if (issetv(v255)) { 
+    print("flag %v255 is set");
+  }
+  else { 
+    print("flag %v255 is not set");
+  }
+}
+
+if (said("set", "flag")) { 
+  get.num("flag number: ", v255);
+  set.v(v255);
+}
+
+if (said("reset", "flag")) { 
+  get.num("flag number: ", v255);
+  reset.v(v255);
+}
+
+if ((said("object") ||
+     controller(key_object))) {
+  get.num("object #: ", v255);
+  obj.status.v(v255);
+}
+
+if ((said("show", "pri") ||
+     controller(key_priority))) { 
+  show.pri.screen();
+}
+
+if (said("get", "object")) { 
+  get.num("object number: ", v255);
+  if (v255 > num_invobjects) {
+    print("Invalid object number!");
+  }
+  else {
+    get.v(v255);
+  }
+}
+
+if (said("gimme", "gimme")) {
+  print("You gottum!");
+  v255 = 0;
+GetNextObject:
+  get.v(v255);
+  if (v255 < num_invobjects) {
+    v255 = v255 +1;
+    goto(GetNextObject);
+  }    
+}
+
+if (said("object", "room")) {
+  get.num("Object number: ", v255);
+  if (v255 > num_invobjects) {
+    print("Invalid object number!");
+  }
+  else {
+    get.room.v(v255,v254);
+    if (v254 == 255) {
+      print("Object %v255 is in your inventory.");
+    }
+    else {
+      print("Object %v255 is in room %v254.");
+    }
+  }
+}
+
+if (said("set", "pri")) {
+  get.num("New priority: ",v255);
+  set.priority.v(ego,v255);
+}
+
+if (said("release", "pri")) {
+  release.priority(ego);
+}
+
+if (said("coords")) {
+  toggle(coords_shown);
+  if (!coords_shown) {
+    clear.lines(24,24,0);
+  }
+}
+
+if (coords_shown) {
+  get.posn(ego, v253, v254);
+  get.priority(ego,v255);
+  set.text.attribute(6,0);
+  display(24,15,"Rm %v0|3 Pri %v255|2 x:%v253|3 y:%v254|3");
+  set.text.attribute(15,0);
+}
+
+if (!isset(input_parsed) &&
+    isset(input_recieved) &&
+    unknown_word_no > 0) {
+  set(input_parsed);
+  //reset(input_recieved);
+    if (unknown_word_no == 1) {
+      log("Unknown word: %w1");
+    }
+    if (unknown_word_no == 2) {
+      log("Unknown word: %w2");
+    }
+    if (unknown_word_no == 3) {
+      log("Unknown word: %w3");
+    }
+    if (unknown_word_no == 4) {
+      log("Unknown word: %w4");
+    }
+    if (unknown_word_no == 5) {
+      log("Unknown word: %w5");
+    }
+    if (unknown_word_no == 6) {
+      log("Unknown word: %w6");
+    }
+    if (unknown_word_no == 7) {
+      log("Unknown word: %w7");
+    }
+    if (unknown_word_no == 8) {
+      log("Unknown word: %w8");
+    }
+    print("Logged an unknown word.");
+}
+
+if (said("log")) {
+get.string(s1,"Error: ",22,0,25);
+log("Error: %s1");
+clear.lines(22, 24, 0);
+accept.input();
+}
+
+v255 = 0;
+return();

@@ -1,0 +1,50 @@
+// ****************************************************************************
+//
+// Logic 1: Opening/intro
+//
+// ****************************************************************************
+
+
+#include "defines.txt"
+#include "custom.txt"
+
+if (new_room) {
+  load.pic(room_no);
+  draw.pic(room_no);
+  discard.pic(room_no);
+  set.horizon(37);
+  status.line.off();
+  prevent.input();
+  program.control();
+  show.pic();
+  
+  set.text.attribute(15,0);
+  display(23, 8,       "Whoa, that's a nice Fro!");
+  display(24, 10,         "(C)2015 X28 Project");
+
+  cycle_delay = 0;
+  max_score = 64;
+
+  load.sound(1);
+  sound(1, fSoundDone);
+
+  StartLoop:
+  if (!have.key()) {
+    goto(StartLoop);
+  }
+}
+
+set(menu_enabled);
+clear.lines(22,24,0);
+stop.motion(ego);
+reset(disable_game_functions);
+//set(fTestRoom);
+if (fTestRoom) {
+  get.num("Room: ",v80);
+  new.room.v(v80);
+}
+else {
+  call(18);
+}
+
+return();

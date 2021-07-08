@@ -1,0 +1,412 @@
+// ****************************************************************************
+//
+// Logic 86: Hints
+//
+// ****************************************************************************
+
+
+#include "defines.txt"
+#include "custom.txt"
+
+#define sHint1 s1
+#define sHint2 s2
+#define sHint3 s3
+#define sHint4 s4
+#define sHint5 s5
+#define sHint6 s6
+
+sHint1 = "Hint:\n\n";
+sHint3 = "\n\n";
+sHint5 = "";
+sHint6 = "";
+
+
+if (!fEgoKissedGirl) {
+
+  // Outside house
+  if (!fHomeDoorOpen) {
+    sHint2 = "Outside your house:";
+    sHint4 = "'open' 'door'";
+    goto(Hint);
+  }
+
+
+  // Inside house
+  if (!fPickGet) {
+    sHint2 = "Inside your house:";
+    sHint4 = "'get' hair 'pick'";
+    goto(Hint);
+  }
+  if (!fGlassOfWaterGet) {
+    sHint2 = "Inside your house:";
+    sHint4 = "'get' 'glass' of 'water'";
+    goto(Hint);
+  }
+  if (!fCandelabraGet) {
+    sHint2 = "Inside your house:";
+    sHint4 = "'get' 'candelabra'";
+    goto(Hint);
+  }
+
+
+  // Outside house
+  if (!fBodyguardTalk) {
+    sHint2 = "Outside your house:";
+    sHint4 = "'talk' to 'bodyguard'";
+    goto(Hint);
+  }
+
+
+  // Outside neighbor's house
+  if (!fBalloonGone) {
+    sHint2 = "Outside your neighbor's house:";
+    sHint4 = "'get' 'balloon'";
+    goto(Hint);
+  }
+  if (!fBoxDoorOpened) {
+    sHint2 = "Outside your neighbor's house:";
+    sHint4 = "'open' 'box' 'door'";
+    goto(Hint);
+  }
+
+
+  // Inside neighbor's house
+  if (!fSmokingManTalk) {
+    sHint2 = "Inside your neighbor's house:";
+    sHint4 = "'talk' to 'man'";
+    goto(Hint);
+  }
+  if (!fEmptyGlassGet) {
+    sHint2 = "Inside your neighbor's house:";
+    sHint4 = "'get' 'empty' 'glass'";
+    goto(Hint);
+  }
+  if (!fElevatorButton) {
+    sHint2 = "Inside your neighbor's house:";
+    sHint4 = "'press' 'up' 'button'";
+    goto(Hint);
+  }
+
+
+  // At the fountain
+  if (!fPlaqueLook) {
+    sHint2 = "At the fountain:";
+    sHint4 = "'look' at 'plaque'";
+    goto(Hint);
+  }
+  if (!fDancingManTalk) {
+    sHint2 = "At the fountain:";
+    sHint4 = "'talk' to 'man'";
+    goto(Hint);
+  }
+  if (!fHatGet) {
+    sHint2 = "At the fountain:";
+    sHint4 = "'get' 'hat'";
+    goto(Hint);
+  }
+  if (!fRabbitGet) {
+    sHint2 = "At the fountain:";
+    sHint4 = "'get' 'rabbit'";
+    goto(Hint);
+  }
+
+
+  // Outside house
+  if (!fWellVisted) {
+    sHint2 = "Outside your house:";
+    sHint4 = "'jump' in 'well'";
+    goto(Hint);
+  }
+
+
+  // Inside well, at the elevator
+  if (!fDeathWater) {
+    sHint2 = "Inside well, at the elevator:";
+    sHint4 = "Walk into the puddle of water.";
+    goto(Hint);
+  }
+
+
+  // Inside well, at the tortoise's lair
+  if (!fLookStalactite) {
+    sHint2 = "Inside well, at the tortoise's lair:";
+    sHint4 = "'look' at 'stalactite'";
+    goto(Hint);
+  }
+  if (!fRabbitTurtleManRaced
+  &&  !fDeathSliced) {
+    sHint2 = "Inside well, at the tortoise's lair:";
+    sHint4 = "Walk over to the tortoise.";
+    goto(Hint);
+  }
+  if (!fRabbitTurtleManRaced) {
+    sHint2 = "Inside well, at the tortoise's lair:";
+    sHint4 = "'release' 'rabbit'";
+    goto(Hint);
+  }
+  if (!fDeathBed) {
+    sHint2 = "Inside well, at the tortoise's lair:";
+    sHint4 = "'jump' 'in' 'bed'";
+    goto(Hint);
+  }
+  if (!fLotionGet) {
+    sHint2 = "Inside well, at the tortoise's lair:";
+    sHint4 = "'get' 'lotion'";
+    goto(Hint);
+  }
+  if (!fBellowsGet) {
+    sHint2 = "Inside well, at the tortoise's lair:";
+    sHint4 = "'get' 'bellows'";
+    goto(Hint);
+  }
+  if (!fDeathFire) {
+    sHint2 = "Inside well, at the tortoise's lair:";
+    sHint4 = "'get' 'fire'";
+    goto(Hint);
+  }
+
+
+  // Inside well, at the elevator
+  if (!fRockThrownButton
+  &&  !fDeathElevator) {
+    sHint2 = "Inside well, at the elevator:";
+    sHint4 = "'press' 'button'";
+    goto(Hint);
+  }
+  if (!fRockGet) {
+    sHint2 = "Inside well, at the elevator:";
+    sHint4 = "'get' 'rock'";
+    goto(Hint);
+  }
+  if (!fRockThrownButton) {
+    sHint2 = "Inside well, at the elevator:";
+    sHint4 = "Do not stand under the elevator.\n\n";
+    sHint5 = "'throw' 'rock' at 'button'";
+    goto(Hint);
+  }
+  if (!fPressButton) {
+    sHint2 = "Inside well, at the elevator:";
+    sHint4 = "'press' 'button'";
+    goto(Hint);
+  }
+
+
+  // At the pole or vortex
+  if (!fPoleOrVortexEnter) {
+    sHint2 = "At the pole or vortex:";
+    sHint4 = "Walk into the vortex.";
+    goto(Hint);
+  }
+
+
+  // At the mountaintop oasis
+  if (!fSignRead) {
+    sHint2 = "At the mountaintop oasis:";
+    sHint4 = "'read' 'sign'";
+    goto(Hint);
+  }
+  if (!fDeathCliff) {
+    sHint2 = "At the mountaintop oasis:";
+    sHint4 = "Try to walk off the cliff.";
+    goto(Hint);
+  }
+
+
+  // At the end of the road
+  if (!fDeathQuickGrass) {
+    sHint2 = "At the end of the road:";
+    sHint4 = "Walk on the grass to go around the ";
+    sHint5 = "boulder.";
+    goto(Hint);
+  }
+  if (!fDrunkManTalk) {
+    sHint2 = "At the end of the road:";
+    sHint4 = "'talk' to 'man'";
+    goto(Hint);
+  }
+  if (!fDrunkManTalkYes) {
+    sHint2 = "At the end of the road:";
+    sHint4 = "Say 'yes' to the man after he asks for ";
+    sHint5 = "your friendship.";
+    goto(Hint);
+  }
+  if (!fBalloonGiven) {
+    sHint2 = "At the end of the road:";
+    sHint4 = "'give' 'balloon' to 'man'";
+    goto(Hint);
+  }
+  if (!fElementalAirSeen) {
+    sHint2 = "At the end of the road:";
+    sHint4 = "'wear' 'eyeglasses'";
+    goto(Hint);
+  }
+  if (!fDeathSkyBird) {
+    sHint2 = "At the end of the road:";
+    sHint4 = "'get' 'air' 'elemental'";
+    goto(Hint);
+  }
+
+
+  // At the crumbling wall
+  if (!fSnowmanHatted) {
+    sHint2 = "At the crumbling wall:";
+    sHint4 = "'put' 'hat' 'on' 'snowman'";
+    goto(Hint);
+  }
+  if (!fSnowmanMelted) {
+    sHint2 = "At the crumbling wall:";
+    sHint4 = "Wait for the snowman to melt.";
+    goto(Hint);
+  }
+
+
+  // Inside neighbor's house
+  if (!fLotionGiven) {
+    sHint2 = "Inside your neighbor's house:";
+    sHint4 = "'give' 'lotion' to 'man'";
+    goto(Hint);
+  }
+
+
+  // Picture of neighbor's friend
+  if (!fWomanPictureStared) {
+    sHint2 = "Picture of neighbor's friend:";
+    sHint4 = "Keep staring at the picture...";
+    goto(Hint);
+  }
+
+
+  // Outside house
+  if (!fBodyguardDrank) {
+    sHint2 = "Outside your house:";
+    sHint4 = "'give' 'water' to 'bodyguard'";
+    goto(Hint);
+  }
+
+
+  // Outside neighbor's house
+  if (!fElementalEarthSeen) {
+    sHint2 = "Outside your neighbor's house:";
+    sHint4 = "'wear' 'eyeglasses'";
+    goto(Hint);
+  }
+  if (!fElementalEarthGet) {
+    sHint2 = "Outside your neighbor's house:";
+    sHint4 = "'get' 'earth' 'elemental'";
+    goto(Hint);
+  }
+  
+  // Inside well, at the tortoise's lair
+  if (!fElementalFireSeen) {
+    sHint2 = "Inside well, at the tortoise's lair:";
+    sHint4 = "'wear' 'eyeglasses'";
+    goto(Hint);
+  }
+  if (!fElementalFireGet) {
+    sHint2 = "Inside well, at the tortoise's lair:";
+    sHint4 = "'get' 'fire' 'elemental' with ";
+    sHint5 = "'candelabra'";
+    goto(Hint);
+  }
+
+
+  // At the end of the road
+  if (!fElementalAirGet) {
+    sHint2 = "At the end of the road:";
+    sHint4 = "'get' 'air' 'elemental' with ";
+    sHint5 = "'bellows'";
+    goto(Hint);
+  }
+
+
+  // At the crumbling wall
+  if (!fElementalWaterSeen) {
+    sHint2 = "At the crumbling wall:";
+    sHint4 = "'wear' 'eyeglasses'";
+    goto(Hint);
+  }
+  if (!fElementalWaterGet) {
+    sHint2 = "At the crumbling wall:";
+    sHint4 = "'get' 'water' 'elemental' with ";
+    sHint5 = "'empty' 'glass'";
+    goto(Hint);
+  }
+
+
+  // At the mountaintop oasis
+  if (!fElementalHeartSeen) {
+    sHint2 = "At the mountaintop oasis:";
+    sHint4 = "'wear' 'eyeglasses'";
+    goto(Hint);
+  }
+  if (!fElementalHeartHugged) {
+    sHint2 = "At the mountaintop oasis:";
+    sHint4 = "'hug' 'heart' 'elemental'";
+    goto(Hint);
+  }
+  if (!fElementalHeartKissed) {
+    sHint2 = "At the mountaintop oasis:";
+    sHint4 = "'kiss' 'heart' 'elemental'";
+    goto(Hint);
+  }
+  if (!fElementalHeartLoved) {
+    sHint2 = "At the mountaintop oasis:";
+    sHint4 = "'i' 'love' 'you' 'heart' 'elemental'";
+    goto(Hint);
+  }
+
+
+  // At the crumbling wall
+  if (!fEgoKissedGirl) {
+    sHint2 = "At the crumbling wall:";
+    sHint4 = "'kiss' 'girl'";
+    goto(Hint);
+  }
+}
+
+
+// In limbo
+if (room_no == 14
+&&  !fOldManStory) {
+  sHint2 = "In limbo:";
+  sHint4 = "'talk' to 'man'";
+  goto(Hint);
+}
+if (room_no == 14
+&&  !fEgoJumpedLimbo) {
+  sHint2 = "In limbo:";
+  sHint4 = "'jump'";
+  goto(Hint);
+}
+if (room_no == 14
+&&  !fEgoSuicideEscapeLimbo) {
+  sHint2 = "In limbo:";
+  sHint4 = "'use' 'emergency' 'suicide' 'kit'";
+  goto(Hint);
+}
+
+
+// At the crumbling wall
+if (!fEgoWins
+&&  fElementalsAll) {
+  sHint2 = "At the crumbling wall:";
+  sHint4 = "'combine' 'elementals'";
+  goto(Hint);
+}
+
+
+// No more
+sHint2 = "There are no more hints.";
+sHint3 = "";
+sHint4 = "";
+
+
+Hint:
+print("%s1"
+      "%s2"
+      "%s3"
+      "%s4"
+      "%s5"
+      "%s6");
+
+return();

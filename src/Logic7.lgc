@@ -1,0 +1,2092 @@
+// ****************************************************************
+//
+// Logic 7 - Wall
+//
+// ****************************************************************
+
+
+#include "defines.txt"
+#include "custom.txt"
+
+#define fDevilRedding f40
+#define fDevilReadyToReject f41
+#define fDevilRejecting f42
+#define fDevilRejected f43
+#define fDevilRejectDone1 f44
+#define fDevilRejectDone2 f45
+#define fBodyguardArrives f46
+#define fBodyguardWalked f47
+#define fBodyguardTalks f48
+#define fBodyguardParched f49
+#define fBodyguardFired f50
+#define fDevilFade1 f57
+#define fDevilFade2 f58
+#define fDevilFade3 f59
+#define fDevilKillsEgo f60
+#define fDevilKillsEgoReady f61
+#define fDevilKillsEgoWalk f62
+#define fDevilKillsEgoFall f63
+#define fDevilKillsEgoDead f64
+#define fDevilKillsEgoTeleport f65
+#define fWomanWakes f66
+#define fWomanHearts f67
+#define fEgoSuperAttack f68
+#define fDevilKillsEgoGameOver f69
+#define fWomanAwake f70
+#define fWomanWaveUp f71
+#define fWomanWaveDown f72
+#define fWomanDeepSleep f73
+#define fDevilAppeared f74
+#define fDevilWaved f75
+#define fDevilStanding f76
+#define fDevilChanged f77
+#define fDevilStole f78
+#define fDevilStarted f79
+#define fDevilFormed f80
+#define fEgoFroGone f81
+#define fDevilToAppear f82
+#define fEgoBackedAway f83
+#define fDevilRed f84
+#define fDevilRed2 f85
+#define fSnowmanHatGive f87
+#define fSnowmanHatGiven f88
+#define fSnowmanHatGivenDone f89
+#define fEgoGetWater f90
+#define fEgoGotWater f91
+#define fEgoGotWaterElemental f92
+#define fEgoGettingWaterElemental f93
+#define fEgoGettingWaterBend f94
+#define fTheEndHorrible f95
+#define fTheEndBetter f96
+#define fTheEndBest f97
+
+#define oTheEnd o19
+#define oBodyguard o21
+#define oSnowman o79
+#define oSnowmanWater o80
+#define oHearts1 o81
+#define oHearts2 o82
+#define oHearts3 o83
+#define oHearts4 o84
+#define oHearts5 o85
+#define oHearts6 o86
+#define oWoman o90
+#define oDevil o91
+
+#define vSnowmanCount3 v101
+#define vBodyguardCount v102
+#define vBodyguardDelayCount v103
+#define vDevilKillsEgoCount v104
+#define vDevilKillsEgoTeleport v105
+#define vWomanWakes v106
+#define vWomanHearts v107
+#define vEgoSuperAttack v108
+#define vGameOverRedY1 v119
+#define vGameOverRedY2 v120
+#define vGameOverRedYOffset1 v121
+#define vGameOverRedYOffset2 v122
+#define vGameOverRedX v123
+#define vDevilKillsEgoGameOver v125
+#define vTheEndBetters v126
+
+if (new_room){
+  load.pic(room_no);
+  draw.pic(room_no);
+  discard.pic(room_no);
+  set.horizon(0);
+
+  status.line.on();
+  accept.input();
+
+  // Woman
+  if (fWomanAsleep) {
+    load.view(90);
+    animate.obj(oWoman);
+    set.view(oWoman,90);
+    set.loop(oWoman,0);
+    set.cel(oWoman,0);
+    position(oWoman,78,101);
+    set.priority(oWoman,11);
+    stop.cycling(oWoman);
+    ignore.objs(oWoman);
+    draw(oWoman);
+    set(fWomanDeepSleep);
+  }
+
+  // Snowman
+  load.view(79);
+  animate.obj(oSnowman);
+  set.view(oSnowman,79);
+  if (!fSnowmanMelted) {
+    if (!fSnowmanHatted) {
+      set.loop(oSnowman,0);
+      set.cel(oSnowman,0);
+    }
+  }
+  else {
+    set.loop(oSnowman,2);
+    set.cel(oSnowman,4);
+    animate.obj(oSnowmanWater);
+    set.view(oSnowmanWater,79);
+    set.loop(oSnowmanWater,3);
+    set.cel(oSnowmanWater,0);
+    set.priority(oSnowmanWater,4);
+    position(oSnowmanWater,16,120);
+    ignore.blocks(oSnowmanWater);
+    ignore.objs(oSnowmanWater);
+    draw(oSnowmanWater);
+  }
+  set.priority(oSnowman,10);
+  position(oSnowman,16,120);
+  ignore.blocks(oSnowman);
+  ignore.objs(oSnowman);
+  stop.cycling(oSnowman);
+  draw(oSnowman);
+  
+  // Devil
+  if (prev_room_no == 14) {
+    set(fDevilReadyToReject);
+    load.view(91);
+    animate.obj(oDevil);
+    set.view(oDevil,91);
+    set.loop(oDevil,9);
+    set.cel(oDevil,0);
+    position(oDevil,42,84);
+    stop.cycling(oDevil);
+    draw(oDevil);
+  }
+  else {
+    load.sound(70);
+    sound(70,fSoundDone);
+  }
+
+  // Position
+  if (prev_room_no == 6) {
+    v80 = 0;
+    if (old_ego_y < 94) {
+      old_ego_y = 94;
+    }
+    else {
+      if (old_ego_y > 154) {
+        old_ego_y = 154;
+      }
+    }
+    position.v(ego,v80,old_ego_y);
+  }
+  else {
+    if (prev_room_no == 13) {
+      v80 = 159;
+      if (old_ego_y < 70) {
+        old_ego_y = 70;
+      }
+      else {
+        if (old_ego_y > 154) {
+          old_ego_y = 154;
+        }
+      }
+      position.v(ego,v80,old_ego_y);
+    }
+    else {
+      if (prev_room_no == 14) {
+        program.control();
+        prevent.input();
+        set(fEgoSuicideEscapeLimbo);
+        new_ego_x = 117;
+        new_ego_y = 127;
+        position.v(ego,new_ego_x,new_ego_y);
+        set(fEgoHaloToAppear);
+        vBodyguardCount = 0;
+        vBodyguardDelayCount = 0;
+      }
+      else {
+        position(ego,80,134);
+      }
+    }
+  }
+
+  if (prev_room_no != 14) {
+    draw(ego);
+  }
+  show.pic();
+}
+if (fSoundDone) {
+  if (prev_room_no == 14
+  &&  !fSoundDoneNoReplay) {
+    reset(fSoundDone);
+    sound(72,fSoundDone);
+  }
+  else {
+    reset(fSoundDone);
+    sound(70,fSoundDone);
+  }
+}
+
+if (fEgoSuicideEscapeLimbo) {
+  call(89);
+}
+
+if (said("look")) {
+  print("You have reached a wall in your life.");
+  if (!fSnowmanMelted) {
+    print("A snowman exists in this climate?");
+  }
+  else {
+    print("A snowman's remains can be seen.");
+  }
+  if (fWomanAsleep) {
+    print("There is a girl laying on the stone bier.");
+  }
+  if (fEyeglassesShowElemental) {
+    print("A Water Elemental resides where there once was a snowman.");
+  }
+}
+if (said("look","snowman")) {
+  if (!fSnowmanMelted) {
+    print("Has this snowman always been here?");
+    print("It's a typical snowman, or \"snowperson\" might be a better way to say it. ");
+  }
+  else {
+    print("A puddle that once was a snowman. So sad. You'd think the hat would have done the opposite.");
+  }
+}
+if ((said("look","snowman","eyes")
+||   said("look","eyes"))) {
+  print("The snowman's eyes are made of coal. Typical.");
+}
+if ((said("look","snowman","nose")
+||   said("look","nose"))) {
+  print("The snowman's nose is a carrot. Typical.");
+}
+if ((said("look","snowman","arms")
+||   said("look","arms"))) {
+  print("The snowman's arms are sticks. Typical.");
+}
+if ((said("look","snowman","scarf")
+||   said("look","scarf"))) {
+  print("The snowman is cold. That's why it needs a scarf.");
+}
+if (fSnowmanMelted) {
+  if ((said("look","snowman","puddle")
+  ||   said("look","puddle"))) {
+    print("The snowman has melted. So sad. You'd think the hat would have done the opposite.");
+  }
+}
+if (said("look","wall")) {
+  print("Just like you, the wall has seen better days.");
+}
+if (said("look","chair")) {
+  print("Someone left a most excellent lawn chair.");
+}
+if ((said("look","stone")
+||   said("look","bier")
+||   said("look","stone","bier"))) {
+  print("It's very nice. Looks quite comfortable. Once your mattress wears out you can use this!");
+}
+if (said("anyword","chair")) {
+  print("Leave the chair for the next person who desires to rest in the utmost of comfort.");
+}
+if (fWomanAsleep) {
+  if (said("look","girl")) {
+    print("All your life you've been looking for her. Just your luck, she's sleeping. "
+          "Hopefully, she isn't always like this.");
+  }
+}
+if (said("look","water")) {
+  if (fEyeglassesShowElemental) {
+    print("A Water Elemental resides where there once was a snowman.");
+  }
+  else {
+    print("It's perfectly normal for water to freeze and for snow to melt.");
+    print("Reversible change!");
+  }
+}
+if (fEyeglassesShowElemental
+&&  (said("look","water","elemental")
+||   said("look","elemental"))) {
+    print("A Water Elemental resides where there once was a snowman.");
+}
+
+// Snowman
+if ((said("give","hat","snowman")
+||   said("give","snowman","hat")
+||   said("put","hat","on","snowman")
+||   said("put","hat","snowman"))) {
+  if (has("Hat")) {
+    if (fRabbitTurtleManRaced) {
+      if (posn(ego,10,109,36,122)) {
+        move.obj(ego,14,109,1,fSnowmanHatGive);
+      }
+      else {
+        print("You can't reach the snowman from here. You should stand in front of the snowman.");
+      }
+    }
+    else {
+      print("You like this hat. "
+            "You are not ready to give it to someone who is giving you the cold shoulder.");
+      print("Besides, what else would you carry your rabbit in?");
+    }
+  }
+  else {
+    print("You are a man without a hat.");
+  }
+}
+if (fSnowmanHatGive) {
+  reset(fSnowmanHatGive);
+  load.view(68);
+  animate.obj(egoAlt);
+  set.view(egoAlt,68);
+  set.loop(egoAlt,0);
+  set.cel(egoAlt,0);
+  get.posn(ego,new_ego_x,new_ego_y);
+  position.v(egoAlt,new_ego_x,new_ego_y);
+  get.priority(ego,v_priority);
+  v_priority++;
+  set.priority.v(egoAlt,v_priority);
+  ignore.blocks(egoAlt);
+  ignore.objs(egoAlt);
+  erase(ego);
+  draw(egoAlt);
+  end.of.loop(egoAlt,fSnowmanHatGiven);
+}
+if(fSnowmanHatGiven) {
+  reset(fSnowmanHatGiven);
+  set.loop(egoAlt,1);
+  set.cel(egoAlt,0);
+  end.of.loop(egoAlt,fSnowmanHatGivenDone);
+  set.loop(oSnowman,1);
+  set.cel(oSnowman,0);
+  drop("Hat");
+  print("You place the hat on the snowman's head and...");
+}
+if (fSnowmanHatGivenDone) {
+  reset(fSnowmanHatGivenDone);
+  print("And...");
+  print("Hmm, and...");
+  print("Come on, and...");
+  print("Really? And...");
+  print("Seriously, this is it. And?");
+  print("Nothing.");
+  print("Wow, that was anticlimactic.");
+  if (!fSnowmanHatted) {
+    set(fSnowmanHatted);
+    score++;
+  }
+  vSnowmanCount1 = 0;
+  vSnowmanCount2 = 0;
+  set.loop(ego,0);
+  set.cel(ego,3);
+  erase(egoAlt);
+  draw(ego);
+}
+if (fSnowmanHatted
+&&  !fSnowmanMelted) {
+  if (vSnowmanCount2 > 0
+  &&  vSnowmanCount2 < 37) {
+    if (vSnowmanCount2 <= 31) {
+      set.loop(oSnowman,1);
+      set.cel.v(oSnowman,vSnowmanCount2);
+    }
+    else {
+      set.loop(oSnowman,2);
+      vSnowmanCount3 = vSnowmanCount2;
+      vSnowmanCount3 = vSnowmanCount3 - 32;
+      set.cel.v(oSnowman,vSnowmanCount3);
+      if (vSnowmanCount3 == 4) {
+        animate.obj(oSnowmanWater);
+        set.view(oSnowmanWater,79);
+        set.loop(oSnowmanWater,3);
+        set.cel(oSnowmanWater,0);
+        set.priority(oSnowmanWater,4);
+        position(oSnowmanWater,16,120);
+        ignore.blocks(oSnowmanWater);
+        ignore.objs(oSnowmanWater);
+        draw(oSnowmanWater);
+      }
+    }
+  }
+  else {
+    if (vSnowmanCount2 >= 37) {
+      set.loop(oSnowman,2);
+      set.cel(oSnowman,4);
+      animate.obj(oSnowmanWater);
+      set.view(oSnowmanWater,79);
+      set.loop(oSnowmanWater,3);
+      set.cel(oSnowmanWater,0);
+      set.priority(oSnowmanWater,4);
+      position(oSnowmanWater,16,120);
+      draw(oSnowmanWater);
+      if (!fSnowmanMelted) {
+        set(fSnowmanMelted);
+        score++;
+      }
+    }
+  }
+}
+if (!fSnowmanMelted
+&&  fSnowmanHatted
+&&  said("get","hat")) {
+  print("The snowman looks better in the hat than you do.");
+}
+if (fSnowmanMelted
+&&  said("get","hat")) {
+  print("The hat is all wet. No need to carry around a soggy hat.");
+}
+if ((said("get","snowman")
+||   said("get","snow"))) {
+  print("And get frostbite.  No way!");
+}
+if ((said("get","snowman","nose")
+||   said("get","nose")
+||   said("get","snowman","carrot")
+||   said("get","carrot"))) {
+  print("That's the snowman's nose! Don't take away his sense of smell.");
+}
+if ((said("get","snowman","eyes")
+||   said("get","eyes")
+||   said("get","snowman","coal")
+||   said("get","coal"))) {
+  print("Don't take the snowman's eyes! It wouldn't be able to see where it's going.");
+}
+if ((said("get","snowman","arms")
+||   said("get","arms")
+||   said("get","snowman","sticks")
+||   said("get","sticks"))) {
+  print("Don't take the snowman's eyes! It wouldn't be able to see where it's going.");
+}
+if ((said("get","snowman","scarf")
+||   said("get","scarf"))) {
+  print("You are not cold, so no need for a scarf.");
+}
+if ((said("get","snowman","scarf")
+||   said("get","scarf"))) {
+  print("You are not cold, so no need for a scarf.");
+}
+
+// Water
+if (said("get","water")) {
+  if (!fEyeglassesShowElemental) {
+    if (has("Water Elemental")) {
+      print("Now that you have the Water Elemental, you will never be thirsty again!");
+    }
+    else {
+      print("You are not thirsty, but thanks for asking!");
+    }
+  }
+  else {
+    set(fEgoGetWater);
+  }
+}
+if ((said("get","water","elemental")
+||   said("get","elemental")
+||   said("get","water","elemental","glass")
+||   said("get","elemental","glass")
+||   said("get","water","elemental","empty","glass")
+||   said("get","elemental","empty","glass")
+||   fEgoGetWater)) {
+  reset(fEgoGetWater);
+  if (!fEyeglassesShowElemental) {
+      print("You don't see that...");
+  }
+  else {
+    if (has("Water Elemental")) {
+      print("Now that you have the Water Elemental, you will never be thirsty again!");
+    }
+    else {
+      if (!has("Empty Glass")) {
+        print("You need something to put it in.");
+      }
+      else {
+        if (posn(ego,10,109,36,122)) {
+          move.obj(ego,30,109,1,fEgoGettingWaterElemental);
+        }
+        else {
+          print("You can't reach the water from here. You should stand in front of the melted snowman.");
+        }
+      }
+    }
+  }
+}
+if (fEgoGettingWaterElemental) {
+  reset(fEgoGettingWaterElemental);
+  program.control();
+  prevent.input();
+  set.loop(ego,1);
+  set.cel(ego,3);
+  get.posn(ego,new_ego_x,new_ego_y);
+  load.view(66);
+  set.view(egoAlt,66);
+  set.loop(egoAlt,1);
+  set.cel(egoAlt,0);
+  new_ego_x = new_ego_x - 4;
+  position.v(egoAlt,new_ego_x,new_ego_y);
+  get.priority(ego,v_priority);
+  v_priority = v_priority + 1;
+  set.priority.v(egoAlt,v_priority);
+  normal.cycle(egoAlt);
+  ignore.blocks(egoAlt);
+  ignore.objs(egoAlt);
+  erase(ego);
+  draw(egoAlt);
+  v_cycle = 4;
+  cycle.time(egoAlt,v_cycle);
+  end.of.loop(egoAlt,fNothing);
+  set(fEgoGettingWaterBend);
+}
+if (fEgoGettingWaterBend) {
+  current.cel(egoAlt,v_cel);
+  if (v_cel == 8) {
+    reset(fEgoGettingWaterBend);
+    stop.cycling(egoAlt);
+    drop("Empty Glass");
+    get("Not-so-empty Glass");
+    set(fEgoGotWaterElemental);
+    set.loop(oElemental,0);
+    last.cel(oElemental,v_cel_last);
+    set.cel.v(oElemental,v_cel_last);
+    reverse.loop(oElemental,fElementalGone);
+  }
+}
+if (fEgoGotWaterElemental
+&&  fElementalGone) {
+  reset(fEgoGotWaterElemental);
+  erase(oElemental);
+  get("Water Elemental");
+  if (!fElementalWaterGet) {
+    set(fElementalWaterGet);
+    score++;
+  }
+  show.obj(238);
+  start.cycling(egoAlt);
+  end.of.loop(egoAlt,fEgoGotWater);
+}
+if (fEgoGotWater) {
+  reset(fEgoGotWater);
+  reset(fEyeglassesShowElemental);
+  erase(egoAlt);
+  draw(ego);
+  accept.input();
+  player.control();
+}
+
+// EgoBackFromLimbo
+if (fEgoBackFromLimbo) {
+  reset(fEgoBackFromLimbo);
+  print("You're back!");
+    
+  load.sound(72);
+  sound(72,fSoundDone);
+    
+  print("Time to regulate!");
+}
+
+
+// Woman
+if (fWomanAsleep
+&&  said("wake","girl")) {
+  if (!fWomanDeepSleep
+  &&  !fWomanAwake) {
+    v80 = 2;
+    cycle.time(oWoman,v80);
+    normal.cycle(oWoman);
+    end.of.loop(oWoman,fWomanAwake);
+    set(fWomanWaveDown);
+  }
+  else {
+    if (fWomanDeepSleep) {
+      print("Try as you might, you can not wake her beauty. She is in a deep stupor.");
+    }
+  }
+}
+if (fWomanAwake) {
+  get.posn(ego,new_ego_x,new_ego_y);
+  if (fWomanWaveUp
+  &&  new_ego_y <= 120) {
+    set.loop(oWoman,1);
+    normal.cycle(oWoman);
+    reset(fWomanWaveUp);
+    set(fWomanWaveDown);
+  }
+  else {
+    if (fWomanWaveDown
+    &&  new_ego_y > 120) {
+      set.loop(oWoman,2);
+      normal.cycle(oWoman);
+      reset(fWomanWaveDown);
+      set(fWomanWaveUp);
+    }
+  }
+}
+if (fWomanAsleep
+&&  said("kiss","girl")) {
+  if (fEgoKissedGirl) {
+    print("You already kissed the girl. Don't be too persistent.");
+  }
+  else {
+    if (posn(ego,82,122,92,126)) {
+      print("Hey! What are you thinking? "
+            "You don't know each other well enough for that kind of behavior.");
+      print("Would your mother be proud right now?");
+      print("Fine, don't listen to me.");
+      print("You gently ready your best kissing technique to wow the lips of this fair maiden.");
+      print("Here you go!");
+      print("MUAH!");
+      set(fDevilToAppear);
+      if (!fEgoKissedGirl) {
+        set(fEgoKissedGirl);
+        score++;
+      }
+    }
+    else {
+      if (posn(ego,0,0,159,120)) {
+        print("Try reaching her from the other side of the bier that she is resting on.");
+      }
+      else {
+        print("Do you want to blow her a kiss? You should get closer.");
+      }
+    }
+  }
+}
+
+// Devil
+if (fDevilToAppear) {
+  reset(fDevilToAppear);
+  program.control();
+  prevent.input();
+  stop.motion(ego);
+  load.view(91);
+  animate.obj(oDevil);
+  set.view(oDevil,91);
+  set.loop(oDevil,7);
+  position(oDevil,42,82);
+  stop.cycling(oDevil);
+  v80 = 1;
+  cycle.time(oDevil,v80);
+  ignore.objs(oDevil);
+  shake.screen(2);
+  print("Wow, that was so good you felt the world move.");
+  draw(oDevil);
+  end.of.loop(oDevil,fDevilFormed);
+  
+  load.sound(71);
+  sound(71,fSoundDone);
+}
+if (fDevilFormed) {
+  reset(fDevilFormed);
+  set.loop(oDevil,2);
+  set.cel(oDevil,0);
+  v80 = 4;
+  cycle.time(oDevil,v80);
+  ignore.objs(oDevil);
+  draw(oDevil);
+  end.of.loop(oDevil,fDevilAppeared);
+  fix.loop(ego);
+  set.loop(ego,1);
+  reverse.cycle(ego);
+  move.obj(ego,120,142,1,fEgoBackedAway);
+}
+if (fDevilAppeared
+&&  fEgoBackedAway) {
+  reset(fDevilAppeared);
+  set.loop(oDevil,3);
+  set.cel(oDevil,0);
+
+  // FaceDevilMan
+  load.view(204);
+  animate.obj(oFaceDevilMan);
+  set.view(oFaceDevilMan,204);
+  set.loop(oFaceDevilMan,1);
+  set.cel(oFaceDevilMan,0);
+  position(oFaceDevilMan,5,67);
+  set.priority(oFaceDevilMan,15);
+  ignore.objs(oFaceDevilMan);
+  v_cycle = 2;
+  cycle.time(oFaceDevilMan,v_cycle);
+  draw(oFaceDevilMan);
+  vFaceTalkCount = 0;
+  end.of.loop(oFaceDevilMan,fFaceTalked);
+}
+if (fDevilWaved) {
+  reset(fDevilWaved);
+  set.loop(oDevil,4);
+  set.cel(oDevil,0);
+  v80 = 2;
+  cycle.time(oDevil,v80);
+  end.of.loop(oDevil,fDevilStanding);
+}
+if (fDevilStanding) {
+  reset(fDevilStanding);
+  set.loop(oDevil,5);
+  set.cel(oDevil,0);
+  position(oDevil,40,82);
+  v80 = 4;
+  cycle.time(oDevil,v80);
+  end.of.loop(oDevil,fDevilRed);
+  set(fDevilRedding);
+}
+if (fDevilRedding) {
+  current.cel(oDevil,v_cel);
+  if (v_cel == 8) {
+    v_cycle = 1;
+    cycle.time(oDevil,v_cycle);
+  }
+  else {
+    if (v_cel == 14) {
+      v_cycle = 4;
+      cycle.time(oDevil,v_cycle);
+      reset(fDevilRedding);
+    }
+  }
+}
+if (fDevilRed) {
+  reset(fDevilRed);
+  set.loop(oFaceDevilMan,2);
+  set.cel(oFaceDevilMan,0);
+  v_cycle = 4;
+  cycle.time(oFaceDevilMan,v_cycle);
+  vFaceTalkCount = 1;
+  draw(oFaceDevilMan);
+  end.of.loop(oFaceDevilMan,fFaceTalked);
+}
+if (fDevilChanged) {
+  reset(fDevilChanged);
+  set.loop(oDevil,8);
+  set.cel(oDevil,0);
+  end.of.loop(oDevil,fDevilRed2);
+}
+if (fDevilRed2) {
+  reset(fDevilRed2);
+  set.loop(oDevil,6);
+  set.cel(oDevil,0);
+  end.of.loop(oDevil,fDevilStole);
+}
+if (fDevilStole) {
+  reset(fDevilStole);
+  drop("Pick");
+
+  print("Your back pocket seems empty. Did he really just steal your pick?");
+  print("Wait, you feel kinda funny...");
+
+  load.view(7);
+  animate.obj(egoAlt);
+  set.view(egoAlt,7);
+  set.loop(egoAlt,0);
+  set.cel(egoAlt,0);
+  ignore.objs(egoAlt);
+  get.posn(ego,new_ego_x,new_ego_y);
+  new_ego_x = new_ego_x - 1;
+  position.v(egoAlt,new_ego_x,new_ego_y);
+  v_cycle = 4;
+  cycle.time(egoAlt,v_cycle);
+  erase(ego);
+  draw(egoAlt);
+  end.of.loop(egoAlt,fEgoFroGone);
+}
+
+if (fFaceTalked) {
+  if (vFaceTalkCount == 0) {
+    print("\"Welcome!\" the man with the crimson skin growls, "
+          "\"You puny, insignificant humans always fall for that!\"");
+    end.of.loop(oDevil,fDevilWaved);
+    vFaceTalkCount = 9;
+  }
+  else {
+    if (vFaceTalkCount == 1) {
+      print("\"Ha! Ha! Ha!\"");
+      v_cycle = 2;
+      cycle.time(oFaceDevilMan,v_cycle);
+    }
+    else {
+      if (vFaceTalkCount == 2) {
+        print("\"Your pick is now mine!\"");
+        end.of.loop(oDevil,fDevilChanged);
+      }
+      else {
+        if (vFaceTalkCount == 3) {
+          print("\"Ha! Ha! Ha!\"");
+          set.loop(oFaceDevilMan,1);
+          set.cel(oFaceDevilMan,0);
+          v_cycle = 2;
+          cycle.time(oFaceDevilMan,v_cycle);
+        }
+        else {
+          if (vFaceTalkCount == 4) {
+            print("\"There is no one to save you now!\"");
+            set(fDevilKillsEgo);
+          }
+        }
+      }
+    }
+  }
+  if (vFaceTalkCount != 9) {
+    if ((vFaceTalkCount == 2
+    ||   vFaceTalkCount == 4)) {
+      vFaceTalkCount = 0;
+      reset(fFaceTalked);
+      erase(oFaceDevilMan);
+    }
+    else {
+      reset(fFaceTalked);
+      set.loop(oFaceDevilMan,3);
+      set.cel(oFaceDevilMan,0);
+      v_cycle = 2;
+      cycle.time(egoAlt,v_cycle);
+      end.of.loop(oFaceDevilMan,fFaceBlinked);
+      vFaceTalkCount++;
+    }
+  }
+  else {
+    erase(oFaceDevilMan);
+  }
+}
+if (fFaceBlinked) {
+  reset(fFaceBlinked);
+  set.loop(oFaceDevilMan,1);
+  set.cel(oFaceDevilMan,0);
+  v_cycle = 2;
+  cycle.time(egoAlt,v_cycle);
+  end.of.loop(oFaceDevilMan,fFaceTalked);
+}
+if (fEgoFroGone) {
+  reset(fEgoFroGone);
+  if (!fDeathFroGone) {
+    set(fDeathFroGone);
+    score++;
+  }
+  print("This is non-");
+  print("non-non-");
+  print("non-non-non-");
+  print("heinous!");
+  erase(egoAlt);
+  new.room(14);
+}
+if (fDevilReadyToReject
+&&  !fDevilRejecting
+&&  posn(ego,0,0,85,120)) {
+  program.control();
+  prevent.input();
+  set(fDevilRejecting);
+  set.loop(oDevil,10);
+  set.cel(oDevil,0);
+  ego_dir = 0;
+  end.of.loop(oDevil,fNothing);
+}
+if (fDevilRejecting) {
+  current.loop(oDevil,v_loop);
+  current.cel(oDevil,v_cel);
+  if (v_loop == 10
+  &&  v_cel == 4) {
+    set(fDevilRejected);
+  }
+}
+if (fDevilRejected) {
+  reset(fDevilRejected);
+  load.view(65);
+  animate.obj(egoAlt);
+  set.view(egoAlt,65);
+  if (posn(ego,0,0,80,120)) {
+    if (fEgoSuper) {
+      set.loop(egoAlt,4);
+      vEgoSuperAttack= 250;
+    }
+    else {
+      set.loop(egoAlt,1);
+    }
+  }
+  else {
+    if (fEgoSuper) {
+      set.loop(egoAlt,3);
+      vEgoSuperAttack= 0;
+    }
+    else {
+      set.loop(egoAlt,0);
+    }
+  }
+  set.cel(egoAlt,0);
+  ignore.objs(egoAlt);
+  get.priority(ego,v_priority);
+  set.priority.v(egoAlt,v_priority);
+  get.posn(ego,new_ego_x,new_ego_y);
+  if (posn(ego,0,0,80,120)) {
+    new_ego_y = new_ego_y + 6;
+  }
+  position.v(egoAlt,new_ego_x,new_ego_y);
+  stop.cycling(egoAlt);
+  erase(ego);
+  draw(egoAlt);
+  end.of.loop(egoAlt,fDevilRejectDone1);
+}
+if (fDevilRejectDone1) {
+  reset(fDevilRejectDone1);
+  if (fEgoSuper) {
+    set.loop(egoAlt,5);
+  }
+  else {
+    set.loop(egoAlt,2);
+  }
+  set.cel(egoAlt,0);
+  get.posn(egoAlt,new_ego_x,new_ego_y);
+  new_ego_x = new_ego_x + 5;
+  position.v(egoAlt,new_ego_x,new_ego_y);
+  end.of.loop(egoAlt,fDevilRejectDone2);
+}
+if (fDevilRejectDone2) {
+  reset(fDevilRejectDone2);
+  reset(fDevilRejecting);
+  set.loop(ego,1);
+  set.cel(ego,3);
+  get.posn(egoAlt,new_ego_x,new_ego_y);
+  new_ego_x = new_ego_x + 1;
+  position.v(ego,new_ego_x,new_ego_y);
+  erase(egoAlt);
+  draw(ego);
+  if (fEgoSuper) {
+    if (vEgoSuperAttack == 0) {
+      move.obj(ego,118,84,1,fEgoSuperAttack);
+    }
+    else {
+      if (vEgoSuperAttack == 250) {
+         move.obj(ego,118,128,1,fEgoSuperAttack);
+      }
+    }
+  }
+  else {
+    player.control();
+    accept.input();
+  }
+}
+
+// EgoSuperAttack
+if (fEgoSuperAttack) {
+  if (vEgoSuperAttack == 0) {
+    program.control();
+    prevent.input();
+    vEgoSuperAttack++;
+    set.loop(ego,1);
+    set.cel(ego,3);
+  }
+  else {
+    if (vEgoSuperAttack == 1) {
+      vEgoSuperAttack++;
+      set.view(egoAlt,15);
+      set.loop(egoAlt,4);
+      set.cel(egoAlt,0);
+      ignore.objs(egoAlt);
+      get.priority(ego,v_priority);
+      set.priority.v(egoAlt,v_priority);
+      new_ego_x = new_ego_x - 13;
+      position.v(egoAlt,new_ego_x,new_ego_y);
+      erase(ego);
+      draw(egoAlt);
+      reset(fEgoSuperAttack);
+      end.of.loop(egoAlt,fEgoSuperAttack);
+    }
+    if (fEgoSuperAttack
+    &&  vEgoSuperAttack == 2) {
+      vEgoSuperAttack++;
+      set.loop(egoAlt,5);
+      set.cel(egoAlt,0);
+      get.posn(egoAlt,v_x,v_y);
+      v_x = v_x - 5;
+      position.v(egoAlt,v_x,v_y);
+      reset(fEgoSuperAttack);
+      start.cycling(egoAlt);
+      v_x = v_x - 14;
+      v_step = 1;
+      move.obj.v(egoAlt,v_x,v_y,v_step,fEgoSuperAttack);
+    }
+    if (fEgoSuperAttack
+    &&  vEgoSuperAttack == 3) {
+      vEgoSuperAttack++;
+      set.loop(egoAlt,6);
+      set.cel(egoAlt,0);
+      get.priority(oDevil,v_priority);
+      v_priority = v_priority + 1;
+      set.priority.v(egoAlt,v_priority);
+      get.posn(egoAlt,v_x,v_y);
+      v_x = v_x - 1;
+      position.v(egoAlt,v_x,v_y);
+      start.cycling(egoAlt);
+      reset(fEgoSuperAttack);
+      move.obj(egoAlt,44,84,3,fEgoSuperAttack);
+      
+      animate.obj(oDevil);
+      load.view(94);
+      set.view(oDevil,94);
+      set.loop(oDevil,2);
+      set.cel(oDevil,0);
+      end.of.loop(oDevil,fNothing);
+    }
+    if (fEgoSuperAttack
+    &&  vEgoSuperAttack == 4) {
+      vEgoSuperAttack++;
+      reset(fEgoSuperAttack);
+      move.obj(egoAlt,44,84,1,fEgoSuperAttack);
+    }
+    if (fEgoSuperAttack
+    &&  vEgoSuperAttack == 5) {
+      vEgoSuperAttack++;
+      set.loop(egoAlt,7);
+      set.cel(egoAlt,0);
+      stop.cycling(egoAlt);
+      end.of.loop(egoAlt,fEgoSuperAttack);
+      
+      set.loop(oDevil,3);
+      set.cel(oDevil,0);
+      end.of.loop(oDevil,fNothing);
+    }
+    if (fEgoSuperAttack
+    &&  vEgoSuperAttack == 6) {
+      vEgoSuperAttack++;
+      set.loop(egoAlt,8);
+      set.cel(egoAlt,0);
+      end.of.loop(egoAlt,fEgoSuperAttack);
+    }
+    if (fEgoSuperAttack
+    &&  vEgoSuperAttack == 7) {
+      vEgoSuperAttack++;
+      erase(egoAlt);
+      set.loop(oDevil,4);
+      set.cel(oDevil,0);
+      end.of.loop(oDevil,fNothing);
+    }
+    if (fEgoSuperAttack
+    &&  vEgoSuperAttack >= 8
+    &&  vEgoSuperAttack < 50) {
+      vEgoSuperAttack++;
+    }
+    if (fEgoSuperAttack
+    &&  vEgoSuperAttack == 50) {
+      vEgoSuperAttack++;
+      set.loop(oDevil,5);
+      set.cel(oDevil,0);
+      get.posn(oDevil,v_x,v_y);
+      v_x = v_x - 14;
+      v_y = v_y + 2;
+      position.v(oDevil,v_x,v_y);
+      reset(fEgoSuperAttack);
+      end.of.loop(oDevil,fEgoSuperAttack);
+      get("Pick");
+      
+      load.sound(101);
+      sound(101,fSoundDone);
+      set(fSoundDoneNoReplay);
+      shake.screen(2);
+    }
+    if (fEgoSuperAttack
+    &&  vEgoSuperAttack == 51) {
+      vEgoSuperAttack++;
+      set.loop(oDevil,6);
+      set.cel(oDevil,0);
+      reset(fEgoSuperAttack);
+      end.of.loop(oDevil,fEgoSuperAttack);
+    }
+    if (fEgoSuperAttack
+    &&  vEgoSuperAttack == 52) {
+      vEgoSuperAttack++;
+      set.loop(oDevil,7);
+      set.cel(oDevil,0);
+      reset(fEgoSuperAttack);
+      end.of.loop(oDevil,fEgoSuperAttack);
+    }
+    if (fEgoSuperAttack
+    &&  vEgoSuperAttack == 53) {
+      vEgoSuperAttack++;
+      set.loop(oDevil,8);
+      set.cel(oDevil,0);
+      reset(fEgoSuperAttack);
+      end.of.loop(oDevil,fEgoSuperAttack);
+    }
+    if (fEgoSuperAttack
+    &&  vEgoSuperAttack == 54) {
+      vEgoSuperAttack++;
+      get.posn(oDevil,v_x,v_y);
+      v_x = v_x + 13;
+      v_y = v_y - 2;
+      position.v(ego,v_x,v_y);
+      erase(oDevil);
+      set.view(ego,0);
+      draw(ego);
+      reset(fEgoSuperAttack);
+      v_x = v_x + 41;
+      v_y = v_y - 7;
+      v_step = 1;
+      move.obj.v(ego,v_x,v_y,v_step,fEgoSuperAttack);
+      reset(fDevilReadyToReject);
+    }
+    if (fEgoSuperAttack
+    &&  vEgoSuperAttack == 55) {
+      vEgoSuperAttack++;
+      set.loop(ego,2);
+      set.cel(ego,0);
+      
+      load.view(22);
+      animate.obj(oBodyguard);
+      set.view(oBodyguard,22);
+      set.loop(oBodyguard,2);
+      set.cel(oBodyguard,0);
+      position(oBodyguard,0,126);
+      set.priority(oBodyguard,11);
+      ignore.objs(oBodyguard);
+      draw(oBodyguard);
+      reset(fEgoSuperAttack);
+      end.of.loop(oBodyguard,fEgoSuperAttack);
+    }
+    if (fEgoSuperAttack
+    &&  vEgoSuperAttack == 56) {
+      vEgoSuperAttack++;
+      set(fWomanWakes);
+      vWomanWakes = 255;
+      reset(fEgoSuperAttack);
+    }
+    if (fEgoSuperAttack
+    &&  vEgoSuperAttack >= 57
+    &&  vEgoSuperAttack < 100) {
+      vEgoSuperAttack++;
+    }
+    if (fEgoSuperAttack
+    &&  vEgoSuperAttack == 100) {
+      vEgoSuperAttack++;
+      set.loop(oWoman,6);
+      set.cel(oWoman,0);
+      v_cycle = 3;
+      cycle.time(oWoman,v_cycle);
+      reset(fEgoSuperAttack);
+      end.of.loop(oWoman,fEgoSuperAttack);
+    }
+    if (fEgoSuperAttack
+    &&  vEgoSuperAttack == 101) {
+      vEgoSuperAttack++;
+      set.loop(oWoman,7);
+      set.cel(oWoman,0);
+      start.cycling(oWoman);
+    }
+    if (fEgoSuperAttack
+    &&  vEgoSuperAttack >= 102
+    &&  vEgoSuperAttack < 150) {
+      vEgoSuperAttack++;
+    }
+    if (fEgoSuperAttack
+    &&  vEgoSuperAttack == 150) {
+      vEgoSuperAttack++;
+      reset(fEgoSuperAttack);
+      reverse.loop(egoAlt,fEgoSuperAttack);
+    }
+    if (fEgoSuperAttack
+    &&  vEgoSuperAttack == 151) {
+      vEgoSuperAttack++;
+      set.loop(ego,1);
+      set.cel(ego,3);
+      erase(egoAlt);
+      draw(ego);
+    }
+    if (fEgoSuperAttack
+    &&  vEgoSuperAttack >= 152
+    &&  vEgoSuperAttack < 200) {
+      vEgoSuperAttack++;
+    }
+    if (fEgoSuperAttack
+    &&  vEgoSuperAttack == 200) {
+      vEgoSuperAttack++;
+      reset(fEgoSuperAttack);
+      move.obj(ego,118,123,1,fEgoSuperAttack);
+    }
+    if (fEgoSuperAttack
+    &&  vEgoSuperAttack == 201) {
+      vEgoSuperAttack++;
+      reset(fEgoSuperAttack);
+      move.obj(ego,44,123,1,fEgoSuperAttack);
+    }
+    if (fEgoSuperAttack
+    &&  vEgoSuperAttack == 202) {
+      vEgoSuperAttack++;
+      set.view(egoAlt,94);
+      set.loop(egoAlt,9);
+      set.cel(egoAlt,0);
+      ignore.objs(egoAlt);
+      get.priority(ego,v_priority);
+      set.priority.v(egoAlt,v_priority);
+      position.v(egoAlt,new_ego_x,new_ego_y);
+      erase(ego);
+      draw(egoAlt);
+      
+      stop.cycling(oWoman);
+      reset(fEgoSuperAttack);
+      reverse.loop(oWoman,fEgoSuperAttack);
+    }
+    if (fEgoSuperAttack
+    &&  vEgoSuperAttack == 203) {
+      vEgoSuperAttack++;
+      set.loop(oWoman,6);
+      set.cel(oWoman,3);
+      reset(fEgoSuperAttack);
+      reverse.loop(oWoman,fEgoSuperAttack);
+    }
+    if (fEgoSuperAttack
+    &&  vEgoSuperAttack == 204) {
+      current.cel(oHearts1,v_cel);
+      if (v_cel == 0) {
+        vEgoSuperAttack++;
+        
+        animate.obj(oHearts5);
+        load.view(153);
+        animate.obj(oHearts5);
+        set.view(oHearts5,153);
+        set.loop(oHearts5,6);
+        set.cel(oHearts5,0);
+        position(oHearts5,43,86);
+        get.priority(oBodyguard,v_priority);
+        set.priority.v(oHearts5,v_priority);
+        ignore.blocks(oHearts5);
+        ignore.objs(oHearts5);
+        start.cycling(oHearts5);
+        draw(oHearts5);
+      }
+    }
+    if (fEgoSuperAttack
+    &&  vEgoSuperAttack == 205) {
+      current.cel(oHearts1,v_cel);
+      if (v_cel == 15) {    
+        vEgoSuperAttack++;
+        
+        animate.obj(oHearts6);
+        load.view(153);
+        animate.obj(oHearts6);
+        set.view(oHearts6,153);
+        set.loop(oHearts6,6);
+        set.cel(oHearts6,0);
+        position(oHearts6,43,86);
+        get.priority(oBodyguard,v_priority);
+        set.priority.v(oHearts6,v_priority);
+        ignore.blocks(oHearts6);
+        ignore.objs(oHearts6);
+        start.cycling(oHearts6);
+        draw(oHearts6);
+        
+        set(fTheEndBest);
+      }
+    }
+  }
+  
+  if (vEgoSuperAttack == 250) {
+    vEgoSuperAttack++;
+    reset(fEgoSuperAttack);
+    move.obj(ego,118,84,1,fEgoSuperAttack);
+  }  
+  if (fEgoSuperAttack
+  &&  vEgoSuperAttack == 251) {
+    vEgoSuperAttack = 0;
+  }
+}
+
+// Bodyguard
+if (!fEgoSuper
+&&  prev_room_no == 14
+&&  vBodyguardDelayCount < 4
+&&  vBodyguardCount < 250) {
+  vBodyguardCount++;
+}
+if (!fEgoSuper
+&&  prev_room_no == 14
+&&  vBodyguardDelayCount < 4
+&&  vBodyguardCount == 250) {
+  vBodyguardCount = 0;
+  vBodyguardDelayCount++;
+}
+if (!fEgoSuper
+&&  prev_room_no == 14
+&&  vBodyguardDelayCount == 4) {
+  vBodyguardDelayCount++;
+  set(fBodyguardArrives);
+}
+if (!fEgoSuper
+&&  fBodyguardArrives
+&&  vBodyguardDelayCount == 5
+&&  !fDevilRejecting) {
+  reset(fBodyguardArrives);
+  program.control();
+  prevent.input();
+  load.view(22);
+  animate.obj(oBodyguard);
+  set.view(oBodyguard,22);
+  set.loop(oBodyguard,2);
+  set.cel(oBodyguard,0);
+  position(oBodyguard,0,126);
+  set.priority(oBodyguard,11);
+  ignore.objs(oBodyguard);
+  draw(oBodyguard);
+  end.of.loop(oBodyguard,fBodyguardWalked);
+  if (new_ego_x < 46
+  &&  new_ego_y > 120) {
+    ego_dir = 3;
+  }
+}
+
+if (fBodyguardDrank) {
+  if (fBodyguardWalked) {
+    program.control();
+    prevent.input();
+    if (new_ego_x > 46) {
+      ego_dir = 0;
+      set.loop(ego,1);
+      set.cel(ego,3);
+    }
+    reset(fBodyguardWalked);
+    set.view(oBodyguard,22);
+    set.loop(oBodyguard,4);
+    set.cel(oBodyguard,0);
+    position(oBodyguard,13,127);
+    v_cycle = 2;
+    cycle.time(oBodyguard,v_cycle);
+    end.of.loop(oBodyguard,fBodyguardFired);
+    set(fBodyguardFired);
+    
+    set.view(oDevil,91);
+    set.loop(oDevil,11);
+    set.cel(oDevil,0);
+    position(oDevil,42,84);
+    v_cycle = 2;
+    cycle.time(oDevil,v_cycle);
+    end.of.loop(oDevil,fNothing);
+  }
+  if (fBodyguardFired) {
+    current.cel(oBodyguard,v_cel);
+    if (v_cel < 5) {
+    }
+    else {
+      if (v_cel == 5) {
+        reset(fBodyguardFired);
+        
+        reset(fSoundDone);
+        load.sound(103);
+        sound(103,fSoundDone);
+        set(fSoundDoneNoReplay);
+      }
+      else {
+        program.control();
+        prevent.input();
+        if (new_ego_x > 46) {
+          ego_dir = 0;
+          set.loop(ego,1);
+          set.cel(ego,3);
+        }
+        reset(fBodyguardFired);
+        set.loop(oBodyguard,5);
+        set.cel(oBodyguard,0);
+        position(oBodyguard,13,123);
+        v_cycle = 1;
+        cycle.time(oBodyguard,v_cycle);
+        end.of.loop(oBodyguard,fDevilFade1);
+      }
+    }
+  }
+  if (fDevilFade1) {
+    program.control();
+    prevent.input();
+    if (new_ego_x > 46) {
+      ego_dir = 0;
+      set.loop(ego,1);
+      set.cel(ego,3);
+    }
+    reset(fDevilFade1);
+    set.view(oDevil,91);
+    set.loop(oDevil,12);
+    set.cel(oDevil,0);
+    position(oDevil,42,84);
+    end.of.loop(oDevil,fDevilFade2);
+  }
+  if (fDevilFade2) {
+    program.control();
+    prevent.input();
+    if (new_ego_x > 46) {
+      ego_dir = 0;
+      set.loop(ego,1);
+      set.cel(ego,3);
+    }
+    reset(fDevilFade2);
+    set.view(oDevil,91);
+    set.loop(oDevil,13);
+    set.cel(oDevil,0);
+    position(oDevil,42,84);
+    end.of.loop(oDevil,fDevilFade3);
+  }
+  if (fDevilFade3) {
+    program.control();
+    prevent.input();
+    if (new_ego_x > 46) {
+      ego_dir = 0;
+      set.loop(ego,1);
+      set.cel(ego,3);
+    }
+    reset(fDevilFade3);
+    set.view(oDevil,91);
+    set.loop(oDevil,14);
+    set.cel(oDevil,0);
+    position(oDevil,42,84);
+    end.of.loop(oDevil,fWomanWakes);
+    vWomanWakes = 255;
+  }
+}
+else {
+  if (fBodyguardWalked) {
+    reset(fBodyguardWalked);
+    program.control();
+    prevent.input();
+    if (new_ego_x > 46) {
+      ego_dir = 0;
+      set.loop(ego,1);
+      set.cel(ego,3);
+    }
+
+    // FaceBodyguard
+    reset(fFaceTalked);
+    load.view(202);
+    animate.obj(oFaceBodyguard);
+    set.view(oFaceBodyguard,202);
+    set.loop(oFaceBodyguard,0);
+    set.cel(oFaceBodyguard,0);
+    position(oFaceBodyguard,5,67);
+    set.priority(oFaceBodyguard,15);
+    ignore.objs(oFaceBodyguard);
+    v_cycle = 2;
+    cycle.time(oFaceBodyguard,v_cycle);
+    draw(oFaceBodyguard);
+    end.of.loop(oFaceBodyguard,fBodyguardTalks);
+  }
+  if (fBodyguardTalks) {
+    reset(fBodyguardTalks);
+    program.control();
+    prevent.input();
+    if (new_ego_x > 46) {
+      ego_dir = 0;
+      set.loop(ego,1);
+      set.cel(ego,3);
+    }
+    print("Sooo thirsty...");
+    set.view(oBodyguard,22);
+    set.loop(oBodyguard,3);
+    set.cel(oBodyguard,0);
+    position(oBodyguard,12,126);
+    v_cycle = 2;
+    cycle.time(oBodyguard,v_cycle);
+    draw(oBodyguard);
+    erase(oFaceBodyguard);
+    end.of.loop(oBodyguard,fBodyguardParched);
+  }
+  if (fBodyguardParched) {
+    reset(fBodyguardParched);
+    program.control();
+    prevent.input();
+    if (new_ego_x > 46) {
+      ego_dir = 0;
+      set.loop(ego,1);
+      set.cel(ego,3);
+    }
+    print("Your bodyguard was quite parched and has died of thirst...");
+
+    // FaceDevil
+    reset(fFaceTalked);
+    load.view(204);
+    animate.obj(oFaceDevilMan);
+    set.view(oFaceDevilMan,204);
+    set.loop(oFaceDevilMan,2);
+    set.cel(oFaceDevilMan,0);
+    position(oFaceDevilMan,5,67);
+    set.priority(oFaceDevilMan,15);
+    ignore.objs(oFaceDevilMan);
+    v_cycle = 4;
+    cycle.time(oFaceDevilMan,v_cycle);
+    draw(oFaceDevilMan);
+    vFaceTalkCount = 3;
+    end.of.loop(oFaceDevilMan,fFaceTalked);
+    vDevilKillsEgoCount = 0;
+  }
+}
+if (fDevilKillsEgo) {
+  if (vDevilKillsEgoCount == 0) {
+    vDevilKillsEgoCount++;
+    set.loop(oDevil,15);
+    set.cel(oDevil,0);
+    end.of.loop(oDevil,fDevilKillsEgoReady);
+  }
+  if (vDevilKillsEgoCount == 1
+  &&  fDevilKillsEgoReady) {
+    vDevilKillsEgoCount++;
+    reset(fDevilKillsEgoReady);
+    load.view(94);
+    set.view(oDevil,94);
+    set.loop(oDevil,0);
+    set.cel(oDevil,0);
+    end.of.loop(oDevil,fDevilKillsEgoReady);
+  }
+  if (vDevilKillsEgoCount == 2
+  &&  fDevilKillsEgoReady) {
+    vDevilKillsEgoCount++;
+    set.loop(oDevil,1);
+    set.cel(oDevil,0);
+    start.cycling(oDevil);
+  }
+  if (vDevilKillsEgoCount == 3) {
+    vDevilKillsEgoCount++;
+    if (new_ego_x < 108
+    &&  new_ego_y > 120) {
+      move.obj(ego,132,124,1,fDevilKillsEgoWalk);
+    }
+    else {
+      if (new_ego_x < 108
+      &&  new_ego_y >= 118) {
+        v_x = 124;
+        v_y = new_ego_y;
+        v_step = 1;
+        move.obj.v(ego,v_x,v_y,v_step,fDevilKillsEgoWalk);
+      }
+      else {
+        set(fDevilKillsEgoWalk);
+        vDevilKillsEgoCount = 4;
+      }
+    }
+  }
+  if (fDevilKillsEgoWalk
+  &&  vDevilKillsEgoCount == 4) {
+    vDevilKillsEgoCount++;
+    reset(fDevilKillsEgoWalk);
+    move.obj(ego,90,78,1,fDevilKillsEgoWalk);
+    v_x = 0;
+    v_y = 0;
+    vDevilKillsEgoTeleport = 0;
+  }
+  if (!fDevilKillsEgoWalk
+  &&  vDevilKillsEgoCount == 5
+  &&  old_ego_x == v_x
+  &&  old_ego_y == v_y) {
+    if (vDevilKillsEgoTeleport == 0) {
+      vDevilKillsEgoTeleport++;
+      load.view(17);
+      animate.obj(egoAlt);
+      set.view(egoAlt,17);
+      set.loop(egoAlt,6);
+      set.cel(egoAlt,0);
+      position.v(egoAlt,new_ego_x,new_ego_y);
+      get.priority(ego,v_priority);
+      set.priority.v(egoAlt,v_priority);
+      ignore.objs(egoAlt);
+      v_cycle = 1;
+      cycle.time(egoAlt,v_cycle);
+      erase(ego);
+      draw(egoAlt);
+      end.of.loop(egoAlt,fDevilKillsEgoTeleport);
+    }
+    if (fDevilKillsEgoTeleport
+    &&  vDevilKillsEgoTeleport == 1) {
+      vDevilKillsEgoTeleport++;
+      reset(fDevilKillsEgoTeleport);
+      set.loop(egoAlt,5);
+      set.cel(egoAlt,14);
+      position(egoAlt,110,84);
+      set.priority(egoAlt,15);
+      reverse.loop(egoAlt,fDevilKillsEgoTeleport);
+    }
+    if (fDevilKillsEgoTeleport
+    &&  vDevilKillsEgoTeleport == 2) {
+      vDevilKillsEgoTeleport++;
+      reset(fDevilKillsEgoTeleport);
+      position(ego,110,84);
+      erase(egoAlt);
+      draw(ego);
+    }
+  }
+  if (!fDevilKillsEgoWalk
+  &&  vDevilKillsEgoCount == 5) {
+    v_x = old_ego_x;
+    v_y= old_ego_y;
+  }
+  if (fDevilKillsEgoWalk
+  &&  vDevilKillsEgoCount == 5) {
+    vDevilKillsEgoCount++;
+    reset(fDevilKillsEgoWalk);
+    load.view(17);
+    animate.obj(egoAlt);
+    set.view(egoAlt,17);
+    set.loop(egoAlt,0);
+    set.cel(egoAlt,0);
+    new_ego_x = new_ego_x - 15;
+    new_ego_y = new_ego_y + 1;
+    position.v(egoAlt,new_ego_x,new_ego_y);
+    set.priority(egoAlt,13);
+    ignore.objs(egoAlt);
+    v_cycle = 1;
+    cycle.time(egoAlt,v_cycle);
+    erase(ego);
+    draw(egoAlt);
+    end.of.loop(egoAlt,fDevilKillsEgoFall);
+    
+    reset(fSoundDone);
+    load.sound(100);
+    sound(100,fSoundDone);
+    set(fSoundDoneNoReplay);
+  }
+  if (fDevilKillsEgoDead
+  &&  vDevilKillsEgoCount == 6) {
+    vDevilKillsEgoCount++;
+    reset(fDevilKillsEgoDead);
+    set.loop(oDevil,0);
+    set.cel(oDevil,5);
+    reverse.loop(oDevil,fDevilKillsEgoDead);
+  }
+  if (fDevilKillsEgoDead
+  &&  vDevilKillsEgoCount == 7) {
+    vDevilKillsEgoCount++;
+    reset(fDevilKillsEgoDead);
+    reset(fDevilKillsEgo);
+    set.view(oDevil,91);
+    set.loop(oDevil,15);
+    set.cel(oDevil,6);
+    reverse.loop(oDevil,fDevilKillsEgoDead);
+  
+    vGameOverRedY1 = 0;
+    vGameOverRedY2 = 0;
+    set(fDevilKillsEgoGameOver);
+    vDevilKillsEgoGameOver = 0;
+  }
+}
+if (fDevilKillsEgoFall) {
+  reset(fDevilKillsEgoFall);
+  set.loop(egoAlt,1);
+  set.cel(egoAlt,0);
+  end.of.loop(egoAlt,fDevilKillsEgoDead);
+}
+
+if (fDevilKillsEgoGameOver) {
+  if (vDevilKillsEgoGameOver < 50) {
+    vDevilKillsEgoGameOver++;
+  }
+  else {
+    if (vGameOverRedY1 >= 0
+    &&  vGameOverRedY1 <= 254
+    &&  vGameOverRedY2 >= 0
+    &&  vGameOverRedY2 <= 73) {
+      vGameOverRedYOffset1 = 0;
+
+      vGameOverRedX =  10; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX = 150; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  80; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX = 140; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  28; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX = 111; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  20; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX = 130; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  30; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  27; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  86; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  87; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  15; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =   0; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX = 159; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX = 131; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX = 120; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  26; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  83; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  54; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  40; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =   1; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX = 158; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =   9; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  17; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  33; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  64; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  37; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX = 102; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  18; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =   2; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX = 157; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  67; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX = 143; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX = 105; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  23; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  69; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX = 110; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  50; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX = 128; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX = 108; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =   3; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX = 156; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  55; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX = 100; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  16; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =   4; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX = 155; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  48; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  99; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  19; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  11; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  32; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  66; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX = 141; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX = 117; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =   5; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX = 154; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  94; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  24; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  95; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  96; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  84; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  22; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  21; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  53; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX = 126; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =   6; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX = 153; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX = 145; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX = 146; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  62; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  76; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX = 137; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  93; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  85; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  12; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  34; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =   7; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX = 152; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  35; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX = 139; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX = 142; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX = 147; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX = 119; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX = 107; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  78; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX = 136; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX = 133; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  89; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  45; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX = 127; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =   8; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX = 151; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX = 138; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX = 122; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX = 104; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX = 134; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  57; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  38; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  79; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  29; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX = 129; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  82; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  14; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX = 148; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  42; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  43; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX = 149; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  91; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  49; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  46; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  47; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  60; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX = 135; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX = 101; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  77; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX = 113; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  75; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  51; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  90; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  58; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  25; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX = 144; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX = 106; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX = 123; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX = 103; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  71; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  13; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX = 118; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  56; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  44; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  61; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  41; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX = 124; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  68; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  31; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  63; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  59; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  88; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  74; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX = 112; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  72; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  73; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX = 114; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX = 132; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX = 115; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  65; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  36; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  52; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX = 109; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  92; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  39; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX = 121; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  81; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  70; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  97; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX = 125; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX =  98; call(87); vGameOverRedYOffset1++;
+      vGameOverRedX = 116; call(87); vGameOverRedYOffset1++;
+
+      if (vGameOverRedY1 < 254) {
+        vGameOverRedY1++;
+      }
+      else {
+        vGameOverRedY2++;
+      }
+    }
+    if (vGameOverRedY2 == 74) {
+      vGameOverRedY2++;
+      animate.obj(oTheEnd);
+      set.view(oTheEnd,19);
+      set.loop(oTheEnd,2);
+      set.cel(oTheEnd,0);
+      set.priority(oTheEnd,15);
+      position(oTheEnd,64,84);
+      stop.cycling(oTheEnd);
+      draw(oTheEnd);
+      v_cycle = 1;
+      cycle.time(oTheEnd,v_cycle);
+      end.of.loop(oTheEnd,fTheEndHorrible);
+      reset(fDevilKillsEgoGameOver);
+      vDevilKillsEgoGameOver = 0;
+      
+      load.sound(102);
+      sound(102,fSoundDone);
+      set(fSoundDoneNoReplay);
+    }
+  }
+}
+if (fTheEndHorrible) {
+  if (vDevilKillsEgoGameOver < 100) {
+    vDevilKillsEgoGameOver++;
+  }
+  if (vDevilKillsEgoGameOver == 100) {
+    vDevilKillsEgoGameOver++;
+    print("That was a \"horrible\" ending. There must be something better than that!");
+  }
+  if (vDevilKillsEgoGameOver == 101
+  &&  (have.key()
+  ||   controller(key_joystick))) {
+      print("Thank you for playing Fro Quest 1. Better luck next time!");
+  }
+}
+
+if (fWomanWakes) {
+  if (vWomanWakes == 255) {
+    program.control();
+    prevent.input();
+    if (new_ego_x < 114
+    &&  new_ego_y > 120) {
+      if (ego_dir != 3) {
+        ego_dir = 3;
+      }
+    }
+    else {
+      if (new_ego_x >= 114
+      &&  new_ego_y > 120
+      &&  ego_dir == 3) {
+        ego_dir = 0;
+      }
+      else {
+        set.loop(ego,1);
+        set.cel(ego,3);
+        vWomanWakes = 0;
+      }
+    }
+  }
+  if (vWomanWakes == 0) {
+    vWomanWakes++;
+    reset(fWomanWakes);
+    set.loop(oWoman,0);
+    set.cel(oWoman,0);
+    v_cycle = 4;
+    cycle.time(oWoman,v_cycle);
+    end.of.loop(oWoman,fWomanWakes);
+  }
+  if (fWomanWakes
+  &&  vWomanWakes == 1) {
+    vWomanWakes++;
+    reset(fWomanWakes);
+    set.loop(oWoman,1);
+    set.cel(oWoman,0);
+    position(oWoman,78,125);
+    v_cycle = 1;
+    cycle.time(oWoman,v_cycle);
+    end.of.loop(oWoman,fWomanWakes);
+  }
+  if (fWomanWakes
+  &&  vWomanWakes == 2) {
+    vWomanWakes++;
+    reset(fWomanWakes);
+    set.loop(oWoman,4);
+    set.cel(oWoman,0);
+    position(oWoman,82,123);
+    release.priority(oWoman);
+    observe.objs(oWoman);
+    set(fWomanWakes);
+  }
+  else {
+    if (fWomanWakes
+    &&  vWomanWakes == 3) {
+      vWomanWakes++;
+      reset(fWomanWakes);
+      set.loop(oWoman,4);
+      set.cel(oWoman,1);
+      set(fWomanWakes);
+    }
+    else {
+      if (fWomanWakes
+      &&  vWomanWakes == 4) {
+        vWomanWakes++;
+        reset(fWomanWakes);
+        set.loop(oWoman,5);
+        set.cel(oWoman,0);
+        normal.cycle(oWoman);
+        move.obj(oWoman,30,123,1,fWomanWakes);
+      }
+    }
+  }
+  if (fWomanWakes
+  &&  vWomanWakes == 5) {
+    vWomanWakes++;
+    reset(fWomanWakes);
+    set.loop(oWoman,4);
+    set.cel(oWoman,1);
+    stop.cycling(oWoman);
+    
+    set.loop(oBodyguard,6);
+    set.cel(oBodyguard,0);
+    position(oBodyguard,13,123);
+    end.of.loop(oBodyguard,fNothing);
+    
+    animate.obj(oHearts1);
+    load.view(153);
+    animate.obj(oHearts1);
+    set.view(oHearts1,153);
+    set.loop(oHearts1,6);
+    set.cel(oHearts1,0);
+    position(oHearts1,29,93);
+    get.priority(oWoman,v_priority);
+    set.priority.v(oHearts1,v_priority);
+    ignore.blocks(oHearts1);
+    ignore.objs(oHearts1);
+    start.cycling(oHearts1);
+    draw(oHearts1);
+    
+    animate.obj(oHearts3);
+    load.view(153);
+    animate.obj(oHearts3);
+    set.view(oHearts3,153);
+    set.loop(oHearts3,6);
+    set.cel(oHearts3,0);
+    position(oHearts3,15,91);
+    get.priority(oBodyguard,v_priority);
+    set.priority.v(oHearts3,v_priority);
+    ignore.blocks(oHearts3);
+    ignore.objs(oHearts3);
+    start.cycling(oHearts3);
+    draw(oHearts3);
+    set(fWomanHearts);
+    vWomanHearts = 0;
+  }
+}
+if (fWomanHearts) {
+  if (vWomanHearts == 0) {
+    current.cel(oHearts1,v_cel);
+    if (v_cel == 15) {
+      animate.obj(oHearts2);
+      load.view(153);
+      animate.obj(oHearts2);
+      set.view(oHearts2,153);
+      set.loop(oHearts2,6);
+      set.cel(oHearts2,0);
+      position(oHearts2,29,93);
+      get.priority(oWoman,v_priority);
+      set.priority.v(oHearts2,v_priority);
+      ignore.blocks(oHearts2);
+      ignore.objs(oHearts2);
+      start.cycling(oHearts2);
+      draw(oHearts2);
+
+      animate.obj(oHearts4);
+      load.view(153);
+      animate.obj(oHearts4);
+      set.view(oHearts4,153);
+      set.loop(oHearts4,6);
+      set.cel(oHearts4,0);
+      position(oHearts4,15,91);
+      get.priority(oBodyguard,v_priority);
+      set.priority.v(oHearts4,v_priority);
+      ignore.blocks(oHearts4);
+      ignore.objs(oHearts4);
+      start.cycling(oHearts4);
+      draw(oHearts4);
+      vWomanHearts++;
+    }
+  }
+  else {
+    if (vWomanHearts < 20) {
+      vWomanHearts++;
+    }
+    else {
+      load.view(17);
+      set.view(egoAlt,17);
+      set.loop(egoAlt,7);
+      set.cel(egoAlt,0);
+      position.v(egoAlt,new_ego_x,new_ego_y);
+      get.priority(ego,v_priority);
+      set.priority.v(egoAlt,v_priority);
+      v_cycle = 2;
+      cycle.time(egoAlt,v_cycle);
+      erase(ego);
+      draw(egoAlt);
+      if (fEgoSuper) {
+        end.of.loop(egoAlt,fEgoSuperAttack);
+      }
+      else {
+        end.of.loop(egoAlt,fTheEndBetter);
+        
+      }
+      reset(fWomanHearts);
+    }
+  }
+}
+
+if ((fTheEndBetter
+||   fTheEndBest)
+&&  vTheEndBetters < 50) {
+  vTheEndBetters++;
+}
+if (fTheEndBest
+&&  vTheEndBetters == 50) {
+  new.room(16);
+}
+if (fTheEndBetter
+&&  vTheEndBetters == 50) {
+  new.room(2);
+}
+
+if (ego_edge_code == left_edge) {
+  if (prev_room_no == 14) {
+    print("You can't leave her to suffer his torment!");
+    print("Do something!");
+    print("Regulate!");
+    ego_dir = 3;
+  }
+  else {
+    new.room(6);
+  }
+}
+if (ego_edge_code == right_edge) {
+  if (prev_room_no == 14) {
+    print("You can't leave her to suffer his torment!");
+    print("Do something!");
+    print("Regulate!");
+    ego_dir = 7;
+  }
+  else {
+    new.room(13);
+  }
+}
+
+return();

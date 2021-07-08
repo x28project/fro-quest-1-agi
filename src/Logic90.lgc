@@ -1,0 +1,232 @@
+// ****************************************************************************
+//
+// Logic 90: Game-specific functions
+//
+// You should use this logic to perform any game specific functions, such as
+// counting down timers, etc and processing player input related to the game
+// (such as examining/using inventory items) and any other things that are
+// required in several rooms that you don't want to duplicate in each room.
+//
+// This logic is called from logic 0, on every cycle.
+// If you like, you could only make it called only when disable_game_functions
+// is not set.
+//
+// Sierra did not use a separate logic for all this - they just did it all
+// from logic 0. I find it is neater this way, as you can keep your game
+// specific processing separate from other system-related things (although
+// these may require some modification for your game). Also, this makes logic 0
+// easier to manage.
+//
+// ****************************************************************************
+
+#include "defines.txt"
+#include "custom.txt"
+
+#define fEgoHaloAppeared f57
+#define fEgoHaloPutAway f58
+
+// put all non-input-reponse game functions here
+
+if (fEgoHaloAppeared) {
+  reset(fEgoHaloAppeared);
+  end.of.loop(egoHaloPutAway,fEgoHaloPutAway);
+}
+if (fEgoHaloPutAway) {
+  reset(fEgoHaloPutAway);
+  erase(egoHaloPutAway);
+  draw(ego);
+}
+
+if (input_recieved &&
+    unknown_word_no == 0 &&
+    !input_parsed) {
+
+// put various input responses here
+
+  if ((said("bad word","rol") ||
+       said("anyword", "bad word", "rol") ||
+       said("anyword", "anyword", "bad word", "rol") ||
+       said("anyword", "anyword", "anyword", "bad word","rol") ||
+       said("anyword", "anyword", "anyword", "anyword", "bad word", "rol") ||
+       said("anyword", "anyword", "anyword", "anyword", "anyword", "bad word", "rol"))) {
+    vBadWordCount = vBadWordCount + 1;
+    if (vBadWordCount == 1) {
+      print("You kiss your mother with that mouth?!");
+    }
+    if (vBadWordCount == 2) {
+      print("Where is that British woman with the elliptical path traveling gum...?");
+    }
+    if (vBadWordCount == 3) {
+      print("Sha, right!");
+      vBadWordCount = 0;
+    }
+  }
+  
+  if (said("look","heart")) {
+    print("You have to look on the inside. You might learn something about yourself.");
+  }
+
+  if ((said("look", "anyword") ||
+       said("look", "anyword", "anyword"))) {
+    print("What? Where?");
+  }
+
+  // Get
+  if ((said("get", "anyword") ||
+       said("get", "anyword", "anyword"))) {
+    print("You can't get that here!");
+  }
+
+  // Drink GlassOfWater
+  if ((said("drink","water")
+  ||   said("drink","glass")
+  ||   said("drink","glass","water"))) {
+    if (has("Glass of Water")) {
+      print("You are not thirsty, but someone, somewhere is...");
+    }
+    else {
+      print("You have nothing to drink.");
+    }
+  }
+  if ((said("drink")
+  ||   said("drink","anyword"))) {
+    print("You are not thirsty.");
+  }
+
+  // Wear EyeGlasses
+  if (said("wear","glasses")) {
+    if (has("Eyeglasses")) {
+      prevent.input();
+      animate.obj(oEyeglasses);
+      load.view(229);
+      set.view(oEyeglasses,229);
+      set.cel(oEyeglasses,2);
+      set.priority(oEyeglasses,15);
+      position(oEyeglasses,0,0);
+      fix.loop(oEyeglasses);
+      ignore.blocks(oEyeglasses);
+      ignore.horizon(oEyeglasses);
+      ignore.objs(oEyeglasses);
+      stop.cycling(oEyeglasses);
+      draw(oEyeglasses);
+      set(fEyeglassesWear);
+    }
+    else {
+      print("You have no eyeglasses. Doesn't everything look clear to you?");
+    }
+  }
+
+  // Use
+  if (said("use", "lotion")
+  &&  has("Lotion")) {
+    print("You skin is already refreshingly moisturized. "
+          "Did you have something else in mind?");
+    print("No...you didn't.");
+  }
+  if ((said("use", "anyword") ||
+       said("use", "anyword", "anyword"))) {
+    print("What do you want me to do with it?");
+  }
+
+  // Give
+  if ((said("give", "anyword")
+  ||   said("give", "anyword", "anyword"))) {
+    print("No one here needs that!");
+  }
+
+  // Halo
+  if ((said("hide","halo")
+  ||   said("take off","halo"))) {
+    if (has("Halo")) {
+      if (!fEgoHaloWearing) {
+        print("I don't think you can take off that which you are not wearing.");
+      }
+      else {
+        reset(fEgoHaloWearing);
+        erase(egoHalo);
+      }
+    }
+    else {
+      print("You ain't dead yet!\n"
+            "Have a little confidence in yourself.");
+    }
+  }
+  if ((said("wear","halo")
+  ||   said("put on","halo"))) {
+    if (has("Halo")) {
+      if (fEgoHaloWearing) {
+        print("You're already making that fashion statement.");
+      }
+      else {
+        load.view(14);
+        animate.obj(egoHaloPutAway);
+        set.view(egoHaloPutAway,14);
+        set.loop(egoHaloPutAway,5);
+        last.cel(egoHaloPutAway,v_cel_last);
+        set.cel.v(egoHaloPutAway,v_cel_last);
+        position.v(egoHaloPutAway,new_ego_x,new_ego_y);
+        get.priority(ego,v_priority);
+        set.priority.v(egoHaloPutAway,v_priority);
+        erase(ego);
+        draw(egoHaloPutAway);
+        reverse.loop(egoHaloPutAway,fEgoHaloAppeared);
+      }
+    }
+    else {
+      print("You ain't dead yet!\n"
+            "Have a little confidence in yourself.");
+    }
+  }
+
+  if (said("wear")) {
+    load.view(14);
+    animate.obj(egoHaloPutAway);
+    set.view(egoHaloPutAway,14);
+    set.loop(egoHaloPutAway,5);
+    last.cel(egoHaloPutAway,v_cel_last);
+    set.cel.v(egoHaloPutAway,v_cel_last);
+    position.v(egoHaloPutAway,new_ego_x,new_ego_y);
+    get.priority(ego,v_priority);
+    set.priority.v(egoHaloPutAway,v_priority);
+    erase(ego);
+    draw(egoHaloPutAway);
+    reverse.loop(egoHaloPutAway,fEgoHaloAppeared);
+  }
+  
+  if (said("hug")) {
+    print("You hug yourself. You feel better.");
+  }
+  if (said("hug","rol")) {
+    print("Sometimes you just need to hug it out.");
+    print("Now is not one of those times.");
+  }
+  if (said("kiss")) {
+    print("You blow a kiss into the wind.");
+    print("The wind does not return the sentiment.");
+  }
+  if (said("kiss","rol")) {
+    print("Don't put your lips on that!");
+  }
+  if (said("love")) {
+    print("What is love?");
+    print("Baby, don't hur...");
+    print("No really, what is love?");
+    print("It's a funny thing... And also a battlefield, an open door, and a two-way street.");
+    print("That should clarify it for you.");
+  }
+  if (said("i","love")) {
+    print("I bet you do.");
+  }
+  if ((said("love","rol")
+  ||   said("i","love","rol"))) {
+    print("That's nice to know. But it doesn't help you here.");
+  }
+}
+
+// Eyeglasses
+if ((fEyeglassesWear
+||   fEyeglassesShowElemental)) {
+  call(88);
+}
+
+return();

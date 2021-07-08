@@ -1,0 +1,416 @@
+// ****************************************************************
+//
+// Logic 10 - Neighbor Home
+//
+// ****************************************************************
+
+
+#include "defines.txt"
+#include "custom.txt"
+
+#define fElevatorDoorIdle        f60
+#define fElevatorDoorOpened      f61
+#define fElevatorDoorClosed      f62
+#define fElevatorDoorIgnored     f63
+#define fElevatorDoorGoingUp     f64
+#define fElevatorDoorUp          f65
+
+#define oSmokingMan o100
+#define oElevatorDoor o101
+#define oElevatorArrows o102
+
+#define vRock_x                  v100
+
+if (new_room){
+  load.pic(room_no);
+  draw.pic(room_no);
+  discard.pic(room_no);
+  set.horizon(0);
+
+  status.line.on();
+  accept.input();
+
+  // SmokingMan
+  load.view(100);
+  animate.obj(oSmokingMan);
+  set.view(oSmokingMan,100);
+  set.priority(oSmokingMan,15);
+  position(oSmokingMan,106,150);
+  v_cycle = 2;
+  cycle.time(oSmokingMan,v_cycle);
+  draw(oSmokingMan);
+
+  // ElevatorDoor
+  load.view(101);
+  animate.obj(oElevatorDoor);
+  set.view(oElevatorDoor,101);
+  position(oElevatorDoor,22,119);
+  v_cycle = 2;
+  cycle.time(oElevatorDoor,v_cycle);
+  stop.cycling(oElevatorDoor);
+  ignore.objs(oElevatorDoor);
+  draw(oElevatorDoor);
+  set(fElevatorDoorIdle);
+
+  // ElevatorArrows
+  load.view(102);
+  animate.obj(oElevatorArrows);
+  set.view(oElevatorArrows,102);
+  set.cel(oElevatorArrows,1);
+  set.priority(oElevatorArrows,15);
+  position(oElevatorArrows,38,74);
+  stop.cycling(oElevatorArrows);
+  if (prev_room_no != 11) {
+    draw(oElevatorArrows);
+  }
+
+  // EmptyGlass
+  if (!fEmptyGlassGet) {
+    load.view(239);
+    animate.obj(oEmptyGlass);
+    set.view(oEmptyGlass,239);
+    set.loop(oEmptyGlass,1);
+    position(oEmptyGlass,80,72);
+    stop.cycling(oEmptyGlass);
+    draw(oEmptyGlass);
+  }
+
+  // Position
+  if (prev_room_no != 11) {
+    position(ego,30,113);
+    ego_dir = 5;
+  }
+  else {
+    ego_dir = 0;
+    set.loop(ego,0);
+    set.cel(ego,3);
+    position(ego,86,160);
+    
+    prevent.input();
+    set.cel(oSmokingMan,0);
+    stop.cycling(oSmokingMan);
+
+    // FaceSmokingMan
+    load.view(205);
+    animate.obj(oFaceSmokingMan);
+    set.view(oFaceSmokingMan,205);
+    set.loop(oFaceSmokingMan,0);
+    set.cel(oFaceSmokingMan,0);
+    position(oFaceSmokingMan,5,67);
+    set.priority(oFaceSmokingMan,15);
+    ignore.objs(oFaceSmokingMan);
+    v_cycle = 2;
+    cycle.time(oFaceSmokingMan,v_cycle);
+    draw(oFaceSmokingMan);
+    vFaceTalkCount = 11;
+    end.of.loop(oFaceSmokingMan,fFaceTalked);
+  }
+  
+  vCount = 0;
+  load.sound(10);
+  sound(10,fSoundDone);
+
+  draw(ego);
+  call(89);
+  show.pic();
+}
+if (fSoundDone) {
+  if (vCount < 20) {
+    vCount++;
+  }
+  else {
+    vCount = 0;
+    reset(fSoundDone);
+    sound(10,fSoundDone);
+  }
+}
+
+if (said("look")) {
+  if (center.posn(ego,19,112,50,119)) {
+    print("You are inside an elevator. There is a button for going up.");
+  }
+  else {
+    print("You neighbor is relaxing like usual. "
+          "He lives in this astounding subterranean home. "
+          "An elevator takes you to and from the surface. "
+          "Aside from that you are quite impressed by the artwork on the wall.");
+  }
+}
+if (said("look","man")) {
+  print("Your neighbor is relaxing like usual.");
+}
+if (said("look","artwork")) {
+    print("What is that?");
+    print("Whatever it is, it's great!");
+}
+if (said("look","elevator")) {
+  print("It sure can lift you up when you're feeling down.");
+}
+if (said("look","rug")) {
+  print("If only there were curtains you could compare.");
+}
+if (said("look","sink")) {
+  print("Haven't you seen a sink before?");
+  if (!fEmptyGlassGet) {
+    print("Next to the sink is an empty glass.");
+  }
+}
+if ((said("use","sink")
+||   said("turn","on","sink")
+||   said("turn","sink","on")
+||   said("use","faucet")
+||   said("turn","on","faucet")
+||   said("turn","faucet","on"))) {
+  print("This is not the time for wasting water!");
+}
+if ((said("look","glass")
+||   said("look","empty","glass"))) {
+  if (!fEmptyGlassGet) {
+    print("Your neighbor left an empty glass sitting next to the sink.");
+  }
+  else {
+    print("You see no glass.");
+  }
+}
+if (said("look","bed")) {
+  print("It's where he likes to chill.");
+}
+if (said("look","pillow")) {
+  print("It's where he likes to dream.");
+}
+if (said("get","pillow")) {
+  print("Don't take the man's dreams from him.");
+}
+if (said("look","cabinets")) {
+  print("Above and below the sink there are uninteresting cabinets.");
+}
+if (said("look","door")) {
+  print("If you've seen one bathroom, you've seen them all. "
+        "Well, actually, you've never seen a door like that.");
+}
+if (said("open","door")) {
+  if (center.posn(ego,19,112,50,119)) {
+    print("You are inside an elevator. The door opens automatically.");
+  }
+  else {
+    print("You have your own bathroom, if you have to go that bad... And you don't.");
+  }
+}
+
+// ElevatorDoor
+if (fElevatorDoorIdle) {
+  if (center.posn(ego,22,116,44,128)) {
+    reset(fElevatorDoorIdle);
+    normal.cycle(oElevatorDoor);
+    end.of.loop(oElevatorDoor,fElevatorDoorOpened);
+  }
+}
+else {
+  if (fElevatorDoorOpened
+  &&  !center.posn(ego,22,116,44,128)) {
+    reset(fElevatorDoorOpened);
+    set(fElevatorDoorIdle);
+    reverse.loop(oElevatorDoor,fElevatorDoorClosed);
+    observe.blocks(ego);
+    reset(fElevatorDoorIgnored);
+  }
+}
+if (fElevatorDoorOpened) {
+  erase(oElevatorArrows);
+  if (!fElevatorDoorIgnored) {
+    ignore.blocks(ego);
+    set(fElevatorDoorIgnored);
+  }
+}
+if ((said("press","button")
+||   said("press","up","button"))) {
+  if (center.posn(ego,19,112,50,119)) {
+    reset(fElevatorDoorIdle);
+    move.obj(ego,40,119,0,fElevatorDoorGoingUp);
+    if (!fElevatorButton) {
+      set(fElevatorButton);
+      score++;
+    }
+  }
+  else {
+    print("Maybe you should be in the elevator to press the correct button.");
+  }
+}
+if (fElevatorDoorGoingUp) {
+  reset(fElevatorDoorGoingUp);
+  set.cel(oElevatorArrows,0);
+  draw(oElevatorArrows);
+  reverse.loop(oElevatorDoor,fElevatorDoorUp);
+}
+if (fElevatorDoorUp) {
+  reset(fElevatorDoorUp);
+  new.room(5);
+}
+
+// SmokingMan
+if (said("talk","man")) {
+  prevent.input();
+  set.cel(oSmokingMan,0);
+  stop.cycling(oSmokingMan);
+  if (vFaceTalkCount == 0) {
+    print("You let your neighbor know you just came to say, \"Hello.\"");
+  }
+  else {
+    if (vFaceTalkCount == 3)
+    {
+      vFaceTalkCount = 2;
+    }
+    else {
+      if (vFaceTalkCount >= 8)
+      {
+        vFaceTalkCount = 9;
+      }
+    }
+  }
+
+  // FaceSmokingMan
+  load.view(205);
+  animate.obj(oFaceSmokingMan);
+  set.view(oFaceSmokingMan,205);
+  set.loop(oFaceSmokingMan,0);
+  set.cel(oFaceSmokingMan,0);
+  position(oFaceSmokingMan,5,67);
+  set.priority(oFaceSmokingMan,15);
+  ignore.objs(oFaceSmokingMan);
+  v_cycle = 2;
+  cycle.time(oFaceSmokingMan,v_cycle);
+  draw(oFaceSmokingMan);
+  end.of.loop(oFaceSmokingMan,fFaceTalked);
+}
+if (fFaceTalked) {
+  if (vFaceTalkCount == 0) {
+    print("\"Hey Man! Rough day, huh?\"");
+    print("You proceed to tell him about your adventures so far.");
+  }
+  if (vFaceTalkCount == 1) {
+    print("\"Well man, isn't that special.\"");
+    print("You agree with him. You were always told you were special in your own special way.");
+  }
+  if (vFaceTalkCount == 2) {
+    print("\"Sorry man,\" he apologizes, \"I would be a more attentive listener "
+          "if this dry skin wasn't bugging me so much. What should I do?\"");
+    print("You voice your concerns and offer to think of a way to help.");
+    if (!fSmokingManTalk) {
+      set(fSmokingManTalk);
+      score++;
+    }
+  }
+  if (vFaceTalkCount == 4) {
+    print("\"Thanks man! You don't know how much this helps me.\"");
+    print("You helped a friend. Don't you feel good?");
+  }
+  if (vFaceTalkCount == 5) {
+    print("\"Man, what can I do for you in return?\"");
+    print("You explain how you are just glad you could help.");
+  }
+  if (vFaceTalkCount == 6) {
+    print("\"Nah man, I gotta do something for ya.\"");
+  }
+  if (vFaceTalkCount == 7) {
+    print("\"I got it! I am gonna hook you up with a friend of mine. Here is her picture...\"");
+  }
+  if (vFaceTalkCount == 9) {
+    print("\"You want to see her picture again? Here it is...\"");
+  }
+  if (vFaceTalkCount == 11) {
+    print("\"I'll tell her to meet you up by the crumbling wall.\"");
+  }
+  reset(fFaceTalked);
+  set.loop(oFaceSmokingMan,1);
+  set.cel(oFaceSmokingMan,0);
+  v_cycle = 4;
+  cycle.time(oFaceSmokingMan,v_cycle);
+  end.of.loop(oFaceSmokingMan,fFaceBlinked);
+  vFaceTalkCount++;
+}
+if (fFaceBlinked) {
+  reset(fFaceBlinked);
+  set.loop(oFaceSmokingMan,0);
+  random(0,5,v80);
+  set.cel.v(oFaceSmokingMan,v80);
+  v_cycle = 2;
+  cycle.time(oFaceSmokingMan,v_cycle);
+  end.of.loop(oFaceSmokingMan,fFaceTalked);
+  if ((vFaceTalkCount == 3
+  ||   vFaceTalkCount == 8
+  ||   vFaceTalkCount == 10
+  ||   vFaceTalkCount == 12)) {
+    reset(fFaceTalked);
+    erase(oFaceSmokingMan);
+    accept.input();
+    set.cel(oSmokingMan,0);
+    normal.cycle(oSmokingMan);
+    if ((vFaceTalkCount == 8
+    ||   vFaceTalkCount == 10)) {
+      new.room(11);
+    }
+  }
+}
+if ((said("give","lotion")
+||   said("give","lotion","man")
+||   said("give","man","lotion"))) {
+  if (posn(ego,90,153,110,167)) {
+    if (has("Lotion")) {
+      prevent.input();
+      set.cel(oSmokingMan,0);
+      stop.cycling(oSmokingMan);
+      if (!fLotionGiven) {
+        set(fLotionGiven);
+        score++;
+      }
+      print("You give your neighbor the lotion to soothe his savage skin.");
+
+      // FaceSmokingMan
+      load.view(205);
+      animate.obj(oFaceSmokingMan);
+      set.view(oFaceSmokingMan,205);
+      set.loop(oFaceSmokingMan,0);
+      set.cel(oFaceSmokingMan,0);
+      position(oFaceSmokingMan,5,67);
+      set.priority(oFaceSmokingMan,15);
+      ignore.objs(oFaceSmokingMan);
+      v_cycle = 2;
+      cycle.time(oFaceSmokingMan,v_cycle);
+      draw(oFaceSmokingMan);
+      vFaceTalkCount = 4;
+      end.of.loop(oFaceSmokingMan,fFaceTalked);
+    }
+    else {
+      print("You don't have that.");
+    }
+  }
+  else {
+    print("If you'd like to be neighborly, get closer to your neighbor.");
+  }
+}
+
+// EmptyGlass
+if ((said("get","glass")
+||   said("get","empty","glass"))) {
+  if (!fEmptyGlassGet) {
+    if (right.posn(ego,66,90,84,100)) {
+      print("A not-so-cool, not-so-refreshing empty glass.");
+      print("You hope that your neighbor won't mind if you just take it.");
+      if (!fEmptyGlassGet) {
+        set(fEmptyGlassGet);
+        score++;
+      }
+      erase(oEmptyGlass);
+      get("Empty Glass");
+      show.obj(239);
+    }
+    else {
+      print("It's over by the sink. Move closer.");
+    }
+  }
+  else {
+    print("There are no more glasses.");
+  }
+}
+
+return();

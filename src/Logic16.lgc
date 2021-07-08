@@ -1,0 +1,365 @@
+// ****************************************************************
+//
+// Logic 16 - Home Ending
+//
+// ****************************************************************
+
+
+#include "defines.txt"
+#include "custom.txt"
+
+#define fSome2Seen f40
+#define fSome3Seen f41
+#define fTheEndNotSoGreat f42
+#define fTheEndMuchBetter f43
+#define fTheEndMuchBetterLyrics f44
+#define fTheEndMuchBetterEyes f45
+#define fTheEndMuchBetterEyesBlink f46
+#define fTheEndMuchBetterSequel f47
+
+#define oSomeN o18
+#define oTheEnd o19
+#define oSequel o95
+
+#define vSome2Seen v100
+#define vSome3Seen v101
+#define vTheEndMuchBetterLyrics1 v102
+#define vTheEndMuchBetterLyrics2 v103
+#define vTheEndMuchBetterLyrics3 v104
+#define vTheEndMuchBetterEyes v105
+
+if (new_room){
+  load.pic(room_no);
+  draw.pic(room_no);
+  discard.pic(room_no);
+  set.horizon(0);
+
+  status.line.on();
+  
+  if (prev_room_no == 7) {
+    set(fEgoSuper);
+    prev_room_no = 17;
+    load.pic(prev_room_no);
+    draw.pic(prev_room_no);
+    discard.pic(prev_room_no);
+    show.pic();
+    print("A short (hopefully not too short) time later...");
+
+    load.pic(room_no);
+    draw.pic(room_no);
+    discard.pic(room_no);
+  
+    vCount = 0;
+    load.sound(16);
+    sound(16,fSoundDone);
+  }
+
+  // SomeN
+  load.view(18);
+  animate.obj(oSomeN);
+  set.view(oSomeN,18);
+  set.loop(oSomeN,0);
+  if (fEgoSuper) {
+    set.cel(oSomeN,1);
+  }
+  else {
+    set.cel(oSomeN,0);
+  }
+  position(oSomeN,26,87);
+  stop.cycling(oSomeN);
+  draw(oSomeN);
+
+  // Position
+  if (!fEgoSuper) {
+    ego_dir = up;
+    set.loop(ego,3);
+    position(ego,77,166);
+    move.obj(ego,77,146,1,fSome2Seen);
+    vSome2Seen = 0;
+    draw(ego);
+  }
+  else {
+    set(fSome3Seen);
+    vSome3Seen = 0;
+  }
+  
+  show.pic();
+}
+if (prev_room_no == 7
+&&  fSoundDone
+&&  !fSoundDoneNoReplay) {
+  if (vCount < 20) {
+    vCount++;
+  }
+  else {
+    vCount = 0;
+    reset(fSoundDone);
+    sound(16,fSoundDone);
+  }
+}
+
+if (fSome2Seen) {
+  if (vSome2Seen == 0) {
+    program.control();
+    prevent.input();
+    vSome2Seen++;
+    set.loop(ego,1);
+    set.cel(ego,3);
+    new_ego_y = new_ego_y - 1;
+    position.v(ego,new_ego_x,new_ego_y);
+  }
+  if (fSome2Seen
+  &&  vSome2Seen >= 1
+  &&  vSome2Seen < 50) {
+    vSome2Seen++;
+    if (vSome2Seen == 3) {
+      print("Really!");
+    }
+    if (vSome2Seen == 10) {
+      print("In your own bed!");
+    }
+    if (vSome2Seen == 30) {
+      print("Well, I never!");
+    }
+  }
+  if (vSome2Seen == 50) {
+    
+    load.sound(102);
+    sound(102,fSoundDone);
+    
+    vSome2Seen++;
+    load.view(17);
+    animate.obj(egoAlt);
+    set.view(egoAlt,17);
+    set.loop(egoAlt,7);
+    set.cel(egoAlt,0);
+    position.v(egoAlt,new_ego_x,new_ego_y);
+    get.priority(ego,v_priority);
+    set.priority.v(egoAlt,v_priority);
+    v_cycle = 2;
+    cycle.time(egoAlt,v_cycle);
+    erase(ego);
+    draw(egoAlt);
+    end.of.loop(egoAlt,fNothing);
+  }
+  if (vSome2Seen >= 51
+  &&  vSome2Seen < 100) {
+    vSome2Seen++;
+  }
+  if (vSome2Seen == 100) {
+    vSome2Seen++;
+    load.view(19);
+    animate.obj(oTheEnd);
+    set.view(oTheEnd,19);
+    set.loop(oTheEnd,0);
+    set.cel(oTheEnd,0);
+    position(oTheEnd,88,127);
+    stop.cycling(oTheEnd);
+    draw(oTheEnd);
+    v_cycle = 8;
+    cycle.time(oTheEnd,v_cycle);
+    end.of.loop(oTheEnd,fTheEndNotSoGreat);
+  }
+  if (fTheEndNotSoGreat
+  &&  vSome2Seen >= 101
+  &&  vSome2Seen < 200) {
+    vSome2Seen++;
+  }
+  if (fTheEndNotSoGreat
+  &&  vSome2Seen == 200) {
+    vSome2Seen++;
+    print("There has to be something better than a \"not-so-great\" ending.");
+    reset(fSome2Seen);
+  }
+}
+
+
+if (!fSome2Seen
+&&  fTheEndNotSoGreat
+&&  (have.key()
+||   controller(key_joystick))) {
+  print("Thank you for playing Fro Quest 1. Better luck next time!");
+}
+
+if (fSome3Seen) {
+  if (vSome3Seen == 0) {
+    set(fTheEndMuchBetterLyrics);
+    vTheEndMuchBetterLyrics1 = 0;
+    vTheEndMuchBetterLyrics2 = 0;
+    vTheEndMuchBetterLyrics3 = 0;
+    program.control();
+    prevent.input();
+  }
+  if (vSome3Seen >= 0
+  &&  vSome3Seen <= 100) {
+    vSome3Seen++;
+  }
+  if (vTheEndMuchBetterLyrics3 == 80
+  &&  vSome3Seen == 101) {
+    vSome3Seen++;
+    load.view(19);
+    animate.obj(oTheEnd);
+    set.view(oTheEnd,19);
+    set.loop(oTheEnd,1);
+    set.cel(oTheEnd,0);
+    position(oTheEnd,68,148);
+    stop.cycling(oTheEnd);
+    draw(oTheEnd);
+    v_cycle = 8;
+    cycle.time(oTheEnd,v_cycle);
+    end.of.loop(oTheEnd,fTheEndMuchBetter);
+  }
+  if (fTheEndMuchBetter
+  &&  vSome3Seen >= 101
+  &&  vSome3Seen < 200) {
+    vSome3Seen++;
+  }
+  if (fTheEndMuchBetter
+  &&  vSome3Seen == 200) {
+    vSome3Seen++;
+    print("Now that was a \"much better\" ending.");
+  }
+  if (fTheEndMuchBetter
+  &&  vSome3Seen >= 201
+  &&  vSome3Seen < 250) {
+    vSome3Seen++;
+  }
+  if (fTheEndMuchBetter
+  &&  vSome3Seen == 250) {
+    vSome3Seen++;
+    reset(fSome3Seen);
+    
+    reset(windows_remain);
+    window_close_time = 10;
+    print.at("Art and Animation\n\n"
+             "   X28 Project   ",5,20,0);
+    reset(windows_remain);
+    window_close_time = 10;
+    print.at("     Design      \n\n"
+             "   X28 Project   ",6,21,0);
+    reset(windows_remain);
+    window_close_time = 10;
+    print.at("   Programming   \n\n"
+             "   X28 Project   ",5,22,0);
+    reset(windows_remain);
+    window_close_time = 10;
+    print.at("      Music      \n\n"
+             "   X28 Project   ",4,21,0);
+    reset(windows_remain);
+    window_close_time = 10;
+    print.at("   Good Times    \n\n"
+             "   X28 Project   ",5,20,0);
+             
+    load.view(95);
+    animate.obj(oSequel);
+    set.view(oSequel,95);
+    set.loop(oSequel,0);
+    set.cel(oSequel,0);
+    position(oSequel,63,49);
+    stop.cycling(oSequel);
+    draw(oSequel);
+    v_cycle = 2;
+    cycle.time(oSequel,v_cycle);
+    end.of.loop(oSequel,fTheEndMuchBetterEyes);
+    vTheEndMuchBetterEyes = 20;
+  }
+}
+if (fTheEndMuchBetterEyes) {
+  if (vTheEndMuchBetterEyes > 0) {
+    vTheEndMuchBetterEyes--;
+  }
+  else {
+    reset(fTheEndMuchBetterEyes);
+    if (!fTheEndMuchBetterSequel) {
+      set.loop(oSequel,1);
+    }
+    set.cel(oSequel,0);
+    v_cycle = 1;
+    cycle.time(oSequel,v_cycle);
+    end.of.loop(oSequel,fTheEndMuchBetterEyesBlink);
+    vTheEndMuchBetterEyes = 0;
+  }
+}
+if (fTheEndMuchBetterEyesBlink) {
+  if (!fTheEndMuchBetterSequel) {
+    set(fTheEndMuchBetterSequel);
+    print.at("To be continued in...\n"
+             "\n\n"
+             "    Fro Quest II     \n"
+             "\n"
+             " Shadows of Darkness \n",8,16,0);
+  }
+  if (vTheEndMuchBetterEyes < 60) {
+    vTheEndMuchBetterEyes++;
+  }
+  else {
+    reset(fTheEndMuchBetterEyesBlink);
+    set.loop(oSequel,2);
+    set.cel(oSequel,4);
+    reverse.loop(oSequel,fTheEndMuchBetterEyes);
+    vTheEndMuchBetterEyes = 0;
+  }
+}
+
+if (!fSome3Seen
+&&  fTheEndMuchBetter
+&&  (have.key()
+||   controller(key_joystick))) {
+  print("Thank you for playing Fro Quest 1!");
+}
+
+// Lyrics
+if (fTheEndMuchBetterLyrics) {
+  if (vTheEndMuchBetterLyrics1 == 0) {
+    set.text.attribute(12,0);
+    display(22, 3,"Love");
+  }
+  if (vTheEndMuchBetterLyrics1 == 40) {
+    display(22, 8,     "for");
+  }
+  if (vTheEndMuchBetterLyrics1 == 65) {
+    display(22,12,         "three,");
+  }
+  if (vTheEndMuchBetterLyrics1 == 120) {
+    display(23, 5,"That's");
+  }
+  if (vTheEndMuchBetterLyrics1 == 130) {
+    display(23,12,       "you,");
+  }
+  if (vTheEndMuchBetterLyrics1 == 155) {
+    display(23,17,            "and");
+  }
+  if (vTheEndMuchBetterLyrics1 == 165) {
+    display(23,21,                "you,");
+  }
+  if (vTheEndMuchBetterLyrics1 == 180) {
+    display(23,26,                     "and");
+  }
+  if (vTheEndMuchBetterLyrics1 == 190) {
+    display(23,30,                         "me.");
+  }
+  if (vTheEndMuchBetterLyrics2 == 60) {
+    display(24, 7,"Love");
+  }
+  if (vTheEndMuchBetterLyrics2 == 90) {
+    display(24,12,     "for");
+  }
+  if (vTheEndMuchBetterLyrics2 == 115) {
+    display(24,16,         "three.");
+  }
+  if (vTheEndMuchBetterLyrics1 < 200) {
+    vTheEndMuchBetterLyrics1++;
+  }
+  else {
+    if (vTheEndMuchBetterLyrics2 < 200) {
+      vTheEndMuchBetterLyrics2++;
+    }
+    else {
+      if (vTheEndMuchBetterLyrics3 < 80) {
+        vTheEndMuchBetterLyrics3++;
+      }
+    }
+  }
+}
+
+return();

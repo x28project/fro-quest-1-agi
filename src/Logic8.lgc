@@ -1,0 +1,663 @@
+// ****************************************************************
+//
+// Logic 8 - Path End
+//
+// ****************************************************************
+
+
+#include "defines.txt"
+#include "custom.txt"
+
+#define fEgoGettingAirElemental f70
+#define fEgoGettingAirElementalMoving f71
+#define fEgoGettingAirElementalReady f72
+#define fEgoGettingAirElementalTouched f73
+#define fEgoGettingAirElementalLiftOff f74
+#define fEgoGettingAirElementalBellows f75
+#define fEgoGettingAirElementalBellowsOverride f76
+#define fEgoGettingAirElementalBellowsFilling f77
+#define fEgoGettingAirElementalBellowsFilled f78
+#define fEgoGettingAirElementalBellowsDone f79
+#define fDrunkManSipped   f90
+#define fDrunkManFaceReset  f91
+#define fDrunkManFaceTalked  f92
+#define fDrunkManFaceAnswered  f93
+#define fDrunkManFaceBalloon  f94
+#define fDrunkManFaceTalking  f95
+#define fQuickGrassWalk  f96
+#define fQuickGrassSink  f97
+#define fQuickGrassDead  f98
+
+#define oDeadFromSky o80
+
+#define vDrunkManNotSipping v100
+#define vDrunkManCount           v101
+#define vDrunkManFaceBlinking v102
+#define vDrunkManFaceCount       v103
+#define vDrunkManFaceTalked      v104
+#define vDancingMan_celLast      v105
+#define vDancingMan1_distance    v106
+#define vDancingMan2_distance    v107
+#define vDancingMan3_distance    v108
+#define vDancingMan4_i     v109
+#define vRabbit_distance     v110
+#define vCel            v111
+#define vDrunkManFaceTalking      v112
+
+if (new_room){
+  load.pic(room_no);
+  draw.pic(room_no);
+  discard.pic(room_no);
+  set.horizon(0);
+
+  status.line.on();
+  accept.input();
+
+  // DrunkMan
+  load.view(93);
+  animate.obj(oDrunkMan);
+  set.view(oDrunkMan,93);
+  position(oDrunkMan,56,156);
+  set.priority(oDrunkMan,13);
+  ignore.objs(oDrunkMan);
+  v80 = 2;
+  cycle.time(oDrunkMan,v80);
+  draw(oDrunkMan);
+  vDrunkManNotSipping = 0;
+  vDrunkManCount = 60;
+  end.of.loop(oDrunkMan,fDrunkManSipped);
+  
+  // Balloon
+  if (fBalloonGiven) {
+    load.view(226);
+    set.view(oBalloon,226);
+    set.loop(oBalloon,1);
+    position(oBalloon,63,144);
+    ignore.objs(oBalloon);
+    normal.cycle(oBalloon);
+    v_cycle = 4;
+    cycle.time(oBalloon,v_cycle);
+    draw(oBalloon);
+  }
+  
+
+  // Position
+  if (prev_room_no == 12) {
+    set.loop(ego,3);
+    ego_dir = 0;
+    position(ego,80,165);
+    get.posn(ego,new_ego_x,new_ego_y);
+    set.priority(ego,14);
+    
+    // Dead Ego From Sky
+    load.view(80);
+    animate.obj(oDeadFromSky);
+    set.view(oDeadFromSky,80);
+    position(oDeadFromSky,50,80);
+    set.priority(oDeadFromSky,15);
+    ignore.objs(oDeadFromSky);
+    ignore.horizon(oDeadFromSky);
+    stop.cycling(oDeadFromSky);
+    draw(oDeadFromSky);
+    
+    death_type = 1;
+  }
+  else {
+    set.loop(ego,3);
+    ego_dir = 0;
+    position(ego,80,165);
+    
+    draw(ego);
+    call(89);
+  }
+  
+  vCount = 0;
+  load.sound(8);
+  sound(8,fSoundDone);
+  
+  show.pic();
+}
+if (fSoundDone) {
+  if (vCount < 20) {
+    vCount++;
+  }
+  else {
+    vCount = 0;
+    reset(fSoundDone);
+    sound(8,fSoundDone);
+  }
+}
+
+if (said("look")) {
+  print("It's the end of the road as you know it...");
+  print("And you feel fine.");
+  print("Maybe we can get this boulder out of the way in a sequel or two. "
+        "Why don't we just pretend it's not there.");
+  print("Anywhooooo...");
+  if (fEyeglassesShowElemental) {
+    print("There is a Air Elemental just floating about.");
+  }
+  else {
+    print("There is a drunkard lounging on the ground. "
+          "He doesn't look too well. ");
+  }
+}
+if (said("look","man")) {
+  print("He is a little chemically inconvenienced at the moment.");
+}
+if (said("look","rock")) {
+  print("Is a boulder really just a rock?");
+  print("The boulder is there to stay. The only way around it is a sequel.");
+}
+if (said("look","boulder")) {
+  print("It's there to stay. The only way around it is a sequel.");
+}
+if (said("look","corn")) {
+  print("A corn is acorn? No, it can't be.");
+}
+if (said("look","sky")) {
+  print("If only you could fly...");
+}
+if (said("look","clouds")) {
+  print("If only you could fly...");
+}
+if (said("look","tree")) {
+  print("This tree casts some nice shade underneath it. So inviting...");
+}
+if (said("look","hills")) {
+  print("They roll on past the boulder.");
+}
+if (said("look","path")) {
+  print("It must lead somewhere.");
+}
+if (said("look","grass")) {
+  print("You're not close enough...");
+}
+if (said("look","air")) {
+  if (fEyeglassesShowElemental) {
+    print("There is a certain air about this Air Elemental.");
+  }
+  else {
+    print("It's right under your nose!");
+  }
+}
+if (fEyeglassesShowElemental
+&&  (said("look","air","elemental")
+||   said("look","elemental"))) {
+    print("There is a certain air about this Air Elemental.");
+}
+
+if (said("get","drink")) {
+  print("Surely, you have better things to do right now than drink this man's liquor.");
+}
+if (said("get","corn")) {
+  print("You're already corny enough.");
+}
+if ((said("get","rock")
+||   said("get","boulder"))) {
+  print("Hercules! Hercules!");
+}
+
+// DrunkMan
+vDrunkManNotSipping++;
+if (vDrunkManNotSipping == vDrunkManCount) {
+  vDrunkManNotSipping = 0;
+  random(80,100,vDrunkManCount);
+  set.cel(oDrunkMan,0);
+  end.of.loop(oDrunkMan,fDrunkManSipped);
+}
+
+// DrunkManFace
+if (said("talk","man")) {
+  set(fDrunkManFaceTalking);
+  print("The drunk man starts rambling to you.");
+  reset(fDrunkManFaceTalked);
+  vDrunkManCount = 0;
+  vDrunkManFaceTalked = 0;
+  load.view(200);
+  animate.obj(oFaceDrunkMan);
+  set.view(oFaceDrunkMan,200);
+  set.loop(oFaceDrunkMan,1);
+  position(oFaceDrunkMan,5,67);
+  ignore.objs(oFaceDrunkMan);
+  v_cycle = 2;
+  cycle.time(oFaceDrunkMan,v_cycle);
+  draw(oFaceDrunkMan);
+  vDrunkManFaceBlinking = 0;
+  vDrunkManFaceCount = 14;
+  end.of.loop(oFaceDrunkMan,fDrunkManFaceReset);
+}
+if (fDrunkManFaceReset) {
+  reset(fDrunkManFaceReset);
+  random(0,6,v80);
+  set.loop(oFaceDrunkMan,1);
+  set.cel.v(oFaceDrunkMan,v80);
+  end.of.loop(oFaceDrunkMan,fDrunkManFaceReset);
+}
+vDrunkManFaceBlinking++;
+if (fDrunkManFaceTalking
+&&  vDrunkManFaceBlinking == vDrunkManFaceCount) {
+
+  if (!fDrunkManFaceTalked) {
+    if (!fDrunkManFaceAnswered) {
+      if (vDrunkManFaceTalked == 0) {
+        print("\"Beware!\"");
+      }
+      if (vDrunkManFaceTalked == 1) {
+        print("\"Shhomthin's wrong wit thish playshhh.\"");
+      }
+      if (vDrunkManFaceTalked == 2) {
+        print("\"I wishhh I coul' get out uv herrreer.\"");
+      }
+      if (vDrunkManFaceTalked == 3) {
+        print("Mumble, mumble, mumble, \"Wait!\"");
+      }
+      if (vDrunkManFaceTalked == 4) {
+        print("\"Will youuu be myyy nuuu frien'?\"");
+      }
+      if (vDrunkManFaceTalked == 5) {
+        print("\"You can leeeeaaaan on meee...\"");
+      }
+      if (vDrunkManFaceTalked == 6) {
+        print("\"I'll be therrrer for youuu...\"");
+      }
+      if (vDrunkManFaceTalked == 7) {
+        print("\"Caaauz dat's what frien's are forrr...\"");
+      }
+      if (vDrunkManFaceTalked == 8) {
+        print("\"Shhooo, will youuu be myyy nuuu frien'?\"");
+        erase(oFaceDrunkMan);
+        reset(fDrunkManFaceTalking);
+        print("The drunk man begins talk to himself in mumbles. "
+              "You can't understand a word he says.");
+        if (!fBalloonGiven) {
+          print("He's such a sad man.");
+        }
+        else {
+          print("He used to be such a sad man, but now that balloon makes him happy. Way to go you!");
+        }
+        set(fDrunkManFaceTalked);
+        if (!fDrunkManTalk) {
+          set(fDrunkManTalk);
+          score++;
+        }
+      }
+    }
+    else {
+      if (vDrunkManFaceTalked == 0) {
+        print("\"Thank you shhooo much!");
+      }
+      if (vDrunkManFaceTalked == 1) {
+        print("\"You arrre the win' beneathhh my wingshhh.\"");
+      }
+      if (vDrunkManFaceTalked == 2) {
+        print("\"Let me telll you a shecret.\"");
+      }
+      if (vDrunkManFaceTalked == 3) {
+        print("\"If you die in a dream, you don' die in real life. "
+              "You shhhimply wake up... hhic!\"");
+        if (!fDrunkManAdvice) {
+          set(fDrunkManAdvice);
+          score++;
+        }
+        erase(oFaceDrunkMan);
+        reset(fDrunkManFaceTalking);
+        print("Once again, the drunk man begins to mumble. "
+              "You can't understand a word he says.");
+        if (!fBalloonGiven) {
+          print("He's such a sad man.");
+        }
+        else {
+          print("He used to be such a sad man, but now that balloon makes him happy. Way to go you!");
+        }
+        set(fDrunkManFaceTalked);
+      }
+    }
+    vDrunkManFaceTalked++;
+  }
+  vDrunkManFaceBlinking = 0;
+  random(14,40,vDrunkManFaceCount);
+  set.loop(oFaceDrunkMan,0);
+  end.of.loop(oFaceDrunkMan,fDrunkManFaceReset);
+}
+if (fDrunkManFaceTalked
+&&  (said("yes")
+||   said("say","yes"))) {
+  set(fDrunkManFaceTalking);
+  print("\"Yes,\" you say to the poor man.");
+  reset(fDrunkManFaceTalked);
+  set(fDrunkManFaceAnswered);
+  draw(oFaceDrunkMan);
+  vDrunkManFaceTalked = 0;
+  vDrunkManFaceBlinking = 0;
+  vDrunkManFaceCount = 14;
+  if (!fDrunkManTalkYes) {
+    set(fDrunkManTalkYes);
+    score++;
+  }
+}
+if (fDrunkManFaceTalked
+&&  (said("no")
+||   said("say","no"))) {
+  print("You have no heart. \"No,\" you say to the poor man.");
+  print("Do you feel good about yourself?");
+  print("The man continues his drunken ramble with himself.");
+}
+if ((said("give","balloon")
+||   said("give","balloon","man"))) {
+  if (has("Balloon")
+  &&  !fDrunkManFaceBalloon) {
+    if (center.posn(ego,42,132,72,160)) {
+      print("You offer the balloon to the man who is not up on his luck...");
+      if (!fBalloonGiven) {
+        set(fBalloonGiven);
+        score++;
+      }
+      set(fDrunkManFaceBalloon);
+    }
+    else {
+      print("If you try to throw him the balloon from here, it will float away. Get closer.");
+    }
+  }
+  else {
+    print("It's not your party anymore. It's his.");
+  }
+}
+if (fDrunkManFaceBalloon) {
+  reset(fDrunkManFaceBalloon);
+  vFaceTalkCount = 0;
+  load.view(200);
+  animate.obj(oFaceDrunkMan);
+  set.view(oFaceDrunkMan,200);
+  set.loop(oFaceDrunkMan,1);
+  position(oFaceDrunkMan,5,67);
+  ignore.objs(oFaceDrunkMan);
+  v_cycle = 2;
+  cycle.time(oFaceDrunkMan,v_cycle);
+  draw(oFaceDrunkMan);
+  end.of.loop(oFaceDrunkMan,fFaceTalked);
+}
+if (fFaceTalked) {
+  if (vFaceTalkCount == 0) {
+    print("\"For me?\"");
+
+    // Balloon
+    load.view(226);
+    set.view(oBalloon,226);
+    set.loop(oBalloon,1);
+    position(oBalloon,63,144);
+    ignore.objs(oBalloon);
+    normal.cycle(oBalloon);
+    v_cycle = 4;
+    cycle.time(oBalloon,v_cycle);
+    draw(oBalloon);
+    drop("Balloon");
+    score++;
+  }
+  else {
+    if (vFaceTalkCount == 1) {
+      print("\"I gotta returrr the favurrr.\"");
+    }
+    else {
+      if (vFaceTalkCount == 2) {
+        print("\"Herrre you go. Thesssh glasssez don't wurrrk for my tire eyes. Maybe you ca' use 'em.\"");
+      }
+    }
+  }
+  reset(fFaceTalked);
+  set.loop(oFaceDrunkMan,0);
+  set.cel(oFaceDrunkMan,0);
+  v_cycle = 2;
+  cycle.time(oFaceDrunkMan,v_cycle);
+  end.of.loop(oFaceDrunkMan,fFaceBlinked);
+  vFaceTalkCount++;
+}
+if (fFaceBlinked) {
+  reset(fFaceBlinked);
+  set.loop(oFaceDrunkMan,1);
+  random(0,5,v80);
+  set.cel.v(oFaceDrunkMan,v80);
+  v_cycle = 2;
+  cycle.time(oFaceDrunkMan,v_cycle);
+  end.of.loop(oFaceDrunkMan,fFaceTalked);
+  if (vFaceTalkCount == 3) {
+    reset(fFaceTalked);
+    erase(oFaceDrunkMan);
+    accept.input();
+    set.cel(oFaceDrunkMan,0);
+    normal.cycle(oFaceDrunkMan);
+    if (!fEyeglassesGet) {
+      get("Eyeglasses");
+      show.obj(229);
+      set(fEyeglassesGet);
+      score++;
+    }
+    
+    print("He's not such a sad man anymore. And now you have a new friend. Not such a bad day after all.");
+  }
+}
+
+// Air
+if (said("get","air")) {
+  if (has("Air Elemental")) {
+    print("You're already full of hot air. More of it will not improve you as a person.");
+  }
+  else {
+    if (fEyeglassesShowElemental) {
+      set(fEgoGettingAirElemental);
+    }
+    else {
+      print("You already get it involuntarily...");
+    }
+  }
+}
+if (said("get","air","elemental")) {
+  if (has("Air Elemental")) {
+    print("You already have it. And it makes you feel like you're on cloud 9!");
+  }
+  else {
+    if (fEyeglassesShowElemental) {
+      set(fEgoGettingAirElemental);
+    }
+    else {
+      print("Are you sure you see what you think you see?");
+    }
+  }
+}
+if ((said("get","air","bellows")
+||   said("get","air","elemental","bellows")
+||   said("suck","air","elemental","bellows"))) {
+  if (has("Air Elemental")) {
+    print("You're already full of hot air. More of it will not improve you as a person.");
+  }
+  else {
+    if (fEyeglassesShowElemental) {
+      set(fEgoGettingAirElementalBellows);
+    }
+    else {
+      print("You see no elemental.");
+    }
+  }
+}
+if (fEgoGettingAirElementalBellows) {
+  reset(fEgoGettingAirElementalBellows);
+  if (center.posn(ego,40,132,80,167)) {
+    program.control();
+    prevent.input();
+    set(fEgoGettingAirElementalMoving);
+    set(fEgoGettingAirElementalBellowsOverride);
+  }
+  else {
+    print("Although air is all around you, for this you must get closer.");
+  }
+}
+if (fEgoGettingAirElemental) {
+  reset(fEgoGettingAirElemental);
+  if (center.posn(ego,40,132,80,167)) {
+    program.control();
+    prevent.input();
+    set(fEgoGettingAirElementalMoving);
+    if (!fDeathSkyBird) {
+      set(fDeathSkyBird);
+      score++;
+    }
+  }
+  else {
+    print("Although air is all around you, for this you must get closer.");
+  }
+}
+if (fEgoGettingAirElementalMoving) {
+  reset(fEgoGettingAirElementalMoving);
+  get.posn(ego,v_x,v_y);
+  if (v_x <= 51
+  &&  v_y <= 155) {
+    move.obj(ego,48,160,1,fEgoGettingAirElementalMoving);
+  }
+  else {
+    if (v_x <= 48
+    &&  v_y <= 160) {
+      move.obj(ego,72,160,1,fEgoGettingAirElementalMoving);
+    }
+    else {
+      move.obj(ego,72,156,1,fEgoGettingAirElementalReady);
+    }
+  }
+}
+if (fEgoGettingAirElementalReady) {
+  reset(fEgoGettingAirElementalReady);
+  if (fEgoGettingAirElementalBellowsOverride) {
+    reset(fEgoGettingAirElementalBellowsOverride);
+    load.view(82);
+    set.view(egoAlt,82);
+    set.loop(egoAlt,0);
+    set.cel(egoAlt,0);
+    get.posn(ego,new_ego_x,new_ego_y);
+    new_ego_x = new_ego_x - 7;
+    position.v(egoAlt,new_ego_x,new_ego_y);
+    get.priority(ego,v_priority);
+    set.priority.v(egoAlt,v_priority);
+    ignore.blocks(egoAlt);
+    ignore.objs(egoAlt);
+    erase(ego);
+    draw(egoAlt);
+    end.of.loop(egoAlt,fEgoGettingAirElementalBellowsFilling);
+    if (!fElementalAirGet) {
+      set(fElementalAirGet);
+      score++;
+    }
+  }
+  else {
+    load.view(92);
+    set.view(egoAlt,92);
+    set.loop(egoAlt,0);
+    set.cel(egoAlt,0);
+    get.posn(ego,new_ego_x,new_ego_y);
+    new_ego_x = new_ego_x - 7;
+    position.v(egoAlt,new_ego_x,new_ego_y);
+    get.priority(ego,v_priority);
+    set.priority.v(egoAlt,v_priority);
+    ignore.blocks(egoAlt);
+    ignore.objs(egoAlt);
+    erase(ego);
+    draw(egoAlt);
+    v_cycle = 4;
+    cycle.time(egoAlt,v_cycle);
+    end.of.loop(egoAlt,fEgoGettingAirElementalTouched);
+  }
+}
+if (fEgoGettingAirElementalBellowsFilling) {
+  reset(fEgoGettingAirElementalBellowsFilling);
+  set.loop(egoAlt,1);
+  set.cel(egoAlt,0);
+  end.of.loop(egoAlt,fNothing);
+  
+  set.view(oElemental,93);
+  set.loop(oElemental,2);
+  set.cel(oElemental,0);
+  end.of.loop(oElemental,fEgoGettingAirElementalBellowsFilled);
+}
+if (fEgoGettingAirElementalBellowsFilled) {
+  reset(fEgoGettingAirElementalBellowsFilled);
+  set.loop(egoAlt,2);
+  set.cel(egoAlt,0);
+  end.of.loop(egoAlt,fEgoGettingAirElementalBellowsDone);
+}
+if (fEgoGettingAirElementalBellowsDone) {
+  reset(fEgoGettingAirElementalBellowsDone);
+  erase(egoAlt);
+  draw(ego);
+  accept.input();
+  player.control();
+  get("Air Elemental");
+  show.obj(235);
+}
+if (fEgoGettingAirElementalTouched) {
+  reset(fEgoGettingAirElementalTouched);
+  set.loop(egoAlt,1);
+  set.cel(egoAlt,0);
+  end.of.loop(egoAlt,fEgoGettingAirElementalLiftOff);
+}
+if (fEgoGettingAirElementalLiftOff) {
+  reset(fEgoGettingAirElementalLiftOff);
+  set.loop(egoAlt,2);
+  set.cel(egoAlt,0);
+  normal.cycle(egoAlt);
+  get.posn(egoAlt,v_x,v_y);
+  v_y = 0;
+  v_step = 4;
+  move.obj.v(egoAlt,v_x,v_y,v_step,fNothing);
+}
+
+// Grass
+if (ego_touching_signal_line
+&&  !fQuickGrassWalk) {
+  set(fQuickGrassWalk);
+  print("Let's try to walk around the boulder...");
+  get.posn(ego,new_ego_x,new_ego_y);
+  if (new_ego_x > 70) {
+    move.obj(ego,136,140,1,fQuickGrassSink);
+  }
+  else {
+    move.obj(ego,18,144,1,fQuickGrassSink);
+  }
+}
+if (fQuickGrassSink) {
+  reset(fQuickGrassSink);
+  print("Oh no! Quickgrass!");
+  load.view(81);
+  set.view(egoAlt,81);
+  set.loop(egoAlt,0);
+  set.cel(egoAlt,0);
+  get.posn(ego,new_ego_x,new_ego_y);
+  new_ego_x = new_ego_x - 6;
+  new_ego_y = new_ego_y + 10;
+  position.v(egoAlt,new_ego_x,new_ego_y);
+  get.priority(ego,v_priority);
+  set.priority.v(egoAlt,v_priority);
+  ignore.blocks(egoAlt);
+  ignore.objs(egoAlt);
+  erase(ego);
+  draw(egoAlt);
+  end.of.loop(egoAlt,fQuickGrassDead);
+  if (!fDeathQuickGrass) {
+    set(fDeathQuickGrass);
+    score++;
+  }
+}
+if (fQuickGrassDead) {
+  reset(fQuickGrassDead);
+  reset(fQuickGrassWalk);
+  position(ego,72,162);
+    
+  death_type = 1;
+}
+
+if (ego_edge_code == bottom_edge) {
+  new.room(13);
+}
+if (object_touching_edge == 1
+&&  object_edge_code == horizon_edge) {
+  new.room(12);
+}
+
+return();

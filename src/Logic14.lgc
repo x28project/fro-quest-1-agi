@@ -1,0 +1,777 @@
+// ****************************************************************
+//
+// Logic 14 - Limbo
+//
+// ****************************************************************
+
+
+#include "defines.txt"
+#include "custom.txt"
+
+#define fEgoJumped f60
+#define fEgoJumpedDown f61
+#define fEgoJumpBottom f62
+#define fEgoJumpReady f63
+#define fEgoJumping f64
+#define fEgoJumpDone f65
+#define fEgoJumpTop f66
+#define fEgoJumpTopFall f67
+#define fEgoJumpLanded f68
+#define fRockMediumRight f70
+#define fRockMediumRightGone f71
+#define fRockMediumLeft f72
+#define fRockMediumLeftGone f73
+#define fRockMediumRedraw f74
+#define fRockMediumAppearingRight f75
+#define fRockMediumAppeared f76
+#define fRockSmallRight f77
+#define fRockSmallRightGone f78
+#define fRockSmallLeft f79
+#define fRockSmallLeftGone f80
+#define fRockSmallRedraw f81
+#define fRockSmallAppearingRight f82
+#define fRockSmallAppeared f83
+#define fRockLargeRight f84
+#define fRockLargeRightGone f85
+#define fRockLargeLeft f86
+#define fRockLargeLeftGone f87
+#define fRockLargeRedraw f88
+#define fRockLargeAppearingRight f89
+#define fRockLargeAppeared f90
+#define fRockSmall2Right f91
+#define fRockSmall2RightGone f92
+#define fRockSmall2Left f93
+#define fRockSmall2LeftGone f94
+#define fRockSmall2Redraw f95
+#define fRockSmall2AppearingRight f96
+#define fRockSmall2Appeared f97
+
+#define oRockMedium o140
+#define oRockSmall o141
+#define oRockLarge o142
+#define oRockSmall2 o143
+#define oTV o144
+#define oOldMan o145
+
+#define vRockMediumX v100
+#define vRockMediumY v101
+#define vRockMediumLR v102
+#define vRockMediumStep v103
+#define vRockSmallX v104
+#define vRockSmallY v105
+#define vRockSmallLR v106
+#define vRockSmallStep v107
+#define vRockLargeX v108
+#define vRockLargeY v109
+#define vRockLargeLR v110
+#define vRockLargeStep v111
+#define vRockWait v112
+#define vRockSmall2X v113
+#define vRockSmall2Y v114
+#define vRockSmall2LR v115
+#define vRockSmall2Step v116
+
+if (new_room){
+  load.pic(room_no);
+  draw.pic(room_no);
+  discard.pic(room_no);
+  set.horizon(0);
+
+  status.line.on();
+  accept.input();
+
+  // RockMedium
+  load.view(140);
+  animate.obj(oRockMedium);
+  set.view(oRockMedium,140);
+  set.loop(oRockMedium,0);
+  set.cel(oRockMedium,0);
+  set.priority(oRockMedium,5);
+  ignore.blocks(oRockMedium);
+  ignore.horizon(oRockMedium);
+  ignore.objs(oRockMedium);
+  set(fRockMediumRedraw);
+ 
+  // RockSmall
+  load.view(141);
+  animate.obj(oRockSmall);
+  set.view(oRockSmall,141);
+  set.loop(oRockSmall,0);
+  set.cel(oRockSmall,0);
+  set.priority(oRockSmall,4);
+  ignore.blocks(oRockSmall);
+  ignore.horizon(oRockSmall);
+  ignore.objs(oRockSmall);
+  set(fRockSmallRedraw);
+  animate.obj(oRockSmall2);
+  set.view(oRockSmall2,141);
+  set.loop(oRockSmall2,0);
+  set.cel(oRockSmall2,0);
+  set.priority(oRockSmall2,4);
+  ignore.blocks(oRockSmall2);
+  ignore.horizon(oRockSmall2);
+  ignore.objs(oRockSmall2);
+  set(fRockSmall2Redraw);
+ 
+  // RockLarge
+  load.view(142);
+  animate.obj(oRockLarge);
+  set.view(oRockLarge,142);
+  set.loop(oRockLarge,0);
+  set.cel(oRockLarge,0);
+  set.priority(oRockLarge,6);
+  ignore.blocks(oRockLarge);
+  ignore.horizon(oRockLarge);
+  ignore.objs(oRockLarge);
+  set(fRockLargeRedraw);
+ 
+  // TV
+  load.view(143);
+  animate.obj(oTV);
+  set.view(oTV,143);
+  set.loop(oTV,1);
+  set.cel(oTV,0);
+  set.priority(oTV,11);
+  ignore.blocks(oTV);
+  ignore.horizon(oTV);
+  ignore.objs(oTV);
+  position(oTV,65,128);
+  start.cycling(oTV);
+  v_cycle = 2;
+  cycle.time(oTV, v_cycle);
+  draw(oTV);
+ 
+  // OldMan
+  load.view(144);
+  animate.obj(oOldMan);
+  set.view(oOldMan,144);
+  set.loop(oOldMan,0);
+  set.cel(oOldMan,0);
+  set.priority(oOldMan,11);
+  ignore.blocks(oOldMan);
+  ignore.horizon(oOldMan);
+  ignore.objs(oOldMan);
+  position(oOldMan,44,144);
+  stop.cycling(oOldMan);
+  draw(oOldMan);
+
+  // FaceOldMan
+  load.view(206);
+  animate.obj(oFaceOldMan);
+  set.view(oFaceOldMan,206);
+  set.loop(oFaceOldMan,0);
+  set.cel(oFaceOldMan,0);
+  position(oFaceOldMan,5,67);
+  set.priority(oFaceOldMan,15);
+  ignore.blocks(oFaceOldMan);
+  ignore.horizon(oFaceOldMan);
+  ignore.objs(oFaceOldMan);
+  
+  // Position
+  position(ego,118,120);
+  draw(ego);
+  
+  vCount = 0;
+  load.sound(14);
+  sound(14,fSoundDone);
+  
+  show.pic();
+}
+if (fSoundDone
+&&  !fSoundDoneNoReplay) {
+  if (vCount < 20) {
+    vCount++;
+  }
+  else {
+    vCount = 0;
+    reset(fSoundDone);
+    sound(14,fSoundDone);
+  }
+}
+
+if (said("look","man")) {
+  print("He's relaxing watching his favorite show.");
+}
+if (said("look","TV")) {
+  print("You can't see what the man is watching, but you bet it's a rerun.");
+}
+if (said("look","rock")) {
+  print("Floating rocks are about all that's going on in here.");
+}
+if (said("look","sky")) {
+  print("You call that sky? You stay inside too much.");
+}
+if (said("look","clouds")) {
+  print("Nope. There are none.");
+}
+if (said("look","path")) {
+  print("There seems to be no way out.");
+}
+if (said("look","grass")) {
+  print("The man has a lawn.");
+  print("How does he mow his lawn?");
+  print("Hmmm...");
+  print("He probably grazes.");
+}
+if ((said("look","limbo")
+||   said("look"))) {
+  print("What you see is what you get in the surreality of limbo.");
+  print("A whole lot of nothing.");
+  print("Well, except for that man watching TV.");
+}
+
+// OldMan
+if (said("talk","man")) {
+  prevent.input();
+  if (vFaceTalkCount == 0) {
+    print("You yell over to the man, \"Hello!\"");
+  }
+  v_cycle = 2;
+  cycle.time(oFaceOldMan,v_cycle);
+  draw(oFaceOldMan);
+  end.of.loop(oFaceOldMan,fFaceTalked);
+}
+if (fFaceTalked) {
+  if (vFaceTalkCount == 0) {
+    print("\"Why hello! Don't get many visitors around these parts. What brings you here?\"");
+    print("You tell him about your harrowing ordeal.");
+  }
+  if (vFaceTalkCount == 1) {
+    print("\"That's similar to what happened to me.\"");
+    print("You ask the man how he ended up here.");
+  }
+  if (vFaceTalkCount == 2) {
+    print("\"I was young once.");
+  }
+  if (vFaceTalkCount == 3) {
+    print("\"Just a whippersnapper.");
+  }
+  if (vFaceTalkCount == 4) {
+    print("\"Still wet behind the ears.");
+  }
+  if (vFaceTalkCount == 5) {
+    print("\"I had my whole life ahead of me.");
+  }
+  if (vFaceTalkCount == 6) {
+    print("\"The possibilities were endless.");
+  }
+  if (vFaceTalkCount == 7) {
+    print("\"Then one day while I was selling my wares at a local market, I met a fine lady...");
+  }
+  if (vFaceTalkCount == 8) {
+    print("\"She took me home and made me breakfast.");
+  }
+  if (vFaceTalkCount == 9) {
+    print("\"It was quite tasty.");
+  }
+  if (vFaceTalkCount == 10) {
+    print("\"Flapjacks.");
+  }
+  if (vFaceTalkCount == 11) {
+    print("\"Hash browns.");
+  }
+  if (vFaceTalkCount == 12) {
+    print("\"Tuna on rye.");
+  }
+  if (vFaceTalkCount == 13) {
+    print("\"I was loving it. But there was no chemistry between me and this very fine lady.");
+  }
+  if (vFaceTalkCount == 14) {
+    print("\"So to make a long story short. I decided to leave her place.");
+  }
+  if (vFaceTalkCount == 15) {
+    print("\"On my way home I saw something I shouldn't have seen.");
+  }
+  if (vFaceTalkCount == 16) {
+    print("\"So I looked away. Didn't want to see that.\"");
+    print("See what? You wonder if this is really going somewhere...");
+    print("You'd like to tell the man that you don't have all day.");
+    print("But alas, you do.");
+  }
+  if (vFaceTalkCount == 17) {
+    print("\"So after I averted my eyes and continued on, I came to a fork in the road.");
+  }
+  if (vFaceTalkCount == 18) {
+    print("\"I kicked the fork aside so no one would step on it.");
+  }
+  if (vFaceTalkCount == 19) {
+    print("\"That's when I noticed there was a man standing there.");
+  }
+  if (vFaceTalkCount == 20) {
+    print("\"I would have already seen him if I hadn't averted my eyes earlier.");
+  }
+  if (vFaceTalkCount == 21) {
+    print("\"The fork was resting on his shoe.");
+  }
+  if (vFaceTalkCount == 22) {
+    print("\"He scowled at me.");
+  }
+  if (vFaceTalkCount == 23) {
+    print("\"The next thing I knew I was here on this rock.");
+  }
+  if (vFaceTalkCount == 24) {
+    print("\"Not one of my best days.\"");
+    print("You couldn't agree more.");
+    print("You ask the aged man how long he has been here.");
+  }
+  if (vFaceTalkCount == 25) {
+    print("\"Since I was just a wee lad.\"");
+    print("You ask if the man has any idea how to get out of here.");
+  }
+  if (vFaceTalkCount == 26) {
+    print("\"If I did, you wouldn't have anyone to talk to right now. Would you?\"");
+    print("You wonder if this is your fate.");
+    print("You ask the man how he copes.");
+  }
+  if (vFaceTalkCount == 27) {
+    print("\"This TV appeared one day, so it helps, but...");
+  }
+  if (vFaceTalkCount == 28) {
+    print("\"Honestly, I wish I could just end it all.\"");
+    print("This man certainly gives you hope.");
+  }
+  reset(fFaceTalked);
+  if (vFaceTalkCount == 28) {
+    set.loop(oFaceOldMan,0);
+    set.cel(oFaceOldMan,0);
+    erase(oFaceOldMan);
+    accept.input();
+    if (!fOldManStory) {
+      set(fOldManStory);
+      score++;
+    }
+  }
+  else {
+    set.loop(oFaceOldMan,1);
+    set.cel(oFaceOldMan,0);
+    v_cycle = 4;
+    cycle.time(oFaceOldMan,v_cycle);
+    end.of.loop(oFaceOldMan,fFaceBlinked);
+    vFaceTalkCount++;
+  }
+}
+if (fFaceBlinked) {
+  reset(fFaceBlinked);
+  set.loop(oFaceOldMan,0);
+  random(0,5,v80);
+  set.cel.v(oFaceOldMan,v80);
+  v_cycle = 2;
+  cycle.time(oFaceOldMan,v_cycle);
+  end.of.loop(oFaceOldMan,fFaceTalked);
+}
+
+// EgoJump
+if ((said("jump")
+||   said("jump","rol"))) {
+  program.control();
+  prevent.input();
+  get.posn(ego,new_ego_x,new_ego_y);
+  erase(ego);
+  animate.obj(egoAlt);
+  load.view(3);
+  set.view(egoAlt,3);
+  set.loop(egoAlt,0);
+  set.cel(egoAlt,0);
+  new_ego_x = new_ego_x - 2;
+  position.v(egoAlt,new_ego_x,new_ego_y);
+  normal.cycle(egoAlt);
+  ignore.blocks(egoAlt);
+  ignore.objs(egoAlt);
+  set.priority(egoAlt,15);
+  draw(egoAlt);
+  stop.cycling(egoAlt);
+  end.of.loop(egoAlt,fEgoJumpReady);
+}
+if (fEgoJumpReady) {
+  reset(fEgoJumpReady);
+  set.loop(egoAlt,1);
+  set.cel(egoAlt,0);
+  v_step = 2;
+  step.size(egoAlt,v_step);
+  end.of.loop(egoAlt,fEgoJumping);
+  v60 = 92;
+  v61 = 97;
+  v62 = 0;
+  move.obj.v(egoAlt,v60,v61,v62,fEgoJumped);
+}
+if (fEgoJumped) {
+  reset(fEgoJumped);
+  move.obj(egoAlt,92,167,0,fEgoJumpBottom);
+}
+if (fEgoJumpBottom) {
+  reset(fEgoJumpBottom);
+  v_step = 1;
+  step.size(egoAlt,v_step);
+  move.obj(egoAlt,92,167,0,fEgoJumpedDown);
+}
+if (fEgoJumpedDown) {
+  reset(fEgoJumpedDown);
+  set.loop(egoAlt,2);
+  set.cel(egoAlt,0);
+  end.of.loop(egoAlt,fEgoJumpDone);
+}
+if (fEgoJumpDone) {
+  reset(fEgoJumpDone);
+  position(egoAlt,115,37);
+  set.loop(egoAlt,3);
+  set.cel(egoAlt,0);
+  end.of.loop(egoAlt,fEgoJumpTop);
+}
+if (fEgoJumpTop) {
+  reset(fEgoJumpTop);
+  v_step = 2;
+  step.size(egoAlt,v_step);
+  move.obj(egoAlt,115,120,0,fEgoJumpTopFall);
+}
+if (fEgoJumpTopFall) {
+  reset(fEgoJumpTopFall);
+  set.loop(egoAlt,4);
+  set.cel(egoAlt,0);
+  end.of.loop(egoAlt,fEgoJumpLanded);
+}
+if (fEgoJumpLanded) {
+  reset(fEgoJumpLanded);
+  get.posn(egoAlt,new_ego_x,new_ego_y);
+  erase(egoAlt);
+  set.loop(ego,2);
+  set.cel(ego,0);
+  new_ego_x = new_ego_x + 2;
+  position.v(ego,new_ego_x,new_ego_y);
+  draw(ego);
+  if (!fEgoJumpedLimbo) {
+    set(fEgoJumpedLimbo);
+    score++;
+  }
+  print("That obviously did not work.");
+  accept.input();
+  player.control();
+}
+
+// EgoSuicideEscapeLimbo
+if (fEgoSuicideEscapeLimbo) {
+  reset(fEgoSuicideEscapeLimbo);
+  print("Wait!");
+  new.room(7);
+  return();
+}
+
+// RockMedium
+if (fRockMediumAppearingRight) {
+  vRockMediumX = vRockMediumX - 1;
+  reposition.to.v(oRockMedium,vRockMediumX,vRockMediumY);
+  if (vRockMediumX == 147) {
+    reset(fRockMediumAppearingRight);
+  }
+}
+if (fRockMediumRedraw) {
+  reset(fRockMediumRedraw);
+  random(21,146,vRockMediumY);
+  random(0,1,vRockMediumLR);
+  random(1,2,vRockMediumStep);
+  step.size(oRockMedium,vRockMediumStep);
+  if (vRockMediumLR == 0) {
+    vRockMediumX = 0;
+    set.loop(oRockMedium,1);
+    last.cel(oRockMedium,v_cel);
+    set.cel.v(oRockMedium,v_cel);
+  }
+  else {
+    vRockMediumX = 159;
+    set.loop(oRockMedium,0);
+    last.cel(oRockMedium,v_cel);
+    v_cel = v_cel - 1;
+    set.cel.v(oRockMedium,v_cel);
+    set(fRockMediumAppearingRight);
+  }
+  position.v(oRockMedium,vRockMediumX,vRockMediumY);
+  draw(oRockMedium);
+  reverse.loop(oRockMedium,fRockMediumAppeared);
+}
+if (fRockMediumAppeared){
+  reset(fRockMediumAppeared);
+  if (vRockMediumLR == 0) {
+    set.loop(oRockMedium,0);
+    v_dir = 3;
+  }
+  else {
+    set.loop(oRockMedium,1);
+    v_dir = 7;
+  }
+  set.cel(oRockMedium,0);
+  set.dir(oRockMedium,v_dir);
+  stop.cycling(oRockMedium);
+}
+get.posn(oRockMedium,vRockMediumX,vRockMediumY);
+if (vRockMediumLR == 0
+&&  vRockMediumX == 147) {
+  set(fRockMediumRight);
+  vRockMediumLR = 2;
+}
+if (fRockMediumRight) {
+  reset(fRockMediumRight);
+  set.cel(oRockMedium,1);
+  end.of.loop(oRockMedium,fRockMediumRightGone);
+}
+if (fRockMediumRightGone) {
+  reset(fRockMediumRightGone);
+  erase(oRockMedium);
+  set(fRockMediumRedraw);
+}
+if (vRockMediumLR == 1
+&&  vRockMediumX == 0) {
+  set(fRockMediumLeft);
+  vRockMediumLR = 2;
+}
+if (fRockMediumLeft) {
+  reset(fRockMediumLeft);
+  set.cel(oRockMedium,1);
+  end.of.loop(oRockMedium,fRockMediumLeftGone);
+}
+if (fRockMediumLeftGone) {
+  reset(fRockMediumLeftGone);
+  erase(oRockMedium);
+  set(fRockMediumRedraw);
+}
+
+// RockSmall
+if (fRockSmallAppearingRight) {
+  vRockSmallX = vRockSmallX - 1;
+  reposition.to.v(oRockSmall,vRockSmallX,vRockSmallY);
+  if (vRockSmallX == 152) {
+    reset(fRockSmallAppearingRight);
+  }
+}
+if (vRockWait >= 20
+&&  fRockSmallRedraw) {
+  reset(fRockSmallRedraw);
+  random(16,151,vRockSmallY);
+  random(0,1,vRockSmallLR);
+  random(1,3,vRockSmallStep);
+  step.size(oRockSmall,vRockSmallStep);
+  if (vRockSmallLR == 0) {
+    vRockSmallX = 0;
+    set.loop(oRockSmall,1);
+    last.cel(oRockSmall,v_cel);
+    set.cel.v(oRockSmall,v_cel);
+  }
+  else {
+    vRockSmallX = 159;
+    set.loop(oRockSmall,0);
+    last.cel(oRockSmall,v_cel);
+    v_cel = v_cel - 1;
+    set.cel.v(oRockSmall,v_cel);
+    set(fRockSmallAppearingRight);
+  }
+  position.v(oRockSmall,vRockSmallX,vRockSmallY);
+  draw(oRockSmall);
+  reverse.loop(oRockSmall,fRockSmallAppeared);
+}
+if (fRockSmallAppeared){
+  reset(fRockSmallAppeared);
+  if (vRockSmallLR == 0) {
+    set.loop(oRockSmall,0);
+    v_dir = 3;
+  }
+  else {
+    set.loop(oRockSmall,1);
+    v_dir = 7;
+  }
+  set.cel(oRockSmall,0);
+  set.dir(oRockSmall,v_dir);
+  stop.cycling(oRockSmall);
+}
+get.posn(oRockSmall,vRockSmallX,vRockSmallY);
+if (vRockSmallLR == 0
+&&  vRockSmallX == 152) {
+  set(fRockSmallRight);
+  vRockSmallLR = 2;
+}
+if (fRockSmallRight) {
+  reset(fRockSmallRight);
+  set.cel(oRockSmall,1);
+  end.of.loop(oRockSmall,fRockSmallRightGone);
+}
+if (fRockSmallRightGone) {
+  reset(fRockSmallRightGone);
+  erase(oRockSmall);
+  set(fRockSmallRedraw);
+}
+if (vRockSmallLR == 1
+&&  vRockSmallX == 0) {
+  set(fRockSmallLeft);
+  vRockSmallLR = 2;
+}
+if (fRockSmallLeft) {
+  reset(fRockSmallLeft);
+  set.cel(oRockSmall,1);
+  end.of.loop(oRockSmall,fRockSmallLeftGone);
+}
+if (fRockSmallLeftGone) {
+  reset(fRockSmallLeftGone);
+  erase(oRockSmall);
+  set(fRockSmallRedraw);
+}
+
+// RockLarge
+if (fRockLargeAppearingRight) {
+  vRockLargeX = vRockLargeX - 1;
+  reposition.to.v(oRockLarge,vRockLargeX,vRockLargeY);
+  if (vRockLargeX == 140) {
+    reset(fRockLargeAppearingRight);
+  }
+}
+if (vRockWait >= 80
+&&  fRockLargeRedraw) {
+  reset(fRockLargeRedraw);
+  random(40,127,vRockLargeY);
+  random(0,1,vRockLargeLR);
+  vRockLargeStep = 1;
+  step.size(oRockLarge,vRockLargeStep);
+  if (vRockLargeLR == 0) {
+    vRockLargeX = 0;
+    set.loop(oRockLarge,1);
+    last.cel(oRockLarge,v_cel);
+    set.cel.v(oRockLarge,v_cel);
+  }
+  else {
+    vRockLargeX = 159;
+    set.loop(oRockLarge,0);
+    last.cel(oRockLarge,v_cel);
+    v_cel = v_cel - 1;
+    set.cel.v(oRockLarge,v_cel);
+    set(fRockLargeAppearingRight);
+  }
+  position.v(oRockLarge,vRockLargeX,vRockLargeY);
+  draw(oRockLarge);
+  reverse.loop(oRockLarge,fRockLargeAppeared);
+}
+if (fRockLargeAppeared){
+  reset(fRockLargeAppeared);
+  if (vRockLargeLR == 0) {
+    set.loop(oRockLarge,0);
+    v_dir = 3;
+  }
+  else {
+    set.loop(oRockLarge,1);
+    v_dir = 7;
+  }
+  set.cel(oRockLarge,0);
+  set.dir(oRockLarge,v_dir);
+  stop.cycling(oRockLarge);
+}
+get.posn(oRockLarge,vRockLargeX,vRockLargeY);
+if (vRockLargeLR == 0
+&&  vRockLargeX == 140) {
+  set(fRockLargeRight);
+  vRockLargeLR = 2;
+}
+if (fRockLargeRight) {
+  reset(fRockLargeRight);
+  set.cel(oRockLarge,1);
+  end.of.loop(oRockLarge,fRockLargeRightGone);
+}
+if (fRockLargeRightGone) {
+  reset(fRockLargeRightGone);
+  erase(oRockLarge);
+  set(fRockLargeRedraw);
+}
+if (vRockLargeLR == 1
+&&  vRockLargeX == 0) {
+  set(fRockLargeLeft);
+  vRockLargeLR = 2;
+}
+if (fRockLargeLeft) {
+  reset(fRockLargeLeft);
+  set.cel(oRockLarge,1);
+  end.of.loop(oRockLarge,fRockLargeLeftGone);
+}
+if (fRockLargeLeftGone) {
+  reset(fRockLargeLeftGone);
+  erase(oRockLarge);
+  set(fRockLargeRedraw);
+}
+
+// RockSmall2
+if (fRockSmall2AppearingRight) {
+  vRockSmall2X = vRockSmall2X - 1;
+  reposition.to.v(oRockSmall2,vRockSmall2X,vRockSmall2Y);
+  if (vRockSmall2X == 152) {
+    reset(fRockSmall2AppearingRight);
+  }
+}
+if (vRockWait >= 40
+&&  fRockSmall2Redraw) {
+  reset(fRockSmall2Redraw);
+  random(16,151,vRockSmall2Y);
+  random(0,1,vRockSmall2LR);
+  random(1,3,vRockSmall2Step);
+  step.size(oRockSmall2,vRockSmall2Step);
+  if (vRockSmall2LR == 0) {
+    vRockSmall2X = 0;
+    set.loop(oRockSmall2,1);
+    last.cel(oRockSmall2,v_cel);
+    set.cel.v(oRockSmall2,v_cel);
+  }
+  else {
+    vRockSmall2X = 159;
+    set.loop(oRockSmall2,0);
+    last.cel(oRockSmall2,v_cel);
+    v_cel = v_cel - 1;
+    set.cel.v(oRockSmall2,v_cel);
+    set(fRockSmall2AppearingRight);
+  }
+  position.v(oRockSmall2,vRockSmall2X,vRockSmall2Y);
+  draw(oRockSmall2);
+  reverse.loop(oRockSmall2,fRockSmall2Appeared);
+}
+if (fRockSmall2Appeared){
+  reset(fRockSmall2Appeared);
+  if (vRockSmall2LR == 0) {
+    set.loop(oRockSmall2,0);
+    v_dir = 3;
+  }
+  else {
+    set.loop(oRockSmall2,1);
+    v_dir = 7;
+  }
+  set.cel(oRockSmall2,0);
+  set.dir(oRockSmall2,v_dir);
+  stop.cycling(oRockSmall2);
+}
+get.posn(oRockSmall2,vRockSmall2X,vRockSmall2Y);
+if (vRockSmall2LR == 0
+&&  vRockSmall2X == 152) {
+  set(fRockSmall2Right);
+  vRockSmall2LR = 2;
+}
+if (fRockSmall2Right) {
+  reset(fRockSmall2Right);
+  set.cel(oRockSmall2,1);
+  end.of.loop(oRockSmall2,fRockSmall2RightGone);
+}
+if (fRockSmall2RightGone) {
+  reset(fRockSmall2RightGone);
+  erase(oRockSmall2);
+  set(fRockSmall2Redraw);
+}
+if (vRockSmall2LR == 1
+&&  vRockSmall2X == 0) {
+  set(fRockSmall2Left);
+  vRockSmall2LR = 2;
+}
+if (fRockSmall2Left) {
+  reset(fRockSmall2Left);
+  set.cel(oRockSmall2,1);
+  end.of.loop(oRockSmall2,fRockSmall2LeftGone);
+}
+if (fRockSmall2LeftGone) {
+  reset(fRockSmall2LeftGone);
+  erase(oRockSmall2);
+  set(fRockSmall2Redraw);
+}
+
+if (vRockWait < 80) {
+  vRockWait = vRockWait + 1;
+}
+
+return();

@@ -1,0 +1,530 @@
+// ****************************************************************
+//
+// Logic 6 - Fountain
+//
+// ****************************************************************
+
+
+#include "defines.txt"
+#include "custom.txt"
+
+#define fDancingManBegin   f70
+#define fDancingManStart   f71
+#define fDancingManMove     f72
+#define fDancingManKick     f73
+#define fDancingManWalk     f74
+#define fDancingManExit     f75
+#define fEgoHatPickupStart     f76
+#define fEgoHatPickupDown     f77
+#define fEgoHatPickupUp     f78
+#define fDancingManGivesHat      f79
+
+#define oRabbitFrolic   o70
+#define oDancingMan1   o71
+#define oDancingMan2   o76
+#define oDancingMan3   o72
+#define oDancingMan4   o73
+#define oFountain   o74
+#define oEgoHatPickup   o78
+
+#define vDancingMan_x            v101
+#define vDancingMan_y            v102
+#define vDancingMan_cel          v103
+#define vDancingMan_celLast      v104
+#define vDancingMan1_distance    v105
+#define vDancingMan2_distance    v106
+#define vDancingMan3_distance    v107
+#define vDancingMan4_i     v108
+#define vRabbit_distance     v109
+#define vCel            v110
+
+if (new_room){
+  load.pic(room_no);
+  draw.pic(room_no);
+  discard.pic(room_no);
+  set.horizon(0);
+
+  status.line.on();
+  accept.input();
+
+  // Fountain
+  load.view(74);
+  animate.obj(oFountain);
+  set.view(oFountain,74);
+  position(oFountain,72,94);
+  normal.cycle(oFountain);
+  ignore.blocks(oFountain);
+  ignore.objs(oFountain);
+  v80 = 4;
+  cycle.time(oFountain,v80);
+  draw(oFountain);
+
+  // Rabbit
+  if (!fRabbitGet) {
+    load.view(75);
+    animate.obj(oRabbitFrolic);
+    set.view(oRabbitFrolic,75);
+    position(oRabbitFrolic,122,154);
+    normal.cycle(oRabbitFrolic);
+    wander(oRabbitFrolic);
+    draw(oRabbitFrolic);
+  }
+
+  if (!fHatGet) {
+    // DancingMan1
+    set(fDancingManBegin);
+    set(fDancingManStart);
+    load.view(71);
+    animate.obj(oDancingMan1);
+    set.view(oDancingMan1,71);
+    position(oDancingMan1,108,134);
+    normal.cycle(oDancingMan1);
+    v80 = 2;
+    cycle.time(oDancingMan1,v80);
+    draw(oDancingMan1);
+
+    // DancingMan2
+    load.view(76);
+    animate.obj(oDancingMan2);
+    set.view(oDancingMan2,76);
+    position(oDancingMan2,108,134);
+    normal.cycle(oDancingMan2);
+    v80 = 4;
+    cycle.time(oDancingMan2,v80);
+    step.time(oDancingMan2,v80);
+    fix.loop(oDancingMan2);
+
+    // DancingMan3
+    load.view(72);
+    animate.obj(oDancingMan3);
+    set.view(oDancingMan3,72);
+    position(oDancingMan3,108,134);
+    normal.cycle(oDancingMan3);
+    v80 = 4;
+    cycle.time(oDancingMan3,v80);
+    fix.loop(oDancingMan3);
+
+    // DancingMan4
+    load.view(77);
+    animate.obj(oDancingMan4);
+    set.view(oDancingMan4,77);
+    position(oDancingMan4,108,134);
+    ignore.blocks(oDancingMan4);
+    ignore.horizon(oDancingMan4);
+    ignore.objs(oDancingMan4);
+    normal.cycle(oDancingMan4);
+    v80 = 1;
+    cycle.time(oDancingMan4,v80);
+  
+    load.sound(60);
+    sound(60,fSoundDone);
+  }
+  else {
+    load.sound(61);
+    sound(61,fSoundDone);
+  }
+
+  // Position
+  if (prev_room_no == 5) {
+    position(ego,74,167);
+  }
+  else {
+    if (prev_room_no == 7) {
+      v80 = 159;
+      if (old_ego_y < 94) {
+        old_ego_y = 94;
+      }
+      else {
+        if (old_ego_y > 154) {
+          old_ego_y = 154;
+        }
+      }
+      position.v(ego,v80,old_ego_y);
+    }
+    else {
+      position(ego,104,134);
+    }
+  }
+
+  draw(ego);
+  call(89);
+  show.pic();
+}
+if (fSoundDone) {
+  if (!fHatGet) {
+    reset(fSoundDone);
+    sound(60,fSoundDone);
+  }
+  else {
+    reset(fSoundDone);
+    sound(61,fSoundDone);
+  }
+}
+
+if (said("look")) {
+  print("A fountain. Yes, you see the fountain. "
+        "There is also a statue honoring an heroic legend of our time. "
+        "Below the statue is a plaque with some words of wisdom.");
+  print("In addition to the loveliness of this park, there really should be a sign saying,\n\n"
+        "\"BEWARE OF FALLING ROCKS\"\n\n"
+        "Who is in charge of safety around here?");
+  if (!fRabbitGet) {
+    print("There's a rabbit...");
+  }
+  if (!fHatGet) {
+    print("There's a man...");
+    print("Is he the man?");
+    print("No! You the man!");
+  }
+}
+if (said("look","fountain")) {
+  print("It's a regular fountain. If you were thirsty it would be great fountain.");
+}
+if (!fRabbitGet
+&&  said("look","rabbit")) {
+  print("Here comes Peter Cottonta...");
+  print("Really?");
+  print("Really? You want to take it that far?");
+  print("No, stop the madness. It's just a rabbit.");
+  print("Well, maybe he does have a cottontail. But how would you know if his name is Peter?");
+}
+if (!fHatGet
+&&  said("look","man")) {
+  print("He's a dance, dance, dance, dance, dancing machine. Watch him get down, watch him get down!");
+  print("Is that the Charleston?");
+  print("He has one truly remarkable hat!");
+}
+if (said("look","statue")) {
+  print("Statues of people are always nice to see. "
+        "There is a plaque below the statue with some choice words to live by.");
+}
+if ((said("look","plaque")
+||   said("read","plaque"))) {
+  print("\"What would he do if he was here right now?\"");
+  if (!fPlaqueLook) {
+    set(fPlaqueLook);
+    score++;
+  }
+}
+if (said("look","rock")) {
+  print("Recently, boulders have been falling from the sky. It happens to the best of us.");
+}
+if (said("look","tree")) {
+  print("Those are evergreens. It's a tree for all seasons.");
+}
+if (said("look","bush")) {
+  print("Isn't that special. No, not really.");
+}
+if (said("look","sky")) {
+  print("Do we ever ask how the sky is doing?");
+  print("It's blue.");
+}
+if (said("look","clouds")) {
+  print("There are clouds, but look at that mountain. The best view you're gonna get!");
+}
+if (said("look","mountain")) {
+  print("So majestic.");
+  print("So picturesque.");
+  print("So pointless.");
+}
+if (said("look","path")) {
+  print("It must lead somewhere.");
+}
+if (said("look","grass")) {
+  print("You feel that it's beneath you.");
+}
+
+if (said("get","flowers")) {
+  print("Please, please don't eat the...");
+  print("No! Please no!");
+}
+if (said("get", "plaque")) {
+  print("Those words of wisdom should remain here for others to read.");
+}
+
+// DancingMan
+if (!fHatGet) {
+  if (fDancingManWalk) {
+    if (vDancingMan4_i < 8) {
+      vDancingMan4_i++;
+    }
+    else {
+      reset(fDancingManWalk);
+      get("Hat");
+      show.obj(224);
+      if (!fHatGet) {
+        set(fHatGet);
+        score++;
+      }
+      get.posn(oDancingMan3,vDancingMan_x,vDancingMan_y);
+      position.v(oDancingMan4,vDancingMan_x,vDancingMan_y);
+      erase(oDancingMan1);
+      erase(oDancingMan2);
+      erase(oDancingMan3);
+      draw(oDancingMan4);
+      move.obj(oDancingMan4,159,126,1,fDancingManExit);
+      print("Hmmm, that was easy. Guess he has more hats.");
+      print("You try to thank the man for his hat...");
+      print("He just walks away.");
+    }
+  }
+  if (fDancingManStart) {
+    reset(fDancingManStart);
+    if (!fDancingManBegin) {
+      get.posn(oDancingMan2,vDancingMan_x,vDancingMan_y);
+      position.v(oDancingMan1,vDancingMan_x,vDancingMan_y);
+      erase(oDancingMan3);
+      draw(oDancingMan1);
+    }
+    set.cel(oDancingMan1,0);
+    end.of.loop(oDancingMan1,fDancingManMove);
+  }
+  else {
+    if (fDancingManMove) {
+      reset(fDancingManBegin);
+      reset(fDancingManMove);
+      get.posn(oDancingMan1,vDancingMan_x,vDancingMan_y);
+      position.v(oDancingMan2,vDancingMan_x,vDancingMan_y);
+      erase(oDancingMan1);
+      draw(oDancingMan2);
+      set.cel(oDancingMan2,0);
+      end.of.loop(oDancingMan2,fDancingManKick);
+    }
+    else {
+      if (fDancingManKick) {
+        reset(fDancingManKick);
+        get.posn(oDancingMan2,vDancingMan_x,vDancingMan_y);
+        position.v(oDancingMan3,vDancingMan_x,vDancingMan_y);
+        erase(oDancingMan2);
+        draw(oDancingMan3);
+        set.cel(oDancingMan3,0);
+        end.of.loop(oDancingMan3,fDancingManStart);
+      }
+      else {
+        current.cel(oDancingMan2,vDancingMan_cel);
+        last.cel(oDancingMan2,vDancingMan_celLast);
+        if (vDancingMan_cel == 3) {
+          wander(oDancingMan2);
+        }
+        else {
+          if (vDancingMan_cel == vDancingMan_celLast) {
+            set(fDancingManKick);
+            set.cel(oDancingMan2,0);
+            normal.motion(oDancingMan2);
+          }
+        }
+      }
+    }
+  }
+}
+if (fDancingManExit) {
+  reset(fDancingManExit);
+  erase(oDancingMan4);
+      
+  load.sound(61);
+  sound(61,fSoundDone);
+}
+if (!fHatGet
+&&  said("talk","man")) {
+  print("You try and talk with the dancing man...");
+  print("The dancing man abruptly interrupts you,");
+  // FaceDancingMan
+  load.view(203);
+  animate.obj(oFaceDancingMan);
+  set.view(oFaceDancingMan,203);
+  set.loop(oFaceDancingMan,0);
+  set.cel(oFaceDancingMan,0);
+  position(oFaceDancingMan,5,67);
+  set.priority(oFaceDancingMan,15);
+  ignore.objs(oFaceDancingMan);
+  v_cycle = 2;
+  cycle.time(oFaceDancingMan,v_cycle);
+  draw(oFaceDancingMan);
+  vFaceTalkCount = 0;
+  end.of.loop(oFaceDancingMan,fFaceTalked);
+}
+if (fFaceTalked) {
+  if (vFaceTalkCount == 0) {
+    print("\"Hey!");
+  }
+  else {
+    if (vFaceTalkCount == 1) {
+      print("\"I'm dancing here!");
+    }
+    else {
+      if (vFaceTalkCount == 2) {
+        print("\"I'm dancing here!!");
+      }
+      else {
+        if (vFaceTalkCount == 3) {
+          print("\"Sometimes, after a hard day, I just need to dance!\"");
+        }
+        else {
+          if (vFaceTalkCount == 4) {
+            print("\"My hat?\n"
+                  "\"My prized possession?\n"
+                  "\"Okay.\"");
+            set(fDancingManGivesHat);
+          }
+        }
+      }
+    }
+  }
+  if (vFaceTalkCount >= 3) {
+    vFaceTalkCount = 0;
+    reset(fFaceTalked);
+    erase(oFaceDancingMan);
+    if (!fDancingManTalk) {
+      set(fDancingManTalk);
+      score++;
+    }
+  }
+  else {
+    reset(fFaceTalked);
+    set.loop(oFaceDancingMan,2);
+    random(0,5,v80);
+    set.cel.v(oFaceDancingMan,v80);
+    end.of.loop(oFaceDancingMan,fFaceBlinked);
+    vFaceTalkCount++;
+  }
+}
+if (fFaceBlinked) {
+  reset(fFaceBlinked);
+  set.loop(oFaceDancingMan,1);
+  set.cel(oFaceDancingMan,0);
+  end.of.loop(oFaceDancingMan,fFaceTalked);
+}
+
+// Hat
+if (said("get","hat")) {
+  if (!fHatGet) {
+    distance(ego,oDancingMan1,vDancingMan1_distance);
+    distance(ego,oDancingMan2,vDancingMan2_distance);
+    distance(ego,oDancingMan3,vDancingMan3_distance);
+    if ((vDancingMan1_distance < 10
+    ||   vDancingMan2_distance < 10
+    ||   vDancingMan3_distance < 10)) {
+      ego_dir = 0;
+
+      // FaceDancingMan
+      load.view(203);
+      animate.obj(oFaceDancingMan);
+      set.view(oFaceDancingMan,203);
+      set.loop(oFaceDancingMan,2);
+      set.cel(oFaceDancingMan,0);
+      position(oFaceDancingMan,5,67);
+      set.priority(oFaceDancingMan,15);
+      ignore.objs(oFaceDancingMan);
+      v_cycle = 2;
+      cycle.time(oFaceDancingMan,v_cycle);
+      draw(oFaceDancingMan);
+      vFaceTalkCount = 4;
+      end.of.loop(oFaceDancingMan,fFaceTalked);
+    }
+    else {
+      print("If you want to get his hat, you should be closer to him.");
+    }
+  }
+  else {
+    print("Do you see another hat?");
+  }
+}
+if (fDancingManGivesHat) {
+  reset(fDancingManGivesHat);
+  if (vDancingMan1_distance < 10) {
+    get.posn(oDancingMan1,vDancingMan_x,vDancingMan_y);
+    position.v(oDancingMan3,vDancingMan_x,vDancingMan_y);
+    erase(oDancingMan1);
+  }
+  else {
+    if (vDancingMan2_distance < 10) {
+      get.posn(oDancingMan2,vDancingMan_x,vDancingMan_y);
+      position.v(oDancingMan3,vDancingMan_x,vDancingMan_y);
+      erase(oDancingMan2);
+    }
+  }
+  reset(fDancingManStart);
+  reset(fDancingManMove);
+  reset(fDancingManKick);
+  set.loop(oDancingMan3,1);
+  set.cel(oDancingMan3,0);
+  draw(oDancingMan3);
+  end.of.loop(oDancingMan3,fDancingManWalk);
+}
+
+// Rabbit
+if (said("get","rabbit")) {
+  if (fRabbitGet) {
+    print("Do you feel you need more rabbits?");
+  }
+  else {
+    if (has("Hat")) {
+      distance(ego,oRabbitFrolic,vRabbit_distance);
+      if (vRabbit_distance < 20) {
+        normal.motion(oRabbitFrolic);
+        follow.ego(oRabbitFrolic,1,fNothing);
+        set(fEgoHatPickupStart);
+      }
+      else {
+        print("You are not close enough.");
+      }
+    }
+    else {
+      print("If you catch the rabbit, what will you put it in?");
+    }
+  }
+}
+if (fEgoHatPickupStart) {
+  reset(fEgoHatPickupStart);
+  print("You deftly scoop the rabbit into the hat.  ");
+  load.view(78);
+  animate.obj(oEgoHatPickup);
+  set.view(oEgoHatPickup,78);
+  get.posn(ego,new_ego_x,new_ego_y);
+  position.v(oEgoHatPickup,new_ego_x,new_ego_y);
+  get.posn(oRabbitFrolic,v_x,v_y);
+  v_x = v_x + 4;
+  if (new_ego_x >= v_x) {
+    set.loop(oEgoHatPickup,0);
+  }
+  else {
+    set.loop(oEgoHatPickup,1);
+  }
+  erase(ego);
+  draw(oEgoHatPickup);
+  end.of.loop(oEgoHatPickup,fEgoHatPickupDown);
+}
+else {
+  if (fEgoHatPickupDown) {
+    reset(fEgoHatPickupDown);
+    reverse.cycle(oEgoHatPickup);
+    erase(oRabbitFrolic);
+    set(fEgoHatPickupUp);
+  }
+  else {
+    if (fEgoHatPickupUp) {
+      current.cel(oEgoHatPickup,vCel);
+      if (vCel == 0) {
+        reset(fEgoHatPickupUp);
+        stop.cycling(oEgoHatPickup);
+        erase(oEgoHatPickup);
+        draw(ego);
+        get("Rabbit");
+        show.obj(222);
+        if (!fRabbitGet) {
+          set(fRabbitGet);
+          score++;
+        }
+      }
+    }
+  }
+}
+
+if (ego_edge_code == bottom_edge) {
+  new.room(5);
+}
+if (ego_edge_code == right_edge) {
+  new.room(7);
+}
+
+return();

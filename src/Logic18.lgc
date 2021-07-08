@@ -1,0 +1,294 @@
+// ****************************************************************
+//
+// Logic 18 - Intro
+//
+// ****************************************************************
+
+
+#include "defines.txt"
+#include "custom.txt"
+
+#define fFro f40
+#define fFro2 f41
+#define fCloud1 f42
+#define fCloud2 f43
+#define fTitle f44
+#define fCloud2Move f45
+#define fNewRoom f46
+
+#define oFro4 o23
+#define oFro3b o26
+#define oCloud1 o27
+#define oTitle o28
+#define oCloud2 o29
+#define oFro1 o41
+#define oFro5 o42
+
+#define vFro v100
+#define vCloud1 v101
+#define vCloud2 v102
+#define vTitle v103
+
+if (!fNewRoom) {
+  set(fNewRoom);
+  room_no = 18;
+  
+  load.pic(room_no);
+  draw.pic(room_no);
+  discard.pic(room_no);
+  set.horizon(0);
+  status.line.off();
+  prevent.input();
+  program.control();
+  
+  load.view(41);
+  animate.obj(oFro1);
+  set.view(oFro1,41);
+  set.loop(oFro1,0);
+  set.cel(oFro1,0);
+  position(oFro1,32,167);
+  stop.cycling(oFro1);
+  ignore.objs(oFro1);
+  draw(oFro1);
+  
+  load.view(26);
+  animate.obj(oFro3b);
+  set.view(oFro3b,26);
+  set.loop(oFro3b,1);
+  set.cel(oFro3b,0);
+  position(oFro3b,39,167);
+  stop.cycling(oFro3b);
+  ignore.objs(oFro3b);
+  draw(oFro3b);
+
+  load.view(23);
+  animate.obj(oFro4);
+  set.view(oFro4,23);
+  set.loop(oFro4,0);
+  set.cel(oFro4,0);
+  position(oFro4,32,167);
+  stop.cycling(oFro4);
+  ignore.objs(oFro4);
+  
+  load.view(42);
+  animate.obj(oFro5);
+  set.view(oFro5,42);
+  set.loop(oFro5,0);
+  set.cel(oFro5,0);
+  position(oFro5,71,167);
+  stop.cycling(oFro5);
+  ignore.objs(oFro5);
+  
+  vFro = 0;
+  
+  load.view(27);
+  animate.obj(oCloud1);
+  set.view(oCloud1,27);
+  set.loop(oCloud1,0);
+  set.cel(oCloud1,0);
+  set.priority(oCloud1,13);
+  position(oCloud1,0,101);
+  stop.cycling(oCloud1);
+  ignore.objs(oCloud1);
+  draw(oCloud1);
+  
+  load.view(29);
+  animate.obj(oCloud2);
+  set.view(oCloud2,29);
+  set.loop(oCloud2,0);
+  set.cel(oCloud2,0);
+  set.priority(oCloud2,13);
+  position(oCloud2,71,79);
+  stop.cycling(oCloud2);
+  ignore.objs(oCloud2);
+  fix.loop(oCloud2);
+  draw(oCloud2);
+  
+  vCloud1 = 0;
+  vCloud2 = 0;
+  
+  load.view(28);
+  animate.obj(oTitle);
+  set.view(oTitle,28);
+  set.loop(oTitle,0);
+  set.cel(oTitle,0);
+  set.priority(oTitle,14);
+  position(oTitle,22,87);
+  stop.cycling(oTitle);
+  ignore.objs(oTitle);
+  draw(oTitle);
+  
+  vTitle = 0;
+  set(fTitle);
+
+  show.pic();
+}
+
+// Fro
+if (fFro) {
+  reset(fFro);
+  vFro++;
+  if (vFro == 1) {
+    end.of.loop(oFro1,fFro);
+  }
+  if (vFro == 2) {
+    set.loop(oFro1,1);
+    set.cel(oFro1,0);
+    end.of.loop(oFro1,fFro);
+  }
+  if (vFro == 3) {
+    erase(oFro1);
+    erase(oFro3b);
+    draw(oFro4);
+    end.of.loop(oFro4,fFro);
+  }
+  if (vFro == 4) {
+    set.loop(oFro4,1);
+    set.cel(oFro4,0);
+    end.of.loop(oFro4,fFro);
+  }
+  if (vFro == 5) {
+    set.loop(oFro4,2);
+    set.cel(oFro4,0);
+    end.of.loop(oFro4,fFro);
+  }
+  if (vFro == 6) {
+    erase(oFro4);
+    draw(oFro5);
+    end.of.loop(oFro5,fFro);
+  }
+  if (vFro == 7) {
+    set.loop(oFro5,1);
+    set.cel(oFro5,0);
+    end.of.loop(oFro5,fFro);
+  }
+  if (vFro == 8) {
+    set.loop(oFro5,2);
+    set.cel(oFro5,0);
+    v_cycle = 3;
+    cycle.time(oFro5,v_cycle);
+    end.of.loop(oFro5,fFro);
+  }
+  if (vFro == 9) {
+    set.cel(oFro5,5);
+    reverse.loop(oFro5,fFro);
+  }
+  if (vFro == 10) {
+    set.loop(oFro5,1);
+    set.cel(oFro5,11);
+    v_cycle = 1;
+    cycle.time(oFro5,v_cycle);
+    reverse.loop(oFro5,fFro);
+  }
+  if (vFro == 11) {
+  
+    reset(windows_remain);
+    window_close_time = 20;
+    print("Whoa, that's a nice Fro!\n\nOf course it is.\n\nFor many years you have lathered, rinsed, and most importantly...repeated.\n\nThis has prepared you for adventure.");
+    reset(windows_remain);
+    window_close_time = 30;
+    print("Something is happening to the land you call home.\n\nStrange characters are all around.\n\nNo one can escape.\n\nDisaster lurks around every corner (maybe more like every other corner, give or take).\n\nSomeone must stand up (straight, stand up straight, posture is important) and set things right!");
+    reset(windows_remain);
+    window_close_time = 15;
+    print("It's up to you to save the day, or at least try and find something to do...");
+  
+    load.view(0);
+    set.view(oFro5,0);
+    set.loop(oFro5,0);
+    set.cel(oFro5,7);
+    start.cycling(oFro5);
+    move.obj(oFro5,120,140,1,fFro);
+  }
+  if (vFro == 12) {
+    stop.cycling(oFro5);
+    set.loop(oFro5,1);
+    set.cel(oFro5,3);
+    set(fFro);
+  }
+  if (vFro == 13) {
+    new.room(2);
+  }
+}
+
+// Cloud
+if (fCloud1) {
+  reset(fCloud1);
+  vCloud1++;
+  if (vCloud1 == 1) {
+    end.of.loop(oCloud1,fCloud1);
+  }
+  if (vCloud1 == 2) {
+    set.loop(oCloud1,1);
+    set.cel(oCloud1,0);
+    end.of.loop(oCloud1,fCloud1);
+  }
+  if (vCloud1 == 3) {
+    set.loop(oCloud1,2);
+    set.cel(oCloud1,0);
+    end.of.loop(oCloud1,fCloud1);
+  }
+  if (vCloud1 == 4) {
+    erase(oCloud1);
+  }
+}
+if (fCloud2) {
+  reset(fCloud2);
+  vCloud2++;
+  if (vCloud2 == 1) {
+    set.loop(oCloud2,0);
+    set.cel(oCloud2,0);
+    end.of.loop(oCloud2,fCloud2);
+    v_dir = 3;
+    set.dir(oCloud2,v_dir);
+    set(fCloud2Move);
+  }
+  if (vCloud2 == 2) {
+    set.loop(oCloud2,1);
+    set.cel(oCloud2,0);
+    end.of.loop(oCloud2,fCloud2);
+    v_dir = 3;
+    set.dir(oCloud2,v_dir);
+  }
+  if (vCloud2 == 3) {
+    set.loop(oCloud2,2);
+    set.cel(oCloud2,0);
+    end.of.loop(oCloud2,fCloud2);
+    v_dir = 3;
+    set.dir(oCloud2,v_dir);
+    reset(fCloud2Move);
+  }
+  if (vCloud2 == 4) {
+    erase(oCloud2);
+    set(fFro);
+  }
+}
+if (fCloud2Move) {
+  current.cel(oCloud2,v_cel);
+  if (v_cel == 30) {
+    stop.cycling(oCloud2);
+    set.cel(oCloud2,31);
+    v_x = 1;
+    v_y = 0;
+    reposition(oCloud2,v_x,v_y);
+    set(fCloud2);
+  }
+}
+
+// Title
+if (fTitle) {
+  reset(fTitle);
+  vTitle++;
+  if (vTitle < 20) {
+    set(fTitle);
+  }
+  if (vTitle == 20) {
+    end.of.loop(oTitle,fTitle);
+  }
+  if (vTitle == 21) {
+    erase(oTitle);
+    set(fCloud1);
+    set(fCloud2);
+  }
+}
+
+return();

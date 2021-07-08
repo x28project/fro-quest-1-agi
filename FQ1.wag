@@ -1,0 +1,1507 @@
+#
+# WinAGI Game Property File
+# converted from version 1.2.1
+#
+[General]
+   WinAGIVersion = 2.1.1
+   GameID = FQ1
+   Interpreter = 2.936
+   LastEdit = "7/8/2021 1:31:24 AM"
+   ResDir = src
+   UseResNames = False
+   Author = "X28 Project"
+   Description = "Fro Quest 1"
+   GameVersion = 1.0
+   About = ""
+   PlatformType = 2
+   Platform = ""
+   DOSExec = ""
+   PlatformOpts = ""
+   UseLE = False
+
+[::BEGIN Logics::]
+
+[Logic0]
+   CompCRC32 = &HE48611BA
+   CRC32 = &HE48611BA
+   IsRoom = False
+   ID = Logic0
+   Size = 3209
+   Description = ""
+
+[Logic1]
+   CompCRC32 = &H3D504B04
+   CRC32 = &H3D504B04
+   IsRoom = True
+   ID = Logic1
+   Size = 139
+   Description = ""
+
+[Logic2]
+   CompCRC32 = &H293380D1
+   CRC32 = &H293380D1
+   IsRoom = True
+   ID = Logic2
+   Size = 3760
+   Description = ""
+
+[Logic3]
+   CompCRC32 = &H6CBE584
+   CRC32 = &H6CBE584
+   IsRoom = True
+   ID = Logic3
+   Size = 2421
+   Description = ""
+
+[Logic4]
+   CompCRC32 = &H5027B452
+   CRC32 = &H5027B452
+   IsRoom = True
+   ID = Logic4
+   Size = 4649
+   Description = ""
+
+[Logic5]
+   CompCRC32 = &H653A5D13
+   CRC32 = &H653A5D13
+   IsRoom = True
+   ID = Logic5
+   Size = 3162
+   Description = ""
+
+[Logic6]
+   CompCRC32 = &H47F0C91B
+   CRC32 = &H47F0C91B
+   IsRoom = True
+   ID = Logic6
+   Size = 3383
+   Description = ""
+
+[Logic7]
+   CompCRC32 = &HAF080370
+   CRC32 = &HAF080370
+   IsRoom = True
+   ID = Logic7
+   Size = 9669
+   Description = ""
+
+[Logic8]
+   CompCRC32 = &H5B36C1C5
+   CRC32 = &H5B36C1C5
+   IsRoom = True
+   ID = Logic8
+   Size = 4458
+   Description = ""
+
+[Logic9]
+   CompCRC32 = &H5F336B74
+   CRC32 = &H5F336B74
+   IsRoom = True
+   ID = Logic9
+   Size = 2680
+   Description = ""
+
+[Logic10]
+   CompCRC32 = &H79826340
+   CRC32 = &H79826340
+   IsRoom = True
+   ID = Logic10
+   Size = 3440
+   Description = ""
+
+[Logic11]
+   CompCRC32 = &HEC1E83C0
+   CRC32 = &HEC1E83C0
+   IsRoom = True
+   ID = Logic11
+   Size = 504
+   Description = ""
+
+[Logic88]
+   CompCRC32 = &H452939CA
+   CRC32 = &H452939CA
+   IsRoom = True
+   ID = Logic88
+   Size = 1247
+   Description = ""
+
+[Logic89]
+   CompCRC32 = &HAFC9F48F
+   CRC32 = &HAFC9F48F
+   IsRoom = True
+   ID = Logic89
+   Size = 175
+   Description = ""
+
+[Logic90]
+   CompCRC32 = &HC6EA9B90
+   CRC32 = &HC6EA9B90
+   IsRoom = True
+   ID = Logic90
+   Size = 1865
+   Description = ""
+
+[Logic91]
+   CompCRC32 = &H898B234D
+   CRC32 = &H898B234D
+   IsRoom = True
+   ID = Logic91
+   Size = 165
+   Description = ""
+
+[Logic92]
+   CompCRC32 = &HB0B5C54A
+   CRC32 = &HB0B5C54A
+   IsRoom = True
+   ID = Logic92
+   Size = 580
+   Description = ""
+
+[Logic93]
+   CompCRC32 = &H633D434B
+   CRC32 = &H633D434B
+   IsRoom = True
+   ID = Logic93
+   Size = 1029
+   Description = ""
+
+[Logic94]
+   CompCRC32 = &H9586B29C
+   CRC32 = &H9586B29C
+   IsRoom = True
+   ID = Logic94
+   Size = 683
+   Description = ""
+
+[Logic95]
+   CompCRC32 = &H993F0B9F
+   CRC32 = &H993F0B9F
+   IsRoom = True
+   ID = Logic95
+   Size = 2617
+   Description = ""
+
+[Logic97]
+   CompCRC32 = &H495EE05D
+   CRC32 = &H495EE05D
+   IsRoom = True
+   ID = Logic97
+   Size = 46
+   Description = ""
+
+[Logic98]
+   CompCRC32 = &H98400991
+   CRC32 = &H98400991
+   IsRoom = True
+   ID = Logic98
+   Size = 777
+   Description = ""
+
+[Logic99]
+   CompCRC32 = &H9B334F48
+   CRC32 = &H9B334F48
+   IsRoom = True
+   ID = Logic99
+   Size = 1156
+   Description = ""
+
+[Logic12]
+   CompCRC32 = &H8EEEF5B9
+   CRC32 = &H8EEEF5B9
+   IsRoom = False
+   ID = Logic12
+   Size = 1315
+   Description = ""
+
+[Logic13]
+   CompCRC32 = &HA310217
+   CRC32 = &HA310217
+   IsRoom = False
+   ID = Logic13
+   Size = 1415
+   Description = ""
+
+[Logic14]
+   CompCRC32 = &H548088B8
+   CRC32 = &H548088B8
+   IsRoom = False
+   ID = Logic14
+   Size = 4245
+   Description = ""
+
+[Logic15]
+   CompCRC32 = &H704ADABB
+   CRC32 = &H704ADABB
+   IsRoom = False
+   ID = Logic15
+   Size = 3132
+   Description = ""
+
+[Logic16]
+   CompCRC32 = &H83A81247
+   CRC32 = &H83A81247
+   IsRoom = False
+   ID = Logic16
+   Size = 1503
+   Description = ""
+
+[Logic87]
+   CompCRC32 = &HD6055AA7
+   CRC32 = &HD6055AA7
+   IsRoom = False
+   ID = Logic87
+   Size = 279
+   Description = ""
+
+[Logic18]
+   CompCRC32 = &HF3DAEF9D
+   CRC32 = &HF3DAEF9D
+   IsRoom = False
+   ID = Logic18
+   Size = 1213
+   Description = ""
+
+[Logic86]
+   CompCRC32 = &HCE661F88
+   CRC32 = &HCE661F88
+   IsRoom = False
+   ID = Logic86
+   Size = 2720
+   Description = ""
+[::END Logics::]
+
+[Palette]
+   Color0 = &H00000000
+   Color1 = &H00A00000
+   Color2 = &H0000A000
+   Color3 = &H00A0A000
+   Color4 = &H000000A0
+   Color5 = &H00A00080
+   Color6 = &H000050A0
+   Color7 = &H00A0A0A0
+   Color8 = &H00505050
+   Color9 = &H00FF5050
+   Color10 = &H0050FF00
+   Color11 = &H00FFFF50
+   Color12 = &H005050FF
+   Color13 = &H00FF50FF
+   Color14 = &H0050FFFF
+   Color15 = &H00FFFFFF
+
+[::BEGIN Views::]
+
+[View230]
+   Description = ""
+   ID = View230
+   Size = 553
+
+[View0]
+   ID = View0
+   Size = 2793
+   Description = ""
+
+[View1]
+   ID = View1
+   Size = 5501
+   Description = ""
+
+[View2]
+   ID = View2
+   Size = 1860
+   Description = ""
+
+[View3]
+   ID = View3
+   Size = 5959
+   Description = ""
+
+[View4]
+   ID = View4
+   Size = 4563
+   Description = ""
+
+[View5]
+   ID = View5
+   Size = 4232
+   Description = ""
+
+[View6]
+   ID = View6
+   Size = 2876
+   Description = ""
+
+[View7]
+   ID = View7
+   Size = 7045
+   Description = ""
+
+[View8]
+   ID = View8
+   Size = 3120
+   Description = ""
+
+[View9]
+   ID = View9
+   Size = 1219
+   Description = ""
+
+[View10]
+   ID = View10
+   Size = 11924
+   Description = ""
+
+[View11]
+   ID = View11
+   Size = 2467
+   Description = ""
+
+[View12]
+   ID = View12
+   Size = 7048
+   Description = ""
+
+[View14]
+   ID = View14
+   Size = 31059
+   Description = ""
+
+[View15]
+   ID = View15
+   Size = 34074
+   Description = ""
+
+[View16]
+   ID = View16
+   Size = 3302
+   Description = ""
+
+[View17]
+   ID = View17
+   Size = 30843
+   Description = ""
+
+[View18]
+   ID = View18
+   Size = 1071
+   Description = ""
+
+[View19]
+   ID = View19
+   Size = 10509
+   Description = ""
+
+[View20]
+   ID = View20
+   Size = 930
+   Description = ""
+
+[View21]
+   ID = View21
+   Size = 3640
+   Description = ""
+
+[View22]
+   ID = View22
+   Size = 20698
+   Description = ""
+
+[View23]
+   ID = View23
+   Size = 47820
+   Description = ""
+
+[View24]
+   ID = View24
+   Size = 43203
+   Description = ""
+
+[View25]
+   ID = View25
+   Size = 43123
+   Description = ""
+
+[View26]
+   ID = View26
+   Size = 23349
+   Description = ""
+
+[View27]
+   ID = View27
+   Size = 37854
+   Description = ""
+
+[View28]
+   ID = View28
+   Size = 4293
+   Description = ""
+
+[View29]
+   ID = View29
+   Size = 39346
+   Description = ""
+
+[View30]
+   ID = View30
+   Size = 3884
+   Description = ""
+
+[View31]
+   ID = View31
+   Size = 4694
+   Description = ""
+
+[View32]
+   ID = View32
+   Size = 922
+   Description = ""
+
+[View33]
+   ID = View33
+   Size = 2212
+   Description = ""
+
+[View34]
+   ID = View34
+   Size = 17
+   Description = ""
+
+[View35]
+   ID = View35
+   Size = 387
+   Description = ""
+
+[View36]
+   ID = View36
+   Size = 1287
+   Description = ""
+
+[View37]
+   ID = View37
+   Size = 2302
+   Description = ""
+
+[View38]
+   ID = View38
+   Size = 4389
+   Description = ""
+
+[View39]
+   ID = View39
+   Size = 3145
+   Description = ""
+
+[View40]
+   ID = View40
+   Size = 3367
+   Description = ""
+
+[View41]
+   ID = View41
+   Size = 33380
+   Description = ""
+
+[View42]
+   ID = View42
+   Size = 5306
+   Description = ""
+
+[View50]
+   ID = View50
+   Size = 745
+   Description = ""
+
+[View51]
+   ID = View51
+   Size = 1564
+   Description = ""
+
+[View52]
+   ID = View52
+   Size = 893
+   Description = ""
+
+[View53]
+   ID = View53
+   Size = 386
+   Description = ""
+
+[View54]
+   ID = View54
+   Size = 1325
+   Description = ""
+
+[View55]
+   ID = View55
+   Size = 2768
+   Description = ""
+
+[View56]
+   ID = View56
+   Size = 10536
+   Description = ""
+
+[View57]
+   ID = View57
+   Size = 1854
+   Description = ""
+
+[View58]
+   ID = View58
+   Size = 1466
+   Description = ""
+
+[View65]
+   ID = View65
+   Size = 6046
+   Description = ""
+
+[View66]
+   ID = View66
+   Size = 2792
+   Description = ""
+
+[View67]
+   ID = View67
+   Size = 3312
+   Description = ""
+
+[View68]
+   ID = View68
+   Size = 3429
+   Description = ""
+
+[View70]
+   ID = View70
+   Size = 287
+   Description = ""
+
+[View71]
+   ID = View71
+   Size = 5505
+   Description = ""
+
+[View72]
+   ID = View72
+   Size = 3869
+   Description = ""
+
+[View73]
+   ID = View73
+   Size = 1143
+   Description = ""
+
+[View74]
+   ID = View74
+   Size = 1607
+   Description = ""
+
+[View75]
+   ID = View75
+   Size = 287
+   Description = ""
+
+[View76]
+   ID = View76
+   Size = 3385
+   Description = ""
+
+[View77]
+   ID = View77
+   Size = 1157
+   Description = ""
+
+[View78]
+   ID = View78
+   Size = 1162
+   Description = ""
+
+[View79]
+   ID = View79
+   Size = 7342
+   Description = ""
+
+[View80]
+   ID = View80
+   Size = 212
+   Description = ""
+
+[View81]
+   ID = View81
+   Size = 5242
+   Description = ""
+
+[View82]
+   ID = View82
+   Size = 1697
+   Description = ""
+
+[View90]
+   ID = View90
+   Size = 9098
+   Description = ""
+
+[View91]
+   ID = View91
+   Size = 42213
+   Description = ""
+
+[View92]
+   ID = View92
+   Size = 11497
+   Description = ""
+
+[View93]
+   ID = View93
+   Size = 4565
+   Description = ""
+
+[View94]
+   ID = View94
+   Size = 44571
+   Description = ""
+
+[View95]
+   ID = View95
+   Size = 3265
+   Description = ""
+
+[View96]
+   ID = View96
+   Size = 22673
+   Description = ""
+
+[View100]
+   ID = View100
+   Size = 3460
+   Description = ""
+
+[View101]
+   ID = View101
+   Size = 3236
+   Description = ""
+
+[View102]
+   ID = View102
+   Size = 1804
+   Description = ""
+
+[View120]
+   ID = View120
+   Size = 1293
+   Description = ""
+
+[View121]
+   ID = View121
+   Size = 690
+   Description = ""
+
+[View122]
+   ID = View122
+   Size = 2986
+   Description = ""
+
+[View123]
+   ID = View123
+   Size = 1187
+   Description = ""
+
+[View124]
+   ID = View124
+   Size = 13481
+   Description = ""
+
+[View130]
+   ID = View130
+   Size = 4311
+   Description = ""
+
+[View131]
+   ID = View131
+   Size = 10472
+   Description = ""
+
+[View132]
+   ID = View132
+   Size = 1852
+   Description = ""
+
+[View140]
+   ID = View140
+   Size = 2616
+   Description = ""
+
+[View141]
+   ID = View141
+   Size = 871
+   Description = ""
+
+[View142]
+   ID = View142
+   Size = 7693
+   Description = ""
+
+[View143]
+   ID = View143
+   Size = 2046
+   Description = ""
+
+[View144]
+   ID = View144
+   Size = 447
+   Description = ""
+
+[View150]
+   ID = View150
+   Size = 288
+   Description = ""
+
+[View151]
+   ID = View151
+   Size = 3759
+   Description = ""
+
+[View152]
+   ID = View152
+   Size = 3385
+   Description = ""
+
+[View153]
+   ID = View153
+   Size = 10825
+   Description = ""
+
+[View154]
+   ID = View154
+   Size = 5525
+   Description = ""
+
+[View200]
+   ID = View200
+   Size = 6985
+   Description = ""
+
+[View201]
+   ID = View201
+   Size = 10539
+   Description = ""
+
+[View202]
+   ID = View202
+   Size = 1529
+   Description = ""
+
+[View203]
+   ID = View203
+   Size = 14033
+   Description = ""
+
+[View204]
+   ID = View204
+   Size = 31721
+   Description = ""
+
+[View205]
+   ID = View205
+   Size = 8109
+   Description = ""
+
+[View206]
+   ID = View206
+   Size = 15803
+   Description = ""
+
+[View220]
+   ID = View220
+   Size = 574
+   Description = ""
+
+[View221]
+   ID = View221
+   Size = 330
+   Description = ""
+
+[View222]
+   ID = View222
+   Size = 1345
+   Description = ""
+
+[View223]
+   ID = View223
+   Size = 326
+   Description = ""
+
+[View224]
+   ID = View224
+   Size = 726
+   Description = ""
+
+[View225]
+   ID = View225
+   Size = 239
+   Description = ""
+
+[View226]
+   ID = View226
+   Size = 953
+   Description = ""
+
+[View227]
+   ID = View227
+   Size = 565
+   Description = ""
+
+[View228]
+   ID = View228
+   Size = 328
+   Description = ""
+
+[View229]
+   ID = View229
+   Size = 1461
+   Description = ""
+
+[View231]
+   ID = View231
+   Size = 235
+   Description = ""
+
+[View232]
+   ID = View232
+   Size = 417
+   Description = ""
+
+[View233]
+   ID = View233
+   Size = 241
+   Description = ""
+
+[View234]
+   ID = View234
+   Size = 272
+   Description = ""
+
+[View235]
+   ID = View235
+   Size = 208
+   Description = ""
+
+[View236]
+   ID = View236
+   Size = 362
+   Description = ""
+
+[View237]
+   ID = View237
+   Size = 336
+   Description = ""
+
+[View238]
+   ID = View238
+   Size = 266
+   Description = ""
+
+[View239]
+   ID = View239
+   Size = 216
+   Description = ""
+
+[View240]
+   ID = View240
+   Size = 252
+   Description = ""
+[::END Views::]
+
+[::BEGIN Sounds::]
+
+[Sound100]
+   Key = 0
+   TQPN = 16
+   Inst0 = 0
+   Inst1 = 0
+   Inst2 = 0
+   Mute0 = 0
+   Mute1 = 0
+   Mute2 = 0
+   Mute3 = 0
+   Visible0 = -1
+   Visible1 = -1
+   Visible2 = -1
+   Visible3 = -1
+   ID = Sound100
+   Size = 26
+   Description = ""
+   TPQN = 0
+
+[Sound101]
+   Key = 0
+   TQPN = 16
+   Inst0 = 0
+   Inst1 = 0
+   Inst2 = 0
+   Mute0 = 0
+   Mute1 = 0
+   Mute2 = 0
+   Mute3 = 0
+   Visible0 = -1
+   Visible1 = -1
+   Visible2 = -1
+   Visible3 = -1
+   ID = Sound101
+   Size = 36
+   Description = ""
+   TPQN = 0
+
+[Sound1]
+   Key = 0
+   TQPN = 16
+   Inst0 = 0
+   Inst1 = 0
+   Inst2 = 0
+   Mute0 = 0
+   Mute1 = 0
+   Mute2 = 0
+   Mute3 = 0
+   Visible0 = -1
+   Visible1 = -1
+   Visible2 = -1
+   Visible3 = -1
+   ID = Sound1
+   Size = 7306
+   TPQN = 0
+   Description = ""
+
+[Sound9]
+   Key = 0
+   TQPN = 16
+   Inst0 = 0
+   Inst1 = 0
+   Inst2 = 0
+   Mute0 = 0
+   Mute1 = 0
+   Mute2 = 0
+   Mute3 = 0
+   Visible0 = -1
+   Visible1 = -1
+   Visible2 = -1
+   Visible3 = -1
+   ID = Sound9
+   Size = 4471
+   Description = ""
+   TPQN = 0
+
+[Sound0]
+   Key = 0
+   TQPN = 16
+   Inst0 = 0
+   Inst1 = 0
+   Inst2 = 0
+   Mute0 = 0
+   Mute1 = 0
+   Mute2 = 0
+   Mute3 = 0
+   Visible0 = -1
+   Visible1 = -1
+   Visible2 = -1
+   Visible3 = -1
+   ID = Sound0
+   Size = 16
+   TPQN = 0
+   Description = ""
+
+[Sound30]
+   Key = 0
+   TQPN = 16
+   Inst0 = 0
+   Inst1 = 0
+   Inst2 = 0
+   Mute0 = 0
+   Mute1 = 0
+   Mute2 = 0
+   Mute3 = 0
+   Visible0 = -1
+   Visible1 = -1
+   Visible2 = -1
+   Visible3 = -1
+   ID = Sound30
+   Size = 281
+   Description = ""
+   TPQN = 0
+
+[Sound31]
+   Key = 0
+   TQPN = 16
+   Inst0 = 0
+   Inst1 = 0
+   Inst2 = 0
+   Mute0 = 0
+   Mute1 = 0
+   Mute2 = 0
+   Mute3 = 0
+   Visible0 = -1
+   Visible1 = -1
+   Visible2 = -1
+   Visible3 = -1
+   ID = Sound31
+   Size = 9291
+   Description = ""
+   TPQN = 0
+
+[Sound102]
+   Key = 0
+   TQPN = 16
+   Inst0 = 0
+   Inst1 = 0
+   Inst2 = 0
+   Mute0 = 0
+   Mute1 = 0
+   Mute2 = 0
+   Mute3 = 0
+   Visible0 = -1
+   Visible1 = -1
+   Visible2 = -1
+   Visible3 = -1
+   ID = Sound102
+   Size = 36
+   Description = ""
+   TPQN = 0
+
+[Sound4]
+   Key = 0
+   TQPN = 16
+   Inst0 = 0
+   Inst1 = 0
+   Inst2 = 0
+   Mute0 = 0
+   Mute1 = 0
+   Mute2 = 0
+   Mute3 = 0
+   Visible0 = -1
+   Visible1 = -1
+   Visible2 = -1
+   Visible3 = -1
+   ID = Sound4
+   Size = 11521
+   Description = ""
+   TPQN = 0
+
+[Sound5]
+   Key = 0
+   TQPN = 16
+   Inst0 = 0
+   Inst1 = 0
+   Inst2 = 0
+   Mute0 = 0
+   Mute1 = 0
+   Mute2 = 0
+   Mute3 = 0
+   Visible0 = -1
+   Visible1 = -1
+   Visible2 = -1
+   Visible3 = -1
+   ID = Sound5
+   Size = 5811
+   Description = ""
+   TPQN = 0
+
+[Sound60]
+   Key = 0
+   TQPN = 16
+   Inst0 = 0
+   Inst1 = 0
+   Inst2 = 0
+   Mute0 = 0
+   Mute1 = 0
+   Mute2 = 0
+   Mute3 = 0
+   Visible0 = -1
+   Visible1 = -1
+   Visible2 = -1
+   Visible3 = -1
+   ID = Sound60
+   Size = 15581
+   Description = ""
+   TPQN = 0
+
+[Sound61]
+   Key = 0
+   TQPN = 16
+   Inst0 = 0
+   Inst1 = 0
+   Inst2 = 0
+   Mute0 = 0
+   Mute1 = 0
+   Mute2 = 0
+   Mute3 = 0
+   Visible0 = -1
+   Visible1 = -1
+   Visible2 = -1
+   Visible3 = -1
+   ID = Sound61
+   Size = 5516
+   Description = ""
+   TPQN = 0
+
+[Sound70]
+   Key = 0
+   TQPN = 16
+   Inst0 = 0
+   Inst1 = 0
+   Inst2 = 0
+   Mute0 = 0
+   Mute1 = 0
+   Mute2 = 0
+   Mute3 = 0
+   Visible0 = -1
+   Visible1 = -1
+   Visible2 = -1
+   Visible3 = -1
+   ID = Sound70
+   Size = 4561
+   Description = ""
+   TPQN = 0
+
+[Sound71]
+   Key = 0
+   TQPN = 16
+   Inst0 = 0
+   Inst1 = 0
+   Inst2 = 0
+   Mute0 = 0
+   Mute1 = 0
+   Mute2 = 0
+   Mute3 = 0
+   Visible0 = -1
+   Visible1 = -1
+   Visible2 = -1
+   Visible3 = -1
+   ID = Sound71
+   Size = 6421
+   Description = ""
+   TPQN = 0
+
+[Sound72]
+   Key = 0
+   TQPN = 16
+   Inst0 = 0
+   Inst1 = 0
+   Inst2 = 0
+   Mute0 = 0
+   Mute1 = 0
+   Mute2 = 0
+   Mute3 = 0
+   Visible0 = -1
+   Visible1 = -1
+   Visible2 = -1
+   Visible3 = -1
+   ID = Sound72
+   Size = 14281
+   Description = ""
+   TPQN = 0
+
+[Sound103]
+   Key = 0
+   TQPN = 16
+   Inst0 = 0
+   Inst1 = 0
+   Inst2 = 0
+   Mute0 = 0
+   Mute1 = 0
+   Mute2 = 0
+   Mute3 = 0
+   Visible0 = -1
+   Visible1 = -1
+   Visible2 = -1
+   Visible3 = -1
+   ID = Sound103
+   Size = 36
+   Description = ""
+   TPQN = 0
+
+[Sound13]
+   Key = 0
+   TQPN = 16
+   Inst0 = 0
+   Inst1 = 0
+   Inst2 = 0
+   Mute0 = 0
+   Mute1 = 0
+   Mute2 = 0
+   Mute3 = 0
+   Visible0 = -1
+   Visible1 = -1
+   Visible2 = -1
+   Visible3 = -1
+   ID = Sound13
+   Size = 5991
+   Description = ""
+   TPQN = 0
+
+[Sound8]
+   Key = 0
+   TQPN = 16
+   Inst0 = 0
+   Inst1 = 0
+   Inst2 = 0
+   Mute0 = 0
+   Mute1 = 0
+   Mute2 = 0
+   Mute3 = 0
+   Visible0 = -1
+   Visible1 = -1
+   Visible2 = -1
+   Visible3 = -1
+   ID = Sound8
+   Size = 5166
+   Description = ""
+   TPQN = 0
+
+[Sound14]
+   Key = 0
+   TQPN = 16
+   Inst0 = 0
+   Inst1 = 0
+   Inst2 = 0
+   Mute0 = 0
+   Mute1 = 0
+   Mute2 = 0
+   Mute3 = 0
+   Visible0 = -1
+   Visible1 = -1
+   Visible2 = -1
+   Visible3 = -1
+   ID = Sound14
+   Size = 5071
+   Description = ""
+   TPQN = 0
+
+[Sound12]
+   Key = 0
+   TQPN = 16
+   Inst0 = 0
+   Inst1 = 0
+   Inst2 = 0
+   Mute0 = 0
+   Mute1 = 0
+   Mute2 = 0
+   Mute3 = 0
+   Visible0 = -1
+   Visible1 = -1
+   Visible2 = -1
+   Visible3 = -1
+   ID = Sound12
+   Size = 3756
+   Description = ""
+   TPQN = 0
+
+[Sound10]
+   Key = 0
+   TQPN = 16
+   Inst0 = 0
+   Inst1 = 0
+   Inst2 = 0
+   Mute0 = 0
+   Mute1 = 0
+   Mute2 = 0
+   Mute3 = 0
+   Visible0 = -1
+   Visible1 = -1
+   Visible2 = -1
+   Visible3 = -1
+   ID = Sound10
+   Size = 2221
+   Description = ""
+   TPQN = 0
+
+[Sound41]
+   Key = 0
+   TQPN = 16
+   Inst0 = 0
+   Inst1 = 0
+   Inst2 = 0
+   Mute0 = 0
+   Mute1 = 0
+   Mute2 = 0
+   Mute3 = 0
+   Visible0 = -1
+   Visible1 = -1
+   Visible2 = -1
+   Visible3 = -1
+   ID = Sound41
+   Size = 6711
+   Description = ""
+   TPQN = 0
+
+[Sound16]
+   Key = 0
+   TQPN = 16
+   Inst0 = 0
+   Inst1 = 0
+   Inst2 = 0
+   Mute0 = 0
+   Mute1 = 0
+   Mute2 = 0
+   Mute3 = 0
+   Visible0 = -1
+   Visible1 = -1
+   Visible2 = -1
+   Visible3 = -1
+   ID = Sound16
+   Size = 3486
+   Description = ""
+   TPQN = 0
+
+[Sound11]
+   Key = 0
+   TQPN = 16
+   Inst0 = 0
+   Inst1 = 0
+   Inst2 = 0
+   Mute0 = 0
+   Mute1 = 0
+   Mute2 = 0
+   Mute3 = 0
+   Visible0 = -1
+   Visible1 = -1
+   Visible2 = -1
+   Visible3 = -1
+   ID = Sound11
+   Size = 3036
+   Description = ""
+   TPQN = 0
+
+[Sound15]
+   Key = 0
+   TQPN = 16
+   Inst0 = 0
+   Inst1 = 0
+   Inst2 = 0
+   Mute0 = 0
+   Mute1 = 0
+   Mute2 = 0
+   Mute3 = 0
+   Visible0 = -1
+   Visible1 = -1
+   Visible2 = -1
+   Visible3 = -1
+   ID = Sound15
+   Size = 3596
+   Description = ""
+   TPQN = 0
+[::END Sounds::]
+
+[::BEGIN Pictures::]
+
+[Picture1]
+   ID = Picture1
+   Size = 7680
+   BkgdImg = ""
+   Description = ""
+
+[Picture2]
+   ID = Picture2
+   Size = 6395
+   BkgdImg = ""
+   Description = ""
+
+[Picture3]
+   ID = Picture3
+   Size = 2232
+   BkgdImg = ""
+   Description = ""
+
+[Picture4]
+   ID = Picture4
+   Size = 1757
+   BkgdImg = ""
+   Description = ""
+
+[Picture5]
+   ID = Picture5
+   Size = 5796
+   BkgdImg = ""
+   Description = ""
+
+[Picture6]
+   ID = Picture6
+   Size = 9573
+   BkgdImg = ""
+   Description = ""
+
+[Picture7]
+   ID = Picture7
+   Size = 6540
+   BkgdImg = ""
+   Description = ""
+
+[Picture8]
+   ID = Picture8
+   Size = 4429
+   BkgdImg = ""
+   Description = ""
+
+[Picture9]
+   ID = Picture9
+   Size = 3273
+   BkgdImg = ""
+   Description = ""
+
+[Picture10]
+   ID = Picture10
+   Size = 3383
+   BkgdImg = ""
+   Description = ""
+
+[Picture11]
+   ID = Picture11
+   Size = 2636
+   BkgdImg = ""
+   Description = ""
+
+[Picture12]
+   ID = Picture12
+   Size = 6
+   BkgdImg = ""
+   Description = ""
+
+[Picture13]
+   ID = Picture13
+   Size = 5409
+   BkgdImg = ""
+   Description = ""
+
+[Picture14]
+   ID = Picture14
+   Size = 2478
+   BkgdImg = ""
+   Description = ""
+
+[Picture15]
+   ID = Picture15
+   Size = 10152
+   BkgdImg = ""
+   Description = ""
+
+[Picture16]
+   ID = Picture16
+   Size = 4138
+   BkgdImg = ""
+   Description = ""
+
+[Picture17]
+   ID = Picture17
+   Size = 6
+   BkgdImg = ""
+   Description = ""
+
+[Picture18]
+   ID = Picture18
+   Size = 4348
+   BkgdImg = ""
+   Description = ""
+[::END Pictures::]
+
+[WORDS.TOK]
+   Description = ""
+
+[OBJECT]
+   Description = ""

@@ -1,0 +1,739 @@
+// ****************************************************************************
+//
+// Logic 4: Well's End
+//
+// ****************************************************************************
+
+
+#include "defines.txt"
+#include "custom.txt"
+
+#define fEgoJumped f61
+#define fEgoJumpedOnBed f62
+#define fEgoJumpedScared f63
+#define fEgoJumpedDead f64
+#define fEgoJumpedDeadGone f65
+#define fEgoJumpReady f66
+#define fEgoJumping f67
+#define fEgoJumpDone f68
+#define fEgoOnFire f69
+#define fTurtleManStarted f70
+#define fTurtleManMoved f71
+#define fTurtleManAttacked f72
+#define fEgoCutInHalf f73
+#define fRabbitRaceStarted f74
+#define fRabbitRanAway f75
+#define fTurtleManRanAway f76
+#define fElevatorShake f77
+#define fEgoLookTurtleMan f78
+#define fTurtleManSliced f79
+#define fEgoReadyForTurtleMan f80
+#define fEgoLightingCandle f81
+#define fEgoLitCandle f82
+#define fEgoLightingCandleFireElemental f83
+#define fEgoLitCandleFireElemental f84
+
+#define oTurtleMan o33 
+#define oBellows o234
+
+#define vTurtleManRanAwayCount v100
+
+if (new_room){
+  load.pic(room_no);
+  draw.pic(room_no);
+  discard.pic(room_no);
+  set.horizon(0);
+
+  status.line.on();
+  accept.input();
+
+  // Fire
+  animate.obj(oFire);
+  load.view(35);
+  set.view(oFire,35);
+  position(oFire,35,127);
+  set.loop(oFire,0);
+  set.cel(oFire,0);
+  ignore.blocks(oFire);
+  ignore.objs(oFire);
+  v80 = 2;
+  cycle.time(oFire,v80);
+  draw(oFire);
+
+  // TurtleMan
+  if (!fRabbitTurtleManRaced) {
+    animate.obj(oTurtleMan);
+    load.view(33);
+    set.view(oTurtleMan,33);
+    position(oTurtleMan,42,142);
+    set.loop(oTurtleMan,0);
+    set.cel(oTurtleMan,0);
+    ignore.blocks(oTurtleMan);
+    ignore.objs(oTurtleMan);
+    draw(oTurtleMan);
+    stop.cycling(oTurtleMan);
+    fix.loop(oTurtleMan);
+  }
+
+  // Lotion
+  if (!fLotionGet) {
+    animate.obj(oLotion);
+    load.view(223);
+    set.view(oLotion,223);
+    position(oLotion,36,148);
+    set.loop(oLotion,2);
+    draw(oLotion);
+    stop.cycling(oLotion);
+  }
+
+  // Bellows
+  if (!fBellowsGet) {
+    animate.obj(oBellows);
+    load.view(234);
+    set.view(oBellows,234);
+    position(oBellows,40,152);
+    set.cel(oBellows,1);
+    stop.cycling(oBellows);
+    draw(oBellows);
+  }
+
+  // Position
+  if (prev_room_no == 3) {
+    v80 = 159;
+    if (old_ego_y < 106) {
+      old_ego_y = 106;
+    }
+    else {
+      if (old_ego_y > 150) {
+        old_ego_y = 150;
+      }
+    }
+    position.v(ego,v80,old_ego_y);
+  }
+  else {
+    position(ego,152,136);
+    set.loop(ego,1);
+  }
+  
+  vCount = 20;
+  if (!fRabbitTurtleManRaced) {
+    load.sound(4);
+    load.sound(41);
+    sound(4,fSoundDone);
+  }
+  else {
+    load.sound(41);
+    sound(41,fSoundDone);
+  }
+
+  draw(ego);
+  call(89);
+  show.pic();
+}
+if (fSoundDone) {
+  if (vCount < 40) {
+    vCount++;
+  }
+  else {
+    vCount = 20;
+    if (!fRabbitTurtleManRaced) {
+      reset(fSoundDone);
+      sound(4,fSoundDone);
+    }
+    else {
+      reset(fSoundDone);
+      sound(41,fSoundDone);
+    }
+  }
+}
+
+if (said("look")) {
+  print("This is the end of the well, or if you prefer, the well's end. "
+        "Does that mean this is the well's all?");
+  print("This obviously has become someone's lair. "
+        "There is a bed against the cave wall, and a fire is burning.");
+  if (!fLotionGet) {
+    print("Next to the fire, you see a bottle of something.");
+  }
+  if (!fBellowsGet) {
+    print("Next to the fire, you see some bellows.");
+  }
+  if (fEyeglassesShowElemental) {
+    print("There is a Fire Elemental burning in the fire pit.");
+  }
+  if (!fRabbitTurtleManRaced) {
+    set(fEgoLookTurtleMan);
+  }
+}
+if ((said("look", "man")
+||   said("look", "tortoise")
+||   fEgoLookTurtleMan)) {
+  reset(fEgoLookTurtleMan);
+  print("A large green, reptilian adolescent is staring at you. "
+        "In his hand is quite the menacing sword. "
+        "You might not want to get too close to the cut of that blade.");
+}
+if (said("look","rock")) {
+  print("Like a rock.");
+}
+if (said("look","stalactite")) {
+  print("stalactite\n"
+        "[stuh-lak-tahyt,\n"
+        " stal-uhk-tahyt]\n"
+        "noun\n\n"
+        "A deposit, usually of calcium carbonate, shaped like an icicle, "
+        "hanging from the roof of a cave or the like, "
+        "and formed by the dripping of percolating calcareous water.\n\n"
+        "\"stalactite.\" Dictionary.com Unabridged. Random House, Inc.");
+  print("stalagmite\n"
+        "[stuh-lag-mahyt,\n"
+        " stal-uhg-mahyt]\n"
+        "noun\n\n"
+        "A deposit, usually of calcium carbonate, more or less resembling an inverted stalactite, "
+        "formed on the floor of a cave or the like by the dripping of percolating calcareous water.\n\n"
+        "\"stalagmite.\" Dictionary.com Unabridged. Random House, Inc.");
+  if (!fLookStalactite) {
+    set(fLookStalactite);
+    score++;
+  }
+  print("See, you learned something today.");
+}
+if (said("look","bed")) {
+  print("Are you tired of this quest already? Maybe you should get some rest. "
+        "Go on, jump into bed!");
+}
+if (said("look","fire")) {
+  print("The fire mesmerizes you...");
+  print("Fryer! Fryer! Fryer!");
+  if (fEyeglassesShowElemental) {
+    print("There is a Fire Elemental burning in the fire pit.");
+  }
+}
+if ((said("look","lotion")
+||   said("look","bottle"))) {
+  if (!fLotionGet) {
+    print("You see a lovely bottle of lotion. Oh the things you could do with that... "
+          "Wait! What?");
+  }
+  else {
+    print("Are you seeing lotions that aren't there? "
+          "You might need to talk to someone about that.");
+  }
+}
+if (said("look","bellows")) {
+  if (!fBellowsGet) {
+    print("Ahh, bellows, that's how the fire rages on 'til the break of dawn.");
+  }
+  else {
+    print("You do not see what you could have once seen.");
+  }
+}
+if (fEyeglassesShowElemental
+&&  (said("look","fire","elemental")
+||   said("look","elemental"))) {
+  print("A majestic Fire Elemental. It's burning, it's burning, it's burning for you.");
+}
+
+// Rock
+if (said("get","rock")) {
+  if (!has("Rock")) {
+    get("Rock");
+    show.obj(221);
+    if (!fRockGet) {
+      set(fRockGet);
+      score++;
+    }
+  }
+  else {
+    print("How many rocks do you need?");
+  }
+}
+
+// TurtleMan
+if ((said("talk","man")
+||   said("talk","turtle"))) {
+  print("The abnormally large tortoise has no interest in talking to you.\n"
+        "Seriously, why do you even bother trying to be polite these days.");
+}
+if (!fRabbitTurtleManRaced
+&&  !fTurtleManStarted
+&&  !fRabbitRaceStarted
+&&  posn(ego,86,92,86,166)) {
+  move.obj(ego,86,132,1,fEgoReadyForTurtleMan);
+}
+if (fEgoReadyForTurtleMan) {
+  reset(fEgoReadyForTurtleMan);
+  set.loop(ego,1);
+  set.cel(ego,3);
+  program.control();
+  prevent.input();
+  set(fTurtleManStarted);
+  stop.motion(ego);
+  get.posn(oTurtleMan,v_x,v_y);
+
+  // FaceTurtleMan
+  load.view(201);
+  animate.obj(oFaceTurtleMan);
+  set.view(oFaceTurtleMan,201);
+  set.loop(oFaceTurtleMan,1);
+  set.cel(oFaceTurtleMan,0);
+  position(oFaceTurtleMan,5,67);
+  ignore.objs(oFaceTurtleMan);
+  v_cycle = 2;
+  cycle.time(oFaceTurtleMan,v_cycle);
+  draw(oFaceTurtleMan);
+  end.of.loop(oFaceTurtleMan,fFaceTalked);
+}
+if (fFaceTalked
+&&  !fRabbitRaceStarted) {
+  reset(fFaceTalked);
+  set.loop(oFaceTurtleMan,0);
+  set.cel(oFaceTurtleMan,0);
+  end.of.loop(oFaceTurtleMan,fFaceBlinked);
+}
+if (fFaceBlinked
+&&  !fRabbitRaceStarted) {
+  reset(fFaceBlinked);
+  set.loop(oFaceTurtleMan,1);
+  set.cel(oFaceTurtleMan,0);
+
+  print("\"Hey you!\", the tortoise man yells, \"What do you think this is?\"");
+  follow.ego(oTurtleMan,4,fTurtleManMoved);
+  normal.cycle(oTurtleMan);
+
+  erase(oFaceTurtleMan);
+}
+if (fTurtleManMoved) {
+  reset(fTurtleManMoved);
+  stop.cycling(oTurtleMan);
+  set.loop(oTurtleMan,1);
+  set.cel(oTurtleMan,0);
+  normal.cycle(oTurtleMan);
+  end.of.loop(oTurtleMan,fTurtleManAttacked);
+}
+if (fTurtleManAttacked) {
+  reset(fTurtleManAttacked);
+  get.posn(ego,new_ego_x,new_ego_y);
+  new_ego_x = new_ego_x - 1;
+  new_ego_y = new_ego_y + 1;
+  load.view(5);
+  set.view(egoAlt,5);
+  set.loop(egoAlt,0);
+  set.cel(egoAlt,0);
+  position.v(egoAlt,new_ego_x,new_ego_y);
+  get.priority(ego,v_priority);
+  set.priority.v(egoAlt,v_priority);
+  erase(ego);
+  draw(egoAlt);
+  stop.cycling(egoAlt);
+  v_cycle = 2;
+  cycle.time(egoAlt,v_cycle);
+  end.of.loop(egoAlt,fTurtleManSliced);
+}
+if (fTurtleManSliced) {
+  reset(fTurtleManSliced);
+  set.loop(oTurtleMan,0);
+  set.cel(oTurtleMan,7);
+  reverse.cycle(oTurtleMan);
+  v_step = 1;
+  move.obj.v(oTurtleMan,v_x,v_y,v_step,fEgoCutInHalf);
+}
+if (fEgoCutInHalf) {
+  reset(fEgoCutInHalf);
+  stop.cycling(oTurtleMan);
+  set.cel(oTurtleMan,0);
+  new_ego_x = new_ego_x + 24;
+  position.v(ego,new_ego_x,new_ego_y);
+  death_type = 1;
+  if (!fDeathSliced) {
+    set(fDeathSliced);
+    score++;
+  }
+}
+if (fDeathSliced
+&&  !fRabbitTurtleManRaced
+&&  !fRabbitRaceStarted) {
+  if (posn(ego,86,92,86,166)) {
+    ego_dir = 3;
+    print("He didn't cut you no slack.");
+    print("You've sure learned your lesson. Better stay away from that tortoise, "
+          "or find a way to get rid of him.");
+  }
+}
+
+// Rabbit
+if ((said("drop","rabbit")
+||   said("release","rabbit")
+||   said("put down","rabbit")
+||   said("let go","rabbit"))
+&&   has("Rabbit")) {
+  if (center.posn(ego,86,122,120,144)) {
+    set(fRabbitRaceStarted);
+    get.posn(ego,new_ego_x,new_ego_y);
+    animate.obj(oRabbit);
+    load.view(75);
+    set.view(oRabbit,75);
+    position.v(oRabbit,new_ego_x,new_ego_y);
+    set.loop(oRabbit,0);
+    set.cel(oRabbit,0);
+    ignore.blocks(oRabbit);
+    ignore.objs(oRabbit);
+    move.obj(oRabbit,159,134,0,fRabbitRanAway);
+    draw(oRabbit);
+    drop("Rabbit");
+    prevent.input();
+  }
+  else {
+    print("Maybe you should put the rabbit down somewhere under the stalagmite, "
+          "so the tortoise can see it.");
+  }
+}
+if (fRabbitRanAway) {
+  reset(fRabbitRanAway);
+  erase(oRabbit);
+
+  // FaceTurtleMan
+  load.view(201);
+  animate.obj(oFaceTurtleMan);
+  set.view(oFaceTurtleMan,201);
+  set.loop(oFaceTurtleMan,1);
+  set.cel(oFaceTurtleMan,0);
+  position(oFaceTurtleMan,5,67);
+  ignore.objs(oFaceTurtleMan);
+  v_cycle = 2;
+  cycle.time(oFaceTurtleMan,v_cycle);
+  draw(oFaceTurtleMan);
+  end.of.loop(oFaceTurtleMan,fFaceTalked);
+}
+if (fFaceTalked
+&&  fRabbitRaceStarted) {
+  reset(fFaceTalked);
+  set.loop(oFaceTurtleMan,0);
+  set.cel(oFaceTurtleMan,0);
+  end.of.loop(oFaceTurtleMan,fFaceBlinked);
+}
+if (fFaceBlinked
+&&  fRabbitRaceStarted) {
+  reset(fFaceBlinked);
+  set.loop(oFaceTurtleMan,1);
+  set.cel(oFaceTurtleMan,0);
+
+  print("\"Oh!  The rabbit wants to race!  Come back rabbit!\"");
+  normal.cycle(oTurtleMan);
+  move.obj(oTurtleMan,159,136,2,fTurtleManRanAway);
+
+  erase(oFaceTurtleMan);
+}
+if (fTurtleManRanAway) {
+  reset(fTurtleManRanAway);
+  erase(oTurtleMan);
+  vTurtleManRanAwayCount = 0;
+  set(fElevatorShake);
+  set(fRabbitTurtleManRaced);
+  score++;
+}
+if (fElevatorShake) {
+  vTurtleManRanAwayCount = vTurtleManRanAwayCount + 1;
+  if (vTurtleManRanAwayCount == 25) {
+    reset(fElevatorShake);
+    
+    vCount = 0;
+    load.sound(100);
+    sound(100, fSoundDone);
+    shake.screen(1);
+    
+    reset(fRabbitRaceStarted);
+    accept.input();
+  }
+}
+
+// Lotion
+if (said("get","lotion")) {
+  if (obj.in.room("Lotion",room_no)) {
+    distance(ego,oLotion,v_distance);
+    if (v_distance < 20) {
+      get("Lotion");
+      erase(oLotion);
+      show.obj(223);
+      set(fLotionGet);
+      score++;
+    }
+    else {
+      print("Using your mind, you try and will the lotion into your hands. "
+            "Hmm, didn't work. Get closer.");
+    }
+  }
+  else {
+    print("There is no lotion to get.");
+  }
+}
+
+// Bellows
+if (said("get","bellows")) {
+  if (!fBellowsGet) {
+    distance(ego,oBellows,v_distance);
+    if (v_distance < 20) {
+      get("Bellows");
+      erase(oBellows);
+      show.obj(234);
+      set(fBellowsGet);
+      score++;
+    }
+    else {
+      print("You'll have to get closer.");
+    }
+  }
+  else {
+    print("There are no bellows to get.");
+  }
+}
+
+// Bed
+if ((said("jump","bed")
+||   said("jump","in","bed")
+||   said("jump","into","bed")
+||   said("jump","on","bed")
+||   said("get","in","bed")
+||   said("get","into","bed")
+||   said("get","on","bed"))) {
+  if (posn(ego,34,90,84,130)) {
+    program.control();
+    prevent.input();
+    get.posn(ego,new_ego_x,new_ego_y);
+    current.loop(ego,v_loop);
+    erase(ego);
+    animate.obj(egoAlt);
+    load.view(37);
+    set.view(egoAlt,37);
+    set.loop(egoAlt,1);
+    set.cel(egoAlt,0);
+    new_ego_x = new_ego_x - 5;
+    position.v(egoAlt,new_ego_x,new_ego_y);
+    get.priority(ego,v_priority);
+    set.priority.v(egoAlt,v_priority);
+    normal.cycle(egoAlt);
+    ignore.blocks(egoAlt);
+    ignore.horizon(egoAlt);
+    ignore.objs(egoAlt);
+    erase(ego);
+    draw(egoAlt);
+    end.of.loop(egoAlt,fEgoJumpReady);
+  }
+  else {
+    print("You can't jump that far. Get closer");
+  }
+}
+if (fEgoJumpReady) {
+  reset(fEgoJumpReady);
+  set.loop(egoAlt,0);
+  set.cel(egoAlt,0);
+  end.of.loop(egoAlt,fEgoJumping);
+  move.obj(egoAlt, 50, 90, 0, fEgoJumped);
+}
+if (fEgoJumped) {
+  reset(fEgoJumped);
+  set.loop(egoAlt,2);
+  set.cel(egoAlt,0);
+  end.of.loop(egoAlt,fEgoJumping);
+  move.obj(egoAlt, 50, 112, 0, fEgoJumpedOnBed);
+}
+if (fEgoJumpedOnBed) {
+  reset(fEgoJumpedOnBed);
+  print("This is a comfortable bed. You could rest here for a whi...");
+  print("Hold on...");
+  print("Something's moving...");
+  set.loop(egoAlt,3);
+  set.cel(egoAlt,0);
+  v_cycle = 4;
+  cycle.time(egoAlt,v_cycle);
+  end.of.loop(egoAlt,fEgoJumpedScared);
+}
+if (fEgoJumpedScared) {
+  reset(fEgoJumpedScared);
+  load.view(38);
+  set.view(egoAlt,38);
+  set.loop(egoAlt,0);
+  set.cel(egoAlt,0);
+  end.of.loop(egoAlt,fEgoJumpedDead);
+}
+if (fEgoJumpedDead) {
+  reset(fEgoJumpedDead);
+  load.view(39);
+  set.view(egoAlt,39);
+  set.loop(egoAlt,0);
+  set.cel(egoAlt,0);
+  end.of.loop(egoAlt,fEgoJumpedDeadGone);
+}
+if (fEgoJumpedDeadGone) {
+  reset(fEgoJumpedDeadGone);
+  print("You've had better naps.");
+  set.priority(egoAlt,9);
+  death_type = 1;
+  if (!fDeathBed) {
+    set(fDeathBed);
+    score++;
+  }
+}
+
+// Fire
+if ((said("get","fire","elemental")
+||   said("get","elemental"))) {
+  if (has("Fire Elemental")) {
+    print("You're already hot enough!");
+  }
+  else {
+    if (fEyeglassesShowElemental) {
+      set(fEgoLightingCandleFireElemental);
+    }
+    else {
+      print("You don't see that...");
+    }
+  }
+}
+if ((fEgoLightingCandleFireElemental
+||   said("get","fire")
+||   said("touch","fire"))) {
+  reset(fEgoLightingCandleFireElemental);
+  if (posn(ego,40,122,46,134)) {
+    print("There has to be a better way to get some fire.  Oh well, let's give it a try.");
+    program.control();
+    prevent.input();
+    get.posn(ego,new_ego_x,new_ego_y);
+    load.view(10);
+    set.view(egoAlt,10);
+    set.loop(egoAlt,0);
+    set.cel(egoAlt,0);
+    new_ego_x = new_ego_x - 7;
+    position.v(egoAlt,new_ego_x,new_ego_y);
+    get.priority(ego,v_priority);
+    set.priority.v(egoAlt,v_priority);
+    normal.cycle(egoAlt);
+    ignore.blocks(egoAlt);
+    ignore.objs(egoAlt);
+    erase(ego);
+    draw(egoAlt);
+    v_cycle = 4;
+    cycle.time(egoAlt,v_cycle);
+    end.of.loop(egoAlt,fEgoOnFire);
+  }
+  else {
+    print("The easiest way to reach the fire is to stand to the right of it.");
+  }
+}
+if (fEgoOnFire) {
+  reset(fEgoOnFire);
+  current.loop(egoAlt,v_loop);
+  v_loop++;
+  if (v_loop > 2) {
+    reset(fEgoOnFire);
+    death_type = 1;
+    if (!fDeathFire) {
+      set(fDeathFire);
+      score++;
+    }
+  }
+  else {
+    set.loop.v(egoAlt,v_loop);
+    set.cel(egoAlt,0);
+    end.of.loop(egoAlt,fEgoOnFire);
+  }
+}
+if (fEyeglassesShowElemental
+&&  (said("get","fire","elemental","candelabra")
+||   said("get","elemental","candelabra"))) {
+  if (has("Fire Elemental")) {
+    print("You're already hot enough!");
+  }
+  else {
+    set(fEgoLightingCandleFireElemental);
+  }
+}
+if ((fEgoLightingCandleFireElemental
+||   said("get","fire","candelabra")
+||   said("light","candelabra"))) {
+  reset(fEgoLightingCandleFireElemental);
+  if (has("Fire Elemental")) {
+    print("How much fire do you really need to be carrying with you?");
+  }
+  else {
+    if (posn(ego,40,122,46,134)) {
+      program.control();
+      prevent.input();
+      get.posn(ego,new_ego_x,new_ego_y);
+      load.view(10);
+      set.view(egoAlt,10);
+      set.loop(egoAlt,0);
+      set.cel(egoAlt,0);
+      new_ego_x = new_ego_x - 7;
+      position.v(egoAlt,new_ego_x,new_ego_y);
+      get.priority(ego,v_priority);
+      set.priority.v(egoAlt,v_priority);
+      normal.cycle(egoAlt);
+      ignore.blocks(egoAlt);
+      ignore.objs(egoAlt);
+      erase(ego);
+      draw(egoAlt);
+      v_cycle = 4;
+      cycle.time(egoAlt,v_cycle);
+      end.of.loop(egoAlt,fNothing);
+      set(fEgoLightingCandle);
+    }
+    else {
+      print("The easiest way to reach the fire is to stand to the right of it.");
+    }
+  }
+}
+if (fEgoLitCandle) {
+  current.cel(egoAlt,v_cel);
+  if (v_cel == 0) {
+    reset(fEgoLitCandle);
+    drop("Candelabra");
+    get("Lit Candelabra");
+    if (fElementalFireSeen) {
+      reset(fEyeglassesShowElemental);
+      get("Fire Elemental");
+      show.obj(231);
+      if (!fElementalFireGet) {
+        set(fElementalFireGet);
+        score++;
+      }
+    }
+    else {
+      show.obj(230);
+    }
+    erase(egoAlt);
+    draw(ego);
+    accept.input();
+    player.control();
+  }
+}
+if (fEgoLightingCandle) {
+  current.cel(egoAlt,v_cel);
+  if (v_cel == 4) {
+    reset(fEgoLightingCandle);
+    set(fEgoLitCandle);
+    stop.cycling(egoAlt);
+    if (fElementalFireSeen) {
+      set.loop(oElemental,0);
+      last.cel(oElemental,v_cel_last);
+      set.cel.v(oElemental,v_cel_last);
+      reverse.loop(oElemental,fEgoLitCandleFireElemental);
+    }
+    else {
+      reverse.cycle(egoAlt);
+    }
+  }
+}
+if(fEgoLitCandleFireElemental) {
+  reset(fEgoLitCandleFireElemental);
+  set(fElementalGone);
+  reverse.cycle(egoAlt);
+}
+
+if (!fRabbitRaceStarted
+&&  ego_edge_code == right_edge) {
+  reset(fEyeglassesShowElemental);
+  new.room(3);
+}
+
+return();

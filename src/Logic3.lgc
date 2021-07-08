@@ -1,0 +1,585 @@
+// ****************************************************************
+//
+// Logic 3 - Well
+//
+// ****************************************************************
+
+
+#include "defines.txt"
+#include "custom.txt"
+
+#define fElevatorReady           f40
+#define fElevatorReadyOpen       f41
+#define fElevatorReadyDone       f42
+#define fEgoWaterDeath           f60
+#define fEgoWaterDeathDead       f61
+#define fEgoWaterDeathStart      f62
+#define fEgoElevatorDeathPress   f63
+#define fEgoElevatorDeathStart   f64
+#define fEgoElevatorDeathScream  f65
+#define fEgoElevatorDeathCrush   f66
+#define fEgoElevatorDeathDead    f67
+#define fEgoElevatorDeathReturn  f68
+#define fEgoElevatorDeathTop     f69
+#define fElevatorPressTop        f70
+#define fElevatorStopBottom      f71
+#define fElevatorDoorOpen        f72
+#define fElevatorStartBottom     f73
+#define fElevatorStopTop         f74
+#define fElevatorStopTopDone     f75
+#define fRockThrown              f76
+#define fRockMovingStart         f77
+#define fRockMoving              f78
+#define fRockHitButton           f79
+#define fRockFell                f80
+#define fElevator2Down           f81
+#define fElevator2StopBottom     f82
+#define fElevator2OpenDoor       f83
+
+#define oElevator                o33
+#define oRockThrown              o34
+#define egoThrowRock             o36
+
+#define vRock_x                  v100
+#define vRock_y                  v101
+#define vButton_x                v102
+#define vButton_y                v103
+#define vRock_ratio_x            v104
+#define vRock_ratio_y            v105
+
+if (new_room){
+  load.pic(room_no);
+  draw.pic(room_no);
+  discard.pic(room_no);
+  set.horizon(0);
+
+  status.line.on();
+  accept.input();
+
+  // Position
+  position(ego,0,0);
+  if (prev_room_no == 2) {
+
+    // Elevator 1
+    load.view(30);
+    set.view(egoAlt,30);
+    position(egoAlt,62,44);
+    set.loop(egoAlt,0);
+    set.cel(egoAlt,0);
+    ignore.blocks(egoAlt);
+    ignore.objs(egoAlt);
+    draw(egoAlt);
+    stop.cycling(egoAlt);
+    
+    vCount = 0;
+    
+    load.sound(30);
+    sound(30,fSoundDone);
+  }
+  else {
+    // Elevator 2
+    if (prev_room_no != 2) {
+      animate.obj(oElevator);
+      load.view(32);
+      set.view(oElevator,32);
+      if (fRabbitTurtleManRaced
+      &&  !fRockThrownButton) {
+        position(oElevator,62,44);
+        set.loop(oElevator,1);
+        set.cel(oElevator,0);
+        ignore.blocks(oElevator);
+        ignore.objs(oElevator);
+        stop.cycling(oElevator);
+        draw(oElevator);
+      }
+      else {
+        position(oElevator,62,128);
+        set.loop(oElevator,0);
+        set.cel(oElevator,0);
+        set.priority(oElevator,8);
+        ignore.blocks(oElevator);
+        ignore.objs(oElevator);
+        stop.cycling(oElevator);
+        draw(oElevator);
+      }
+
+      // Position
+      v80 = 0;
+      if (old_ego_y < 128) {
+        old_ego_y = 128;
+      }
+      else {
+        if (old_ego_y > 150) {
+          old_ego_y = 150;
+        }
+      }
+      position.v(ego,v80,old_ego_y);
+      draw(ego);
+      
+      load.sound(31);
+      sound(31,fSoundDone);
+      set(fElevatorReadyDone);
+    }
+  }
+
+  call(89);
+  show.pic();
+}
+if (prev_room_no == 2
+&&  !fElevatorReady) {
+  if (vCount < 42) {
+    vCount++;
+  }
+  else {
+    if (!fElevatorReady) {
+      set(fElevatorReady);
+      end.of.loop(egoAlt,fElevatorPressTop);
+    }
+  }
+}
+if (fElevatorReadyOpen
+&&  fSoundDone) {
+  if (vCount < 20) {
+    vCount++;
+  }
+  else {
+    reset(fElevatorReadyOpen);
+    vCount = 0;
+    reset(fSoundDone);
+    load.sound(31);
+    sound(31,fSoundDone);
+    set(fElevatorReadyDone);
+  }
+}
+if (fElevatorReadyDone
+&&  fSoundDone) {
+  if (vCount < 20) {
+    vCount++;
+  }
+  else {
+    vCount = 0;
+    reset(fSoundDone);
+    sound(31,fSoundDone);
+  }
+}
+
+if (said("look")) {
+  print("This well is dry... Maybe not completely. "
+        "Only a small pool of water remains. "
+        "Large and small rocks litter the floor. "
+        "And last but not least, there is a nice elevator that you had installed.\n\n"
+        "Why did you install an elevator? "
+        "You really thought you'd have a reason to use this well?");
+}
+if (said("look","elevator")) {
+  print("Whenever you are down, the elevator lifts you up. "
+        "Should you thank the elevator or the buttons?");
+}
+if (said("look","button")) {
+  print("There are two buttons. A button near the top moves the elevator down. "
+        "A button near the bottom moves the elevator up.");
+}
+if (said("look","water")) {
+  print("Is this the first time you have seen water?");
+}
+if (said("look","rock")) {
+  print("Like a rock. You see some good throwing rocks scattered about.");
+}
+if (said("look","wall")) {
+  print("Don't worry, these walls are not closing in on you.");
+}
+
+
+// Elevator
+if (fElevatorPressTop) {
+  reset(fElevatorPressTop);
+  move.obj(egoAlt, 62, 130, 4, fElevatorStopBottom);
+}
+if (fElevatorStopBottom) {
+  reset(fElevatorStopBottom);
+  
+  set(fElevatorReadyOpen);
+  vCount = 0;
+  
+  load.sound(100);
+  sound(100, fSoundDone);
+  shake.screen(1);
+  
+  set.loop(egoAlt,1);
+  set.cel(egoAlt,0);
+  stop.cycling(egoAlt);
+  end.of.loop(egoAlt,fElevatorDoorOpen);
+}
+
+if (fElevatorDoorOpen) {
+  reset(fElevatorDoorOpen);
+
+  // Elevator
+  animate.obj(oElevator);
+  load.view(32);
+  set.view(oElevator,32);
+  ignore.blocks(oElevator);
+  ignore.objs(oElevator);
+  position(oElevator,62,128);
+  set.priority(oElevator,8);
+  stop.cycling(oElevator);
+  draw(oElevator);
+
+  // Ego
+  position(ego,63,123);
+  ignore.objs(ego);
+  set.loop(ego,0);
+  set.cel(ego,0);
+  ego_dir = stopped;
+  draw(ego);
+
+  erase(egoAlt);
+}
+
+if (said("press","button")) {
+  if (center.posn(ego,62,122,71,126)) {
+    get.posn(oElevator,v_x,v_y);
+    if (v_x == 62
+    &&  v_y == 44) {
+      load.view(31);
+      set.view(egoAlt,31);
+      set.loop(egoAlt,2);
+      set.cel(egoAlt,0);
+      ignore.blocks(egoAlt);
+      position(egoAlt,63,129);
+      stop.cycling(egoAlt);
+      draw(egoAlt);
+      erase(ego);
+      end.of.loop(egoAlt,fEgoElevatorDeathPress);
+    }
+    else {
+      load.view(31);
+      set.view(egoAlt,31);
+      set.loop(egoAlt,0);
+      set.cel(egoAlt,0);
+      get.posn(oElevator,v_x,v_y);
+      position.v(egoAlt,v_x,v_y);
+      ignore.blocks(egoAlt);
+      stop.cycling(egoAlt);
+      draw(egoAlt);
+      erase(ego);
+      erase(oElevator);
+      end.of.loop(egoAlt,fElevatorStartBottom);
+      if (!fPressButton) {
+        set(fPressButton);
+        score++;
+      }
+    }
+  }
+  else {
+    print("You're not close enough.");
+  }
+}
+if (fEgoElevatorDeathPress) {
+  reset(fEgoElevatorDeathPress);
+  
+  draw(ego);
+  erase(egoAlt);
+  
+  // Elevator Death
+  program.control();
+  prevent.input();
+  ignore.blocks(oElevator);
+  ignore.objs(oElevator);
+  move.obj(ego,64,127,1,fEgoElevatorDeathStart);
+  move.obj(oElevator,62,92,4,fEgoElevatorDeathScream);
+}
+if (fElevatorStartBottom) {
+  reset(fElevatorStartBottom);
+  vHaloOffset_y = 8;
+  move.obj(egoAlt, 62, 44, 4, fElevatorStopTop);
+}
+if (fElevatorStopTop) {
+  reset(fElevatorStopTop);
+  vHaloOffset_y = 0;
+  set.loop(egoAlt,1);
+  set.cel(egoAlt,0);
+  stop.cycling(egoAlt);
+  end.of.loop(egoAlt,fElevatorStopTopDone);
+  new.room(2);
+}
+if (fEgoElevatorDeathStart) {
+  reset(fEgoElevatorDeathStart);
+  load.view(12);
+  set.view(egoAlt,12);
+  set.loop(egoAlt,0);
+  set.cel(egoAlt,0);
+  normal.cycle(egoAlt);
+  ignore.blocks(egoAlt);
+  ignore.objs(egoAlt);
+  new_ego_x = new_ego_x - 13;
+  new_ego_y = new_ego_y + 8;
+  position.v(egoAlt,new_ego_x,new_ego_y);
+  get.priority(ego,v_priority);
+  v_priority = v_priority - 3;
+  set.priority.v(egoAlt,v_priority);
+  erase(ego);
+  draw(egoAlt);
+  stop.cycling(egoAlt);
+  end.of.loop(egoAlt,fNothing);
+}
+if (fEgoElevatorDeathScream) {
+  reset(fEgoElevatorDeathScream);
+  set.loop(egoAlt,1);
+  set.cel(egoAlt,0);
+  end.of.loop(egoAlt,fEgoElevatorDeathCrush);
+  move.obj(oElevator,62,128,1,fElevator2StopBottom);
+}
+if (fEgoElevatorDeathCrush) {
+  reset(fEgoElevatorDeathCrush);
+  set.loop(egoAlt,2);
+  set.cel(egoAlt,0);
+  end.of.loop(egoAlt,fEgoElevatorDeathDead);
+}
+
+// Water
+if (ego_on_water
+&&  !fEgoWaterDeathStart) {
+  set(fEgoWaterDeathStart);
+  set(fEgoWaterDeath);
+}
+if (fEgoWaterDeath) {
+  reset(fEgoWaterDeath);
+
+  // Water Death
+  program.control();
+  prevent.input();
+  load.view(4);
+  set.view(egoAlt,4);
+  set.loop(egoAlt,0);
+  set.cel(egoAlt,0);
+  new_ego_x = new_ego_x - 1;
+  position.v(egoAlt,new_ego_x,new_ego_y);
+  get.priority(ego,v_priority);
+  set.priority.v(egoAlt,v_priority);
+  normal.cycle(egoAlt);
+  ignore.blocks(egoAlt);
+  ignore.objs(egoAlt);
+  erase(ego);
+  draw(egoAlt);
+  stop.cycling(egoAlt);
+  v_cycle = 4;
+  cycle.time(egoAlt,v_cycle);
+  end.of.loop(egoAlt,fEgoWaterDeathDead);
+}
+if (fEgoWaterDeathDead) {
+  reset(fEgoWaterDeathDead);
+  set.loop(egoAlt,1);
+  set.cel(egoAlt,0);
+  erase(egoAlt);
+  print("That was precisely the reason you drained the well and signed up for public water and sewer.");
+  position(ego,88,134);
+  reset(fEgoWaterDeathStart);
+  death_type = 1;
+  if (!fDeathWater) {
+    set(fDeathWater);
+    score++;
+  }
+}
+
+// Rock
+if (said("get","rock")) {
+  if (!has("Rock")) {
+    get("Rock");
+    show.obj(221);
+    if (!fRockGet) {
+      set(fRockGet);
+      score++;
+    }
+  }
+  else {
+    print("How many rocks do you need?");
+  }
+}
+if (said("throw","rock","button")) {
+  if (has("Rock")) {
+    get.posn(oElevator,v_x,v_y);
+    if (v_x == 62
+    &&  v_y == 44) {
+      if (posn(ego,42,112,92,162)) {
+        drop("Rock");
+        program.control();
+        prevent.input();
+        print("You wind up with that world-class pitching arm...");
+        load.view(11);
+        set.view(egoAlt,11);
+        set.loop(egoAlt,0);
+        set.cel(egoAlt,0);
+        new_ego_x = new_ego_x - 4;
+        position.v(egoAlt,new_ego_x,new_ego_y);
+        get.priority(ego,v_priority);
+        v_priority = v_priority + 1;
+        set.priority.v(egoAlt,v_priority);
+        normal.cycle(egoAlt);
+        ignore.blocks(egoAlt);
+        ignore.objs(egoAlt);
+        erase(ego);
+        draw(egoAlt);
+        end.of.loop(egoAlt,fRockThrown);
+
+      }
+      else {
+        print("To throw the rock at the button, shouldn't you be under the button.");
+      }
+    }
+    else {
+      print("You don't have a reason to throw the rock.");
+    }
+  }
+  else {
+    print("You don't have a rock.");
+  }
+}
+else {
+  if (said("throw","rock")) {
+    if (has("Rock")) {
+      print("Throw the rock at what?");
+    }
+    else {
+      print("You don't have a rock.");
+    }
+  }
+}
+if (fRockThrown) {
+  reset(fRockThrown);
+  get.posn(egoAlt,v_x,v_y);
+  v_x = v_x + 4;
+  v_y = v_y - 24;
+  vButton_x = 71;
+  vButton_y = 21;
+  animate.obj(oRockThrown);
+  load.view(34);
+  set.view(oRockThrown,34);
+  position.v(oRockThrown,v_x,v_y);
+  ignore.blocks(oRockThrown);
+  ignore.objs(oRockThrown);
+  set.priority(oRockThrown,15);
+  draw(oRockThrown);
+  stop.cycling(oRockThrown);
+  set(fRockMovingStart);
+
+  set.loop(egoAlt,1);
+  set.cel(egoAlt,0);
+  end.of.loop(egoAlt,fNothing);
+}
+if (fRockMoving) {
+  get.posn(oRockThrown,vRock_x,vRock_y);
+  vRock_ratio_y = vRock_y;
+  vRock_ratio_y = vRock_ratio_y / vButton_y;
+  if (vRock_y > vButton_y) {
+    if (vRock_x > vButton_x) {
+      vRock_ratio_x = vRock_x;
+      vRock_ratio_x = vRock_ratio_x / vButton_x;
+      vRock_x = vRock_x - vRock_ratio_x;
+    }
+    else {
+      if (vRock_x < vButton_x) {
+        vRock_ratio_x = vButton_x;
+        vRock_ratio_x = vRock_ratio_x / vRock_x;
+        vRock_x = vRock_x + vRock_ratio_x;
+      }
+    }
+    if (v_y > vButton_y) {
+      vRock_y = vRock_y - vRock_ratio_y;
+    }
+    reposition.to.v(oRockThrown,vRock_x,vRock_y);
+  }
+  else {
+    reset(fRockMoving);
+    v_step = 1;
+    move.obj.v(oRockThrown,vButton_x,vButton_y,v_step,fRockHitButton);
+  }
+}
+if (fRockMovingStart) {
+  reset(fRockMovingStart);
+  set(fRockMoving);
+}
+if (fRockHitButton) {
+  reset(fRockHitButton);
+  if (center.posn(egoAlt,62,122,71,126)) {
+    // Elevator Death
+    erase(egoAlt);
+    draw(ego);
+    ignore.blocks(oElevator);
+    ignore.objs(oElevator);
+    move.obj(ego,64,127,1,fEgoElevatorDeathStart);
+    move.obj(oElevator,62,92,4,fEgoElevatorDeathScream);
+  }
+  else {
+    move.obj(oElevator,62,128,4,fElevator2StopBottom);
+  }
+  move.obj(oRockThrown,80,130,8,fRockFell);
+}
+if (fRockFell) {
+  reset(fRockFell);
+  erase(oRockThrown);
+}
+if (fElevator2StopBottom) {
+  reset(fElevator2StopBottom);
+  
+  reset(fElevatorReadyDone);
+  set(fElevatorReadyOpen);
+  vCount = 0;
+  
+  load.sound(100);
+  sound(100, fSoundDone);
+  shake.screen(1);
+  
+  end.of.loop(oElevator,fElevator2OpenDoor);
+}
+if (fElevator2OpenDoor) {
+  reset(fElevator2OpenDoor);
+
+  load.view(32);
+  set.view(oElevator,32);
+  set.loop(oElevator,0);
+  set.cel(oElevator,0);
+  ignore.blocks(oElevator);
+  ignore.objs(oElevator);
+  position(oElevator,62,128);
+  set.priority(oElevator,8);
+  stop.cycling(oElevator);
+  
+  if (fEgoElevatorDeathDead) {
+    reset(fEgoElevatorDeathDead);
+    set.priority(egoAlt,8);
+    print("You should have seen that one coming...");
+    set.loop(oElevator,1);
+    set.cel(oElevator,4);
+    reverse.loop(oElevator,fEgoElevatorDeathReturn);
+  }
+  else {
+    erase(egoAlt);
+    draw(ego);
+
+    if (!fRockThrownButton) {
+      set(fRockThrownButton);
+      score++;
+    }
+    player.control();
+    accept.input();
+  }
+}
+if (fEgoElevatorDeathReturn) {
+  reset(fEgoElevatorDeathReturn);
+  move.obj(oElevator,62,44,4,fEgoElevatorDeathTop);
+}
+if (fEgoElevatorDeathTop) {
+  reset(fEgoElevatorDeathTop);
+  death_type = 1;
+  if (!fDeathElevator) {
+    set(fDeathElevator);
+    score++;
+  }
+}
+
+if (ego_edge_code == left_edge) {
+  new.room(4);
+}
+
+return();

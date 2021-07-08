@@ -1,0 +1,86 @@
+// ****************************************************************
+//
+// Logic 11 - Girl
+//
+// ****************************************************************
+
+
+#include "defines.txt"
+#include "custom.txt"
+
+if (new_room){
+  load.pic(room_no);
+  draw.pic(room_no);
+  discard.pic(room_no);
+  set.horizon(0);
+
+  status.line.on();
+  prevent.input();
+  
+  vCount = 0;
+  load.sound(11);
+  sound(11,fSoundDone);
+
+  show.pic();
+}
+if (fSoundDone
+&&  !fSoundDoneNoReplay) {
+  if (vCount < 20) {
+    vCount++;
+  }
+  else {
+    vCount = 0;
+    reset(fSoundDone);
+    sound(11,fSoundDone);
+  }
+}
+
+if (!fWomanPictureStared) {
+  if (v80 <= 200) {
+    v80++;
+  }
+  if (v80 == 20) {
+    print("Wow! You can't wait to meet her.");
+  }
+  else {
+    if (v80 == 100) {
+      print("You must be smitten with her!");
+    }
+    else {
+      if (v80 == 120) {
+        print("Don't you think you should go and meet her?");
+      }
+      else {
+        if (v80 == 140) {
+          print("Okay, you're staring. It's getting a little creepy...");
+        }
+        else {
+          if (v80 == 160) {
+            print("Seriously, what's wrong with you? You could actually be talking to her by now!");
+          }
+          else {
+            if (v80 == 200) {
+              if (!fWomanPictureStared) {
+                set(fWomanPictureStared);
+                score++;
+              }
+              print("Ahh, so you want to take things slow. Let's hope your patience pays off.");
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+if (!fWomanAsleep) {
+  set(fWomanAsleep);
+  score++;
+}
+
+if ((have.key()
+||   controller(key_joystick))) {
+  new.room(10);
+}
+
+return();

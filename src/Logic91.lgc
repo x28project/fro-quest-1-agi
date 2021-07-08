@@ -1,0 +1,116 @@
+// ****************************************************************************
+//
+// Logic 91: Initialization
+//
+// ****************************************************************************
+
+#include "defines.txt"
+#include "custom.txt"
+
+// Key settings with set.key are as follows:
+// First number:
+//   1-26        CTRL-A - CTRL-Z
+//   8           BACKSPACE
+//   9           TAB
+//   10          CTRL-ENTER
+//   13          ENTER
+//   27          CTRL-[ and ESC
+//   28          CTRL-\
+//   29          CTRL-]
+//   30          CTRL-6
+//   31          CTRL--
+//   32          SPACE
+//
+//  There are other keys in the 1-26 range that can be assigned
+//  Both the CTRL-Letter and that key will be assigned if you do this
+//  eg. most AGI games use both TAB and CTRL-I for inventory.
+//
+// Second number:
+//   3           CTRL-@
+//   15          SHIFT-TAB
+//   16-25       ALT: Q W E R T Y U I O P
+//   30-38       ALT: A S D F G H J K L
+//   44-50       ALT: Z X C V B N M
+//   59-68       F1-F10
+//   71          HOME*
+//   72          UP*
+//   73          PAGE UP*
+//   75          LEFT*
+//   77          RIGHT*
+//   79          END*
+//   80          DOWN*
+//   81          PAGE DOWN*
+//   82          INS
+//   83          DEL
+//   84-93       SHIFT: F1-F10
+//   94-103      CTRL: F1-F10
+//   104-113     ALT: F1-F10
+//   115         CTRL-LEFT
+//   116         CTRL-RIGHT
+//   117         CTRL-END
+//   118         CTRL-PAGE DOWN
+//   119         CTRL-HOME
+//   120-131     ALT- 1 2 3 4 5 6 7 8 9 - =
+//   132         CTRL-PAGE UP
+//   133-134     F11-F12
+//   135-136     SHIFT: F11-F12
+//   137-138     CTRL: F11-F12
+//   139-140     ALT: F11-F12
+//
+// Joystick buttons:
+//   1, 1        FIRST BUTTON
+//   1, 2        SECOND BUTTON
+//   1, 3        FIRST BUTTON**
+//   1, 4        SECOND BUTTON**
+//
+// *  These keys cannot be used because they are used to control the character.
+// ** These keys must be pressed twice to work.
+
+if (new_room) {
+  trace.info(95, 3, 10);
+  set.key(0, 59, menu_help);           // F1 - Help
+  set.key(0, 60, menu_soundonoff);     // F2 - Sound on/off
+  set.key(0, 61, key_echoline);        // F3 - Echo line
+  set.key(0, 62, key_seeobject);       // F4 - See object
+  set.key(0, 63, menu_save);           // F5 - Save game
+  set.key(0, 64, menu_clock);          // F6 - Clock on/off
+  set.key(0, 65, menu_restore);        // F7 - Restore game
+  set.key(0, 67, menu_restart);        // F9 - Restart game
+  set.key(0, 32, key_debug);           // ALT-D - Enter debug mode
+  set.key(0, 18, key_ego);             // ALT-E - Displays info about EGO
+  set.key(0, 35, menu_hint);           // ALT+H - Hint
+  set.key(0, 23, key_object);          // ALT-I - Shows information about screen objects
+  set.key(0, 50, key_memory);          // ALT-M - Displays heapsize
+  set.key(0, 25, key_priority);        // ALT-P - Displays priority screen
+  set.key(0, 47, key_version);         // ALT-V - Shows game version info
+  set.key(0, 45, key_coords);          // ALT-X - Show Coordinates
+  set.key(0, 44, menu_quit);           // ALT-Z - quit game
+  set.key(3,  0, key_clearinputline);  // CTRL-C - Clear input line
+  set.key(5,  0, key_echoline);        // CTRL-E - Echo line
+  set.key(9,  0, menu_inventory);      // CTRL-I/TAB - inventory
+  set.key(10, 0, menu_joystick);       // CTRL-J - Configure joystick
+  set.key(18, 0, menu_color);          // CTRL-R - Switches between RGB and CGA graphics
+  set.key(19, 0, menu_soundonoff);     // CTRL-S - Sound on/off
+  set.key(1,  1, key_joystick);        // Joystick button 1
+  set.key(1,  2, key_activiate_menu);  // Joystick button 2
+  set.key(1,  3, key_version);         // Joystick button 1 pressed twice
+  set.key(1,  4, key_coords);          // Joystick button 2 pressed twice
+  set.key(45, 0, key_decreasevolume);  // - - decrease volume
+  set.key(43, 0, key_increasevolume);  // + - increase volume
+  set.key(27, 0, key_activiate_menu);  // ESC - activate menu
+
+  //set(joystick_sensitivity_set);
+  joystick_sensitivity = 3;
+  sound_volume = 0;   // full volume
+
+//set.game.id("AGI");    // We don't actually need to set the game ID. It's
+                         // best not to, then the game can run on any
+                         // interpreter (provided it's the right version).
+  configure.screen(1, 22, 0);
+  set.string(prompt_char, ">");
+  set.cursor.char("_");
+  max_score = 0;
+  cycle_delay = 2;  // set speed to normal (delay=2/20ths of a second)
+}
+
+return();

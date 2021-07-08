@@ -1,0 +1,514 @@
+// ****************************************************************************
+//
+// Logic 2: First room
+//
+// ****************************************************************************
+
+
+#include "defines.txt"
+#include "custom.txt"
+
+#define fEgoDoorOpened    f60
+#define fEgoDoorClosed    f61
+#define fEgoJumped        f62
+#define fEgoJumpedInWell  f63
+#define fBodyGuardHappy   f64
+#define fBodyGuardDrink   f65
+#define fBodyGuardPatrol  f66
+#define fEgoJumpReady     f67
+#define fEgoJumping       f68
+#define fEgoJumpDone      f69
+#define fEgoEndWalk       f70
+
+#define oDoor             o20
+#define oBodyguard        o21
+
+#define vEgoEndWalk       v100
+
+if (new_room) {
+  load.pic(room_no);
+  draw.pic(room_no);
+  discard.pic(room_no);
+  set.horizon(37);
+  
+  // The next 6 lines need only be in the first room of the game
+  if ((prev_room_no == 1         // just come from intro screen
+  ||   prev_room_no == 0         // or just started game
+  ||   prev_room_no == 18)) {
+    set.loop(ego,1);
+    set.cel(ego,3);
+    position(ego,120,140);
+    status.line.on();
+    accept.input();
+    get("Emergency Suicide Kit");
+  }
+  else {
+    load.sound(1);
+    sound(1,fSoundDone);
+  }
+
+  //Door
+  load.view(20);
+  animate.obj(oDoor);
+  position(oDoor,65,115);
+  ignore.blocks(oDoor);
+  ignore.objs(oDoor);
+  set.view(oDoor,20);
+  set.loop(oDoor,0);
+  set.cel(oDoor,0);
+  set.priority(oDoor,9);
+  draw(oDoor);
+  stop.cycling(oDoor);
+
+  //Bodyguard
+  animate.obj(oBodyguard);
+  load.view(21);
+  set.view(oBodyguard,21);
+  set.loop(oBodyguard,0);
+  position(oBodyguard,100,154);
+  normal.cycle(oBodyguard);
+  wander(oBodyguard);
+  draw(oBodyguard);
+
+  // Position
+  if (prev_room_no == 5) {
+    v80 = 159;
+    if (old_ego_y < 124) {
+      old_ego_y = 124;
+    }
+    else {
+      if (old_ego_y > 160) {
+        old_ego_y = 160;
+      }
+    }
+  }
+  else {
+    if (prev_room_no == 3) {
+      ego_dir = stopped;
+      set.loop(ego,0);
+      position(ego,36,136);
+    }
+    else {
+      if (prev_room_no == 9) {
+        ego_dir = stopped;
+        set.loop(ego,0);
+        position(ego,72,114);
+        set.cel(oDoor,3);
+        reverse.loop(oDoor,fEgoDoorClosed);
+      }
+      else {
+        if (prev_room_no == 7) {
+          ego_dir = stopped;
+          set.loop(ego,1);
+          set.cel(ego,3);
+          position(ego,152,154);
+          erase(oBodyguard);
+          erase(oDoor);
+          
+          prev_room_no = 17;
+          load.pic(prev_room_no);
+          draw.pic(prev_room_no);
+          discard.pic(prev_room_no);
+          show.pic();
+          print("A short time later...");
+          
+          load.pic(room_no);
+          draw.pic(room_no);
+          discard.pic(room_no);
+          draw(oDoor);
+          
+          set(fEgoEndWalk);
+          vEgoEndWalk = 0;
+        }
+      }
+    }
+  }
+
+  draw(ego);
+  call(89);
+  show.pic();
+}
+if (fSoundDone) {
+  reset(fSoundDone);
+  sound(1,fSoundDone);
+}
+
+
+if (said("look","house")) {
+  print("Your house... In the middle of your yard.\n\n"
+        "With all the home improvements your buddy Al made to this place you think it would be worth more. "
+        "Thanks a lot, Al!");
+}
+if (said("look","well")) {
+  print("Ahh yes, the well. It is dry. "
+        "You haven't had to use the well since you hooked up to public water and sewer. "
+        "When was the last time you jumped down the well?");
+}
+if ((said("look","man")
+||   said("look","bodyguard"))) {
+  print("It's your bodyguard. Wait...");
+  print("Are you really that important?");
+}
+if (said("look","wall")) {
+  print("All in all you're just another brick in the wall.");
+}
+if (said("look","cliff")) {
+  print("Whoa!");
+}
+if (said("look","rock")) {
+  print("Some would say you actually live under there instead.");
+  if (has("rock")) {
+    print("Also, is that a rock in your pocket?");
+    print("Oh, it is. Okay, never mind.");
+  }
+}
+if (said("look","sky")) {
+  print("It's blue, but it's happy. Or is it?");
+}
+if (said("look","clouds")) {
+  print("Happy little clouds frolicking around that oh so majestic mountaintop. One word: picturesque.");
+}
+if (said("look","mountain")) {
+  print("The snow capped mountain is big enough that it's in plain sight.  Oh, and what a sight it is!");
+}
+if (said("look","tree")) {
+  print("Such a nice tree. It really increases your property value!");
+}
+if (said("look","hills")) {
+  print("They keep rolling and rolling and rolling...");
+}
+if (said("look","path")) {
+  print("It leads to your front door!");
+}
+if (said("look","grass")) {
+  print("You feel that it's beneath you.");
+}
+if (said("look")) {
+  print("The green pastures of this land roll on for miles. "
+        "This is your house. In the middle of your yard. "
+        "Everyday you wake to this same view. "
+        "An old, unused well still lingers to the side.");
+  print("Your trusty bodyguard patrols the grounds. "
+        "You can never be too safe!");
+}
+
+// Bodyguard
+if ((said("talk","man")
+||   said("talk","bodyguard"))) {
+
+  // FaceBodyguard
+  load.view(202);
+  animate.obj(oFaceBodyguard);
+  set.view(oFaceBodyguard,202);
+  set.loop(oFaceBodyguard,0);
+  set.cel(oFaceBodyguard,0);
+  position(oFaceBodyguard,5,67);
+  set.priority(oFaceBodyguard,15);
+  ignore.objs(oFaceBodyguard);
+  v_cycle = 2;
+  cycle.time(oFaceBodyguard,v_cycle);
+  draw(oFaceBodyguard);
+  end.of.loop(oFaceBodyguard,fFaceTalked);
+  print("You speak to your hired help in the most affable manner without seeming too friendly,\n\n"
+        "\"Hello, Steve. What's new?\"\n\n"
+        "You can never be too careful with employees.");
+}
+if (fFaceTalked
+&&  vFaceTalkCount == 0) {
+  reset(fFaceTalked);
+  print("\"Sir, the perimeter is secure.\"");
+  if (!fBodyguardDrank) {
+    print("Sadly, you expected more from his answer. You press him further.\n\n"
+          "\"That's wonderful.\"\n"
+          "\"However, I should say... how are you, Steve, on this fine day?\"");
+    print("Taken aback by your persistence he slowly responds,\n\n"
+          "\"Sir...");
+    set.loop(oFaceBodyguard,0);
+    set.cel(oFaceBodyguard,0);
+    end.of.loop(oFaceBodyguard,fFaceTalked);
+    vFaceTalkCount++;
+  }
+}
+else {
+  if (fFaceTalked
+  &&  vFaceTalkCount == 1) {
+    reset(fFaceTalked);
+    vFaceTalkCount = 0;
+    if (!fBodyguardDrank) {
+      print("\"I am well. A little parched, but aside from that, I am well.\"");
+    }
+    print("You nod in acknowledgement of his response. That's it. "
+          "You have done your good deed for the day. "
+          "You are so nice!");
+    erase(oFaceBodyguard);
+    if (!fBodyguardTalk) {
+      set(fBodyguardTalk);
+      score++;
+    }
+  }
+}
+if ((said("give","water","man")
+||   said("give","water","bodyguard")
+||   said("give","man","water")
+||   said("give","bodyguard","water"))) {
+  if (has("Glass of Water")) {
+    distance(ego,oBodyguard,v_distance);
+    if (v_distance < 20) {
+      ego_dir = 0;
+      print("You are so kind.");
+      print("You say, \"Steve, would you like a glass of water to quench your thirst?\"");
+      print("You can't tell because of his mask, but it seems he's elated.");
+      drop("Glass of Water");
+      set(fBodyGuardHappy);
+    }
+    else {
+      print("Don't try to toss the glass of water to him. Get closer.");
+    }
+  }
+  else {
+    print("It's not yours to give.");
+  }
+}
+if (fBodyGuardHappy) {
+  reset(fBodyGuardHappy);
+  get.posn(oBodyguard,v_x,v_y);
+  load.view(22);
+  set.view(oBodyguard,22);
+  set.loop(oBodyguard,0);
+  set.cel(oBodyguard,0);
+  v_x = v_x - 3;
+  position.v(oBodyguard,v_x,v_y);
+  normal.motion(oBodyguard);
+  stop.motion(oBodyguard);
+  end.of.loop(oBodyguard,fBodyGuardDrink);
+}
+if (fBodyGuardDrink) {
+  reset(fBodyGuardDrink);
+
+  // FaceBodyguard
+  load.view(202);
+  animate.obj(oFaceBodyguard);
+  set.view(oFaceBodyguard,202);
+  set.loop(oFaceBodyguard,0);
+  set.cel(oFaceBodyguard,0);
+  position(oFaceBodyguard,5,67);
+  set.priority(oFaceBodyguard,15);
+  ignore.objs(oFaceBodyguard);
+  v_cycle = 2;
+  cycle.time(oFaceBodyguard,v_cycle);
+  draw(oFaceBodyguard);
+  end.of.loop(oFaceBodyguard,fFaceTalked);
+  vFaceTalkCount = 2;
+}
+if (fFaceTalked
+&& vFaceTalkCount == 2){
+  reset(fFaceTalked);
+  vFaceTalkCount = 0;
+  print("\"Thanks, Boss!\"");
+  print("Yeah, he is obviously happy.");
+  set.loop(oBodyguard,1);
+  set.cel(oBodyguard,0);
+  v_cycle = 4;
+  cycle.time(oBodyguard,v_cycle);
+  erase(oFaceBodyguard);
+  end.of.loop(oBodyguard,fBodyGuardPatrol);
+}
+if (fBodyGuardPatrol) {
+  reset(fBodyGuardPatrol);
+  set.view(oBodyguard,21);
+  set.loop(oBodyguard,0);
+  set.cel(oBodyguard,0);
+  v_x = v_x + 2;
+  position.v(oBodyguard,v_x,v_y);
+  start.cycling(oBodyguard);
+  v_cycle = 2;
+  cycle.time(oBodyguard,v_cycle);
+  wander(oBodyguard);
+  if (!fBodyguardDrank) {
+    set(fBodyguardDrank);
+    score++;
+  }
+}
+
+// Door
+if (said("open", "door")) {
+  if (center.posn(ego,60,100,79,122)) {
+    if (!fHomeDoorOpen) {
+      set(fHomeDoorOpen);
+      score++;
+    }
+    end.of.loop(oDoor,fEgoDoorOpened);
+  }
+  else {
+    print("You're not close enough.");
+  }
+}
+if (fEgoDoorOpened) {
+  reset(fEgoDoorOpened);
+  new.room(9);
+}
+
+// Well
+if (said("jump", "well")) {
+  if (center.posn(ego,0,110,40,165)) {
+    if (fPickGet) {
+      if (!fWellVisted) {
+        set(fWellVisted);
+        score++;
+      }
+      //Jump
+      get.posn(ego,new_ego_x,new_ego_y);
+      erase(ego);
+      animate.obj(egoAlt);
+      load.view(3);
+      set.view(egoAlt,3);
+      set.loop(egoAlt,0);
+      set.cel(egoAlt,0);
+      new_ego_x = new_ego_x - 2;
+      position.v(egoAlt,new_ego_x,new_ego_y);
+      normal.cycle(egoAlt);
+      ignore.blocks(egoAlt);
+      ignore.objs(egoAlt);
+      set.priority(egoAlt,15);
+      v_cycle = 2;
+      cycle.time(oBodyguard,v_cycle);
+      draw(egoAlt);
+      stop.cycling(egoAlt);
+      end.of.loop(egoAlt,fEgoJumpReady);
+    }
+    else {
+      print("How can you think about going anywhere without your awesome hair pick?");
+      print("You must have left it at home.");
+      ego_dir = 3;
+    }
+  }
+  else {
+    print("You're not close enough.");
+  }
+}
+else {
+  if (said("anyword", "well")) {
+    print("A well isn't for that. A well is for jumping in blindly!");
+    print("Wait!");
+    print("Don't try that at home."); 
+  }
+}
+if (fEgoJumpReady) {
+  reset(fEgoJumpReady);
+  set.loop(egoAlt,1);
+  set.cel(egoAlt,0);
+  end.of.loop(egoAlt,fEgoJumping);
+  v60 = 18;
+  v61 = 120;
+  v62 = 0;
+  move.obj.v(egoAlt, v60, v61, v62, fEgoJumped);
+}
+if (fEgoJumped) {
+  reset(fEgoJumped);
+  move.obj(egoAlt, 18, 129, 0, fEgoJumpedInWell);
+}
+if (fEgoJumpedInWell) {
+  reset(fEgoJumpedInWell);
+  set.loop(egoAlt,2);
+  set.cel(egoAlt,0);
+  end.of.loop(egoAlt,fEgoJumpDone);
+}
+if (fEgoJumpDone) {
+  reset(fEgoJumpDone);
+  new.room(3);
+}
+
+// EgoEndWalk
+if (fEgoEndWalk) {
+  if (fEgoEndWalk
+  &&  vEgoEndWalk == 0) {
+    vEgoEndWalk++;
+    reset(fEgoEndWalk);
+    move.obj(ego,148,154,1,fEgoEndWalk);
+  }
+  if (fEgoEndWalk
+  &&  vEgoEndWalk == 1) {
+    vEgoEndWalk++;
+    reset(fEgoEndWalk);
+    move.obj(ego,138,153,1,fEgoEndWalk);
+  }
+  if (fEgoEndWalk
+  &&  vEgoEndWalk == 2) {
+    vEgoEndWalk++;
+    reset(fEgoEndWalk);
+    move.obj(ego,128,152,1,fEgoEndWalk);
+  }
+  if (fEgoEndWalk
+  &&  vEgoEndWalk == 3) {
+    vEgoEndWalk++;
+    reset(fEgoEndWalk);
+    move.obj(ego,118,151,1,fEgoEndWalk);
+  }
+  if (fEgoEndWalk
+  &&  vEgoEndWalk == 4) {
+    vEgoEndWalk++;
+    reset(fEgoEndWalk);
+    move.obj(ego,108,150,1,fEgoEndWalk);
+  }
+  if (fEgoEndWalk
+  &&  vEgoEndWalk == 5) {
+    vEgoEndWalk++;
+    reset(fEgoEndWalk);
+    move.obj(ego,102,146,1,fEgoEndWalk);
+  }
+  if (fEgoEndWalk
+  &&  vEgoEndWalk == 6) {
+    vEgoEndWalk++;
+    reset(fEgoEndWalk);
+    move.obj(ego,96,140,1,fEgoEndWalk);
+  }
+  if (fEgoEndWalk
+  &&  vEgoEndWalk == 7) {
+    vEgoEndWalk++;
+    reset(fEgoEndWalk);
+    move.obj(ego,90,132,1,fEgoEndWalk);
+  }
+  if (fEgoEndWalk
+  &&  vEgoEndWalk == 8) {
+    vEgoEndWalk++;
+    reset(fEgoEndWalk);
+    move.obj(ego,84,124,1,fEgoEndWalk);
+  }
+  if (fEgoEndWalk
+  &&  vEgoEndWalk == 9) {
+    vEgoEndWalk++;
+    reset(fEgoEndWalk);
+    move.obj(ego,80,118,1,fEgoEndWalk);
+  }
+  if (fEgoEndWalk
+  &&  vEgoEndWalk == 10) {
+    vEgoEndWalk++;
+    reset(fEgoEndWalk);
+    move.obj(ego,74,112,1,fEgoEndWalk);
+  }
+  if (fEgoEndWalk
+  &&  vEgoEndWalk == 11) {
+    vEgoEndWalk++;
+    reset(fEgoEndWalk);
+    end.of.loop(oDoor,fEgoEndWalk);
+  }
+  if (fEgoEndWalk
+  &&  vEgoEndWalk == 12) {
+    vEgoEndWalk++;
+    reset(fEgoEndWalk);
+    new.room(16);
+  }
+}
+
+if (ego_edge_code == right_edge) {
+  if (fPickGet) {
+    new.room(5);
+  }
+  else {
+    print("How can you think about going anywhere without your trusty hair pick?");
+    print("You must have left it at home.");
+    ego_dir = 7;
+  }
+}
+
+return();

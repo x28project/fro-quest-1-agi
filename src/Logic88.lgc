@@ -1,0 +1,377 @@
+// ****************************************************************************
+//
+// Logic 88: Eyeglasses handler
+//
+// ****************************************************************************
+
+
+#include "defines.txt"
+#include "custom.txt"
+
+
+if (fEyeglassesWear) {
+  if (room_no == 8
+  &&  !has("Air Elemental")) {
+    vEyeglasses_x = 56;
+    vEyeglasses_x = vEyeglasses_x - 11;
+    vEyeglasses_y = 156;
+    vEyeglasses_y = vEyeglasses_y + 7;
+    v_step = 4;
+    step.size(oEyeglasses,v_step);
+    move.obj.v(oEyeglasses,vEyeglasses_x,vEyeglasses_y,v_step,fEyeglassesAir);
+  }
+  else {
+    if (room_no == 4
+    &&  !has("Fire Elemental")) {
+      vEyeglasses_x = 33;
+      vEyeglasses_x = vEyeglasses_x - 11;
+      vEyeglasses_y = 121;
+      vEyeglasses_y = vEyeglasses_y + 7;
+      v_step = 4;
+      step.size(oEyeglasses,v_step);
+      move.obj.v(oEyeglasses,vEyeglasses_x,vEyeglasses_y,v_step,fEyeglassesFire);
+    }
+    else {
+      if (room_no == 5
+      &&  !has("Earth Elemental")) {
+        vEyeglasses_x = 138;
+        vEyeglasses_x = vEyeglasses_x - 11;
+        vEyeglasses_y = 148;
+        vEyeglasses_y = vEyeglasses_y + 7;
+        v_step = 4;
+        step.size(oEyeglasses,v_step);
+        move.obj.v(oEyeglasses,vEyeglasses_x,vEyeglasses_y,v_step,fEyeglassesEarth);
+      }
+      else {
+        if (room_no == 15
+        &&  !has("Heart Elemental")) {
+          vEyeglasses_x = 70;
+          vEyeglasses_x = vEyeglasses_x - 11;
+          vEyeglasses_y = 95;
+          vEyeglasses_y = vEyeglasses_y + 7;
+          v_step = 4;
+          step.size(oEyeglasses,v_step);
+          move.obj.v(oEyeglasses,vEyeglasses_x,vEyeglasses_y,v_step,fEyeglassesHeart);
+        }
+        else {
+          if (room_no == 7
+          &&  !has("Water Elemental")) {
+            vEyeglasses_x = 19;
+            vEyeglasses_x = vEyeglasses_x - 11;
+            vEyeglasses_y = 110;
+            vEyeglasses_y = vEyeglasses_y + 7;
+            v_step = 4;
+            step.size(oEyeglasses,v_step);
+            move.obj.v(oEyeglasses,vEyeglasses_x,vEyeglasses_y,v_step,fEyeglassesWater);
+          }
+          else {
+            if (room_no == 9) {
+              vEyeglasses_x = 30;
+              vEyeglasses_x = vEyeglasses_x - 11;
+              vEyeglasses_y = 82;
+              vEyeglasses_y = vEyeglasses_y + 7;
+              v_step = 4;
+              step.size(oEyeglasses,v_step);
+              move.obj.v(oEyeglasses,vEyeglasses_x,vEyeglasses_y,v_step,fEyeglassesPizza);
+            }
+            else {
+              move.obj(oEyeglasses,134,167,4,fEyeglassesNothing);
+            }
+          }
+        }
+      }
+    }
+  }
+  reset(fEyeglassesWear);
+  set(fEyeglassesShowElemental);
+  reset(fElementalGone);
+}
+if (fEyeglassesHeart) {
+  if (vEyeglasses_x != 70
+  &&  vEyeglasses_y != 95) {
+    reset(fEyeglassesHeart);
+    v_step = v_step - 1;
+    step.size(oEyeglasses,v_step);
+    move.obj.v(oEyeglasses,vEyeglasses_x,vEyeglasses_y,v_step,fEyeglassesHeart);
+  }
+}
+
+// ElementalAir
+if (fEyeglassesAir) {
+  reset(fEyeglassesAir);
+  if (!fElementalAirSeen) {
+    set(fElementalAirSeen);
+    score++;
+  }
+  animate.obj(oElemental);
+  load.view(93);
+  set.view(oElemental,93);
+  set.loop(oElemental,1);
+  set.cel(oElemental,0);
+  get.posn(oDrunkMan,v_x,v_y);
+  v_x = v_x - 2;
+  v_y = v_y - 1;
+  position.v(oElemental,v_x,v_y);
+  ignore.blocks(oElemental);
+  ignore.horizon(oElemental);
+  ignore.objs(oElemental);
+  erase(oEyeglasses);
+  draw(oElemental);
+  end.of.loop(oElemental,fElementalHere);
+  accept.input();
+}
+if (fElementalAirSeen
+&&  room_no == 8
+&&  fElementalHere) {
+  reset(fElementalHere);
+  print("There is a certain air about him.");
+}
+
+// ElementalFire
+if (fEyeglassesFire) {
+  reset(fEyeglassesFire);
+  if (!fElementalFireSeen) {
+    set(fElementalFireSeen);
+    score++;
+  }
+  animate.obj(oElemental);
+  load.view(40);
+  set.view(oElemental,40);
+  set.loop(oElemental,0);
+  set.cel(oElemental,0);
+  get.posn(oFire,v_x,v_y);
+  v_x = v_x - 5;
+  v_y = v_y - 4;
+  position.v(oElemental,v_x,v_y);
+  ignore.blocks(oElemental);
+  ignore.horizon(oElemental);
+  ignore.objs(oElemental);
+  erase(oEyeglasses);
+  draw(oElemental);
+  end.of.loop(oElemental,fElementalHere);
+  accept.input();
+}
+if (fElementalFireSeen
+&&  room_no == 4
+&&  fElementalHere) {
+  reset(fElementalHere);
+  print("Whoa! Someone is burning for you. They're burning, they're burning, they're burning for you!");
+  set.loop(oElemental,1);
+  normal.cycle(oElemental);
+}
+
+// ElementalEarth
+if (fEyeglassesEarth) {
+  reset(fEyeglassesEarth);
+  if (!fElementalEarthSeen) {
+    set(fElementalEarthSeen);
+    score++;
+  }
+  
+  animate.obj(oElementalEarthGround);
+  ignore.blocks(oElementalEarthGround);
+  ignore.horizon(oElementalEarthGround);
+  ignore.objs(oElementalEarthGround);
+  load.view(57);
+  set.view(oElementalEarthGround,57);
+  set.loop(oElementalEarthGround,0);
+  set.cel(oElementalEarthGround,0);
+  draw(oElementalEarthGround);
+  set.priority(oElementalEarthGround,11);
+  position(oElementalEarthGround,130,155);
+  end.of.loop(oElementalEarthGround,fNothing);
+  
+  animate.obj(oElemental);
+  load.view(56);
+  set.view(oElemental,56);
+  set.loop(oElemental,0);
+  set.cel(oElemental,0);
+  v_x = 134;
+  v_y = 144;
+  position.v(oElemental,v_x,v_y);
+  ignore.blocks(oElemental);
+  ignore.horizon(oElemental);
+  erase(oEyeglasses);
+  draw(oElemental);
+  end.of.loop(oElemental,fElementalHere);
+  set(fElementalEarthStarted);
+  accept.input();
+  load.sound(101);
+}
+if (fElementalEarthSeen
+&&  fElementalEarthStarted) {
+  current.cel(oElemental,v_cel);
+  if (v_cel <= 13) {
+    sound(101, fSoundDone);
+    shake.screen(1);
+  }
+}
+if (fElementalEarthSeen
+&&  room_no == 5
+&&  fElementalHere) {
+  reset(fElementalEarthStarted);
+  reset(fElementalHere);
+  load.sound(100);
+  sound(100, fSoundDone);
+  shake.screen(1);
+  set.loop(oElemental,1);
+  set.cel(oElemental,0);
+  end.of.loop(oElemental,fNothing);
+}
+
+// ElementalHeart
+if (fEyeglassesHeart) {
+  reset(fEyeglassesHeart);
+  if (!fElementalHeartSeen) {
+    set(fElementalHeartSeen);
+    score++;
+  }
+  animate.obj(oElemental);
+  load.view(153);
+  animate.obj(oElemental);
+  set.view(oElemental,153);
+  set.loop(oElemental,1);
+  set.cel(oElemental,31);
+  v_cycle = 2;
+  cycle.time(oElemental,v_cycle);
+  position(oElemental,68,98);
+  ignore.blocks(oElemental);
+  ignore.horizon(oElemental);
+  erase(oEyeglasses);
+  draw(oElemental);
+  reverse.loop(oElemental,fElementalHere);
+}
+if (fElementalHeartSeen
+&&  room_no == 15
+&&  fElementalHere) {
+  reset(fElementalHere);
+  set.loop(oElemental,2);
+  set.cel(oElemental,0);
+  end.of.loop(oElemental,fElementalHeartEmerged);
+  vElementalCount = 0;
+}
+if (fElementalHeartSeen
+&&  fElementalHeartEmerged) {
+  vElementalCount++;
+}
+if (fElementalHeartSeen
+&&  fElementalHeartEmerged
+&&  vElementalCount == 20) {
+  reset(fElementalHeartEmerged);
+  print("Awww, this game is a romantic comedy!");
+  accept.input();
+}
+
+// ElementalWater
+if (fEyeglassesWater) {
+  reset(fEyeglassesWater);
+  if (fSnowmanMelted) {
+    if (!fElementalWaterSeen) {
+      set(fElementalWaterSeen);
+      score++;
+    }
+    animate.obj(oElemental);
+    load.view(67);
+    set.view(oElemental,67);
+    set.loop(oElemental,0);
+    set.cel(oElemental,0);
+    set.priority(oElemental,10);
+    v_x = 19;
+    v_y = 109;
+    position.v(oElemental,v_x,v_y);
+    ignore.blocks(oElemental);
+    ignore.horizon(oElemental);
+    ignore.objs(oElemental);
+    erase(oEyeglasses);
+    draw(oElemental);
+    end.of.loop(oElemental,fElementalHere);
+  }
+  else {
+    print("There is definitely something strange about that warmth resistant snowman.");
+    erase(oEyeglasses);
+  }
+  accept.input();
+}
+if (fElementalWaterSeen
+&&  room_no == 7
+&&  fElementalHere) {
+  reset(fElementalHere);
+  set.loop(oElemental,1);
+  v_cycle = 2;
+  cycle.time(oElemental,v_cycle);
+  normal.cycle(oElemental);
+}
+
+// ElementalPizza
+if (fEyeglassesPizza) {
+  reset(fEyeglassesPizza);
+  if (!fElementalPizzaSeen) {
+    set(fElementalPizzaSeen);
+    max_score = 128;
+    score = score + 64;
+    
+    set.text.attribute(10,0);
+    display(24,31,                               "Score +64");
+    set.text.attribute(15,0);
+    vScoreOld = score;
+    vScoreTimer = 21;
+  }
+  animate.obj(oElemental);
+  load.view(96);
+  set.view(oElemental,96);
+  set.loop(oElemental,0);
+  set.cel(oElemental,0);
+  set.priority(oElemental,9);
+  v_x = 26;
+  v_y = 105;
+  position.v(oElemental,v_x,v_y);
+  ignore.blocks(oElemental);
+  ignore.horizon(oElemental);
+  ignore.objs(oElemental);
+  erase(oEyeglasses);
+  draw(oElemental);
+  end.of.loop(oElemental,fElementalHere);
+  accept.input();
+}
+if (fElementalPizzaSeen
+&&  room_no == 9
+&&  fElementalHere) {
+  reset(fElementalHere);
+  set.loop(oElemental,1);
+  set.cel(oElemental,0);
+  set.priority(oElemental,9);
+  v_cycle = 2;
+  cycle.time(oElemental,v_cycle);
+  normal.cycle(oElemental);
+  
+  animate.obj(oElementalZ);
+  //load.view(96);
+  set.view(oElementalZ,96);
+  set.loop(oElementalZ,2);
+  set.cel(oElementalZ,0);
+  set.priority(oElementalZ,10);
+  v_x = 26;
+  v_y = 105;
+  position.v(oElementalZ,v_x,v_y);
+  ignore.blocks(oElementalZ);
+  ignore.horizon(oElementalZ);
+  ignore.objs(oElementalZ);
+  v_cycle = 2;
+  cycle.time(oElementalZ,v_cycle);
+  normal.cycle(oElementalZ);
+  draw(oElementalZ);
+}
+
+if (fEyeglassesNothing) {
+  reset(fEyeglassesNothing);
+  print("You see nothing out of the ordinary.");
+  accept.input();
+  erase(oEyeglasses);
+}
+
+if (fElementalGone) {
+  reset(fElementalGone);
+  erase(oElemental);
+}
+
+return();

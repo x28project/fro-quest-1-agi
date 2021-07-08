@@ -1,0 +1,455 @@
+// ****************************************************************
+//
+// Logic 15 - Anare's Tranquility
+//
+// ****************************************************************
+
+
+#include "defines.txt"
+#include "custom.txt"
+
+#define fEgoVortexPulling f77
+#define fEgoVortexPulled f78
+#define fEgoVortexReentered f79
+#define fEgoHeartHugging f80
+#define fEgoHeartHugged f81
+#define fEgoHeartKissing f82
+#define fEgoHeartKissed f83
+#define fEgoHeartLoving f84
+#define fElementalHeartDeflate f85
+#define fElementalHeartDeflating f86
+#define fElementalHeartDeflated f87
+#define fElementalHeartTaken f88
+#define fDeathCliffTeeter f89
+#define fDeathCliffTotter f90
+#define fDeathCliffTotted f91
+#define fDeathCliffTeeted f92
+#define fDeathCliffReady f93
+
+#define oPoleOrVortex o150
+
+if (new_room){
+  load.pic(room_no);
+  draw.pic(room_no);
+  discard.pic(room_no);
+  set.horizon(0);
+
+  status.line.on();
+  accept.input();
+   
+  // PoleOrVortex
+  load.view(150);
+  animate.obj(oPoleOrVortex);
+  set.view(oPoleOrVortex,150);
+  set.loop(oPoleOrVortex,0);
+  set.cel(oPoleOrVortex,0);
+  ignore.blocks(oPoleOrVortex);
+  ignore.objs(oPoleOrVortex);
+  position(oPoleOrVortex,69,167);
+  draw(oPoleOrVortex);
+  
+  // Position
+  position(ego,80,166);
+  set.loop(ego,2);
+  load.view(152);
+  animate.obj(egoAlt);
+  set.view(egoAlt,152);
+  set.loop(egoAlt,0);
+  set.cel(egoAlt,0);
+  position(egoAlt,79,166);
+  draw(egoAlt);
+  end.of.loop(egoAlt,fEgoVortexReentered);
+  
+  vCount = 0;
+  load.sound(15);
+  sound(15,fSoundDone);
+  
+  show.pic();
+}
+if (fSoundDone
+&&  !fSoundDoneNoReplay) {
+  if (vCount < 20) {
+    vCount++;
+  }
+  else {
+    vCount = 0;
+    reset(fSoundDone);
+    sound(15,fSoundDone);
+  }
+}
+if (fEgoVortexReentered) {
+  reset(fEgoVortexReentered);
+  set(fDeathCliffReady);
+  erase(egoAlt);
+  ego_dir = 0;
+  draw(ego);
+}
+
+if (said("look")) {
+  print("You have reached the mountaintop...");
+  print("And it is good...");
+  print("Though quite strange. An oasis occupies the center of the meadow. "
+        "Bordering the area are rocks, walls, and a harrowing precipice. "
+        "A welcoming sign is posted for all to see. "
+        "A calmness fills the air.");
+  if (fEyeglassesShowElemental) {
+    print("Oh, and there is a Heart Elemental hovering above the water.");
+  }
+}
+if (said("look","mountain")) {
+  print("There is another strange mountain in the distance. "
+        "Do not concern yourself with that mountain. Your current mountain is much more interesting.");
+}
+if (said("look","rock")) {
+  print("The area is bordered on both sides by finely detailed rocks of all different styles.");
+}
+if (said("look","wall")) {
+  print("Two types of walls have been built here to add to the beauty. How nice.");
+}
+if (said("look","grass")) {
+  print("It seems well maintained.");
+}
+if ((said("look","oasis")
+||   said("look","pool")
+||   said("look","pool","water")
+||   said("look","water"))) {
+  print("A pool of water, skirted by sand and a majestic palm tree, seems to be the main attraction...");
+}
+if ((said("look","tree")
+||   said("look","palm","tree"))) {
+  print("The palm tree resides in a climate that should be much too harsh. "
+        "Then again, the weather is quite comfortable here.");
+}
+if (said("look","sand")) {
+  print("It's like a mini-beach. But there is no time to tan.");
+}
+if (said("look","cliff")) {
+  print("It's a far drop to the valley below. Be careful!");
+}
+if ((said("look","sign")
+||   said("read","sign"))) {
+  print("The sign reads:");
+  print("    Anare's Tranquility    "
+    "\n\n          Welcome          "
+    "\n\n   Feel Free to Feel Home  "
+    "\n\n        XXXOOO Love        ");
+  if (!fSignRead) {
+    set(fSignRead);
+    score++;
+  }
+}
+if ((said("look","vortex")
+||   said("look","pole","or","vortex")
+||   said("look","vortex","or","pole"))) {
+  print("It's how you got here. Looks like the only way to get here.");
+}
+if (said("look","sky")) {
+  print("It's blue and it's high. You are neither.");
+}
+if (said("look","clouds")) {
+  print("I believe I can fly...");
+  print("No.");
+  print("No, you don't.");
+}
+if (fEyeglassesShowElemental
+&&  (said("look","heart")
+||   said("look","heart","elemental")
+||   said("look","elemental"))) {
+  if (fElementalHeartGet) {
+    print("You have plenty of heart, now go get 'em champ!");
+  }
+  else {
+    if (fElementalHeartKissed) {
+      print("The Heart Elemental is really beating for you. It's totally pining for you! "
+            "Let it know how you feel!");
+    }
+    else {
+      if (fElementalHeartHugged) {
+        print("The Heart Elemental is beating for you, but only slightly.");
+      }
+      else {      
+        if (fEyeglassesShowElemental) {
+          print("The lonely Heart Elemental has a certain stillness to it.");
+        }
+      }
+    }
+  }
+}
+
+// ElementalHeart
+if ((said("hug","elemental")
+||   said("hug","heart")
+||   said("hug","heart","elemental"))) {
+  if (fElementalHeartGet) {
+    print("There is no heart left.");
+  }
+  else {
+    if (!fEyeglassesShowElemental) {
+      print("Where's the love?");
+    }
+    else {
+      if (posn(ego,59,98,96,112)) {
+        move.obj(ego,86,99,1,fEgoHeartHugging);
+      }
+      else {
+        print("Are you into long distance relationships?");
+        print("Get closer.");
+      }
+    }
+  }
+}
+if (fEgoHeartHugging) {
+  reset(fEgoHeartHugging);
+  load.view(154);
+  set.view(egoAlt,154);
+  set.loop(egoAlt,0);
+  set.cel(egoAlt,0);
+  get.posn(ego,new_ego_x,new_ego_y);
+  new_ego_x = new_ego_x - 7;
+  position.v(egoAlt,new_ego_x,new_ego_y);
+  get.priority(ego,v_priority);
+  v_priority++;
+  set.priority.v(egoAlt,v_priority);
+  ignore.blocks(egoAlt);
+  ignore.objs(egoAlt);
+  erase(ego);
+  draw(egoAlt);
+  end.of.loop(egoAlt,fEgoHeartHugged);
+}
+if (fEgoHeartHugged) {
+  reset(fEgoHeartHugged);
+  reposition.to(oElemental,68,97);
+  set.loop(oElemental,3);
+  if (!fElementalHeartHugged) {
+    set(fElementalHeartHugged);
+    score++;
+  }
+  v_cycle = 6;
+  cycle.time(oElemental,v_cycle);
+  normal.cycle(oElemental);
+  erase(egoAlt);
+  set.loop(ego,1);
+  set.cel(ego,3);
+  draw(ego);
+}
+if ((said("kiss","elemental")
+||   said("kiss","heart")
+||   said("kiss","heart","elemental"))) {
+  if (fElementalHeartGet) {
+    print("There is no heart left.");
+  }
+  else {
+    if (!fEyeglassesShowElemental) {
+      print("Where's the love?");
+    }
+    else {
+      if (!fElementalHeartHugged) {
+        print("I don't think you know each other that well.");
+      }
+      else {
+        if (posn(ego,59,98,96,112)) {
+          move.obj(ego,86,99,1,fEgoHeartKissing);
+        }
+        else {
+          print("Are you into long distance relationships?");
+          print("Get closer.");
+        }
+      }
+    }
+  }
+}
+if (fEgoHeartKissing) {
+  reset(fEgoHeartKissing);
+  load.view(154);
+  set.view(egoAlt,154);
+  set.loop(egoAlt,1);
+  set.cel(egoAlt,0);
+  get.posn(ego,new_ego_x,new_ego_y);
+  new_ego_x = new_ego_x - 7;
+  position.v(egoAlt,new_ego_x,new_ego_y);
+  get.priority(ego,v_priority);
+  v_priority++;
+  set.priority.v(egoAlt,v_priority);
+  ignore.blocks(egoAlt);
+  ignore.objs(egoAlt);
+  erase(ego);
+  draw(egoAlt);
+  end.of.loop(egoAlt,fEgoHeartKissed);
+}
+if (fEgoHeartKissed) {
+  reset(fEgoHeartKissed);
+  if (!fElementalHeartKissed) {
+    set(fElementalHeartKissed);
+    score++;
+  }
+  v_cycle = 4;
+  cycle.time(oElemental,v_cycle);
+  erase(egoAlt);
+  set.loop(ego,1);
+  set.cel(ego,3);
+  draw(ego);
+}
+if ((said("i","love","you")
+||   said("i","love","you","elemental")
+||   said("i","love","you","heart")
+||   said("i","love","you","heart","elemental"))) {
+  if (fElementalHeartGet) {
+    print("There is no heart left.");
+  }
+  else {
+    if (!fEyeglassesShowElemental) {
+      print("Where's the love?");
+    }
+    else {
+      if ((!fElementalHeartHugged
+      ||   !fElementalHeartKissed)) {
+        print("I don't think your relationship is ready for that step.");
+      }
+      else {
+        if (posn(ego,59,98,96,112)) {
+          move.obj(ego,86,99,1,fEgoHeartLoving);
+        }
+        else {
+          print("Are you into long distance relationships?");
+          print("Get closer.");
+        }
+      }
+    }
+  }
+}
+if (fEgoHeartLoving) {
+  reset(fEgoHeartLoving);
+  set.loop(ego,1);
+  set.cel(ego,3);
+  print("You proclaim for all to hear...");
+  print("\"I love you!\"");
+  if (!fElementalHeartLoved) {
+    set(fElementalHeartLoved);
+    score++;
+  }
+  v_cycle = 1;
+  cycle.time(oElemental,v_cycle);
+  vElementalCount = 0;
+  set(fElementalHeartDeflate);
+  prevent.input();
+  program.control();
+}
+if (fElementalHeartDeflate) {
+  vElementalCount++;
+  if (vElementalCount == 40) {
+    reset(fElementalHeartDeflate);
+    set.loop(oElemental,4);
+    set.cel(oElemental,0);
+    v_dir = 8;
+    set.dir(oElemental,v_dir);
+    v_step = 2;
+    step.size(oElemental,v_step);
+    end.of.loop(oElemental,fElementalHeartDeflating);
+  }
+}
+if (fElementalHeartDeflating) {
+  reset(fElementalHeartDeflating);
+  set.loop(oElemental,5);
+  set.cel(oElemental,0);
+  v_dir = 8;
+  set.dir(oElemental,v_dir);
+  v_step = 2;
+  step.size(oElemental,v_step);
+  end.of.loop(oElemental,fElementalHeartDeflated);
+}
+if (fElementalHeartDeflated) {
+  reset(fElementalHeartDeflated);
+  follow.ego(oElemental,4,fElementalHeartTaken); 
+}
+if (fElementalHeartTaken) {
+  reset(fElementalHeartTaken);
+  erase(oElemental);
+  get("Heart Elemental");
+  show.obj(237);
+  set(fElementalHeartGet);
+  score++;
+  accept.input();
+  player.control();
+}
+
+// Water
+if (ego_on_water){
+  load.view(6);
+  set.view(ego,6);
+}
+else{
+  set.view(ego,0);
+}
+
+// Cliff
+if (ego_touching_signal_line
+&&  fDeathCliffReady
+&&  !fDeathCliffTeeter) {
+  set(fDeathCliffTeeter);
+  load.view(151);
+  set.view(egoAlt,151);
+  set.loop(egoAlt,0);
+  set.cel(egoAlt,0);
+  get.posn(ego,new_ego_x,new_ego_y);
+  new_ego_x = new_ego_x - 1;
+  position.v(egoAlt,new_ego_x,new_ego_y);
+  get.priority(ego,v_priority);
+  set.priority.v(egoAlt,v_priority);
+  ignore.blocks(egoAlt);
+  ignore.objs(egoAlt);
+  erase(ego);
+  draw(egoAlt);
+  end.of.loop(egoAlt,fDeathCliffTotter);
+}
+if (fDeathCliffTotter) {
+  reset(fDeathCliffTotter);
+  set.loop(egoAlt,1);
+  set.cel(egoAlt,0);
+  position.v(egoAlt,new_ego_x,new_ego_y);
+  end.of.loop(egoAlt,fDeathCliffTotted);
+}
+if (fDeathCliffTotted) {
+  reset(fDeathCliffTotted);
+  set.loop(egoAlt,0);
+  set.cel(egoAlt,3);
+  new_ego_x = new_ego_x - 1;
+  position.v(egoAlt,new_ego_x,new_ego_y);
+  reverse.loop(egoAlt,fDeathCliffTeeted);
+}
+if (fDeathCliffTeeted) {
+  reset(fDeathCliffTeeted);
+  reset(fDeathCliffTeeter);
+  new_ego_x = new_ego_x - 1;
+  new_ego_y = new_ego_y + 1;
+  position.v(ego,new_ego_x,new_ego_y);
+  ego_dir = left;
+  erase(egoAlt);
+  draw(ego);
+  if (!fDeathCliff) {
+    set(fDeathCliff);
+    score++;
+    print("Phew! That was close!");
+    print("Something tells you that you can't die here. But at least you're trying!");
+  }
+}
+
+if (ego_edge_code == bottom_edge
+&&  !fEgoVortexPulling) {
+  set(fEgoVortexPulling);
+  set.view(egoAlt,152);
+  set.loop(egoAlt,0);
+  set.cel(egoAlt,14);
+  get.posn(ego,new_ego_x,new_ego_y);
+  new_ego_x = new_ego_x - 1;
+  position.v(egoAlt,new_ego_x,new_ego_y);
+  erase(ego);
+  draw(egoAlt);
+  reverse.loop(egoAlt,fEgoVortexPulled);
+}
+if (fEgoVortexPulled) {
+  reset(fEgoVortexPulling);
+  reset(fEgoVortexPulled);
+  new.room(13);
+}
+
+return();

@@ -1,0 +1,112 @@
+// ****************************************************************************
+//
+// Logic 94: Death handler
+// This logic is run when the player dies.
+// The death message displayed depends on the value of death_type.
+//
+// ****************************************************************************
+
+#include "defines.txt"
+#include "custom.txt"
+
+if (death_type != 255) {   // if death_type = 255, the death message has
+                           // already been displayed
+  //accept.input();
+  //cancel.line();
+  program.control();
+  //clear.lines(23, 24, 0);
+  thankyou_timer = 25;
+
+  if (death_type == 1) {
+    print("You are now dead.");
+  }
+
+  // add messages for other death types here
+
+  death_type = 255;  // set death_type to 255 so this logic does not display
+                     // the death message again
+
+  reset(fEgoHaloToAppear);
+}
+
+thankyou_timer--;
+
+if (thankyou_timer == 1) {
+  print("Thank you for playing Fro Quest 1. Better luck next time!");
+  
+  // EgoAlt
+  if (prev_room_no != 12) {
+    current.view(egoAlt,v_view);
+    current.loop(egoAlt,v_loop);
+    current.cel(egoAlt,v_cel);
+    get.priority(egoAlt,v_priority);
+    get.posn(egoAlt,v_x,v_y);
+    v_margin = 4;
+    erase(egoAlt);
+    set.loop(egoAlt,0);
+    set.cel(egoAlt,0);
+    add.to.pic.v(v_view,v_loop,v_cel,v_x,v_y,v_priority,v_margin);
+  }
+  
+  if (room_no == 14) {
+    set(fEgoSuicideEscapeLimbo);
+    death_type = 0;
+  }
+  else {
+    set(fEgoHaloToAppear);
+  }
+}
+call(89);
+
+if (controller(key_activiate_menu)) {
+  menu.input();
+}
+
+if ((controller(menu_help) ||
+     said("help"))) {
+  call(92);
+}
+
+if ((controller(menu_restore) ||
+     said("restore", "game") ||
+     said("restore"))) {
+  restore.game();
+}
+
+if ((controller(menu_restart) ||
+     said("restart", "game") ||
+     said("restart"))) {
+  restart.game();
+}
+
+if ((controller(menu_inventory) ||
+     said("inventory"))) {
+  status();
+}
+
+if ((controller(menu_quit) ||
+     said("quit"))) {
+  stop.sound();
+  quit(0);
+}
+
+if (controller(menu_color)) {
+  toggle.monitor();
+}
+
+if (controller(menu_about)) {
+  print(game_about_message);
+  print(game_about_message_soundtrack);
+}
+
+if (controller(menu_soundonoff)) {
+  toggle(sound_on);
+}
+
+if (input_recieved &&
+    !input_parsed) {
+  print("You are dead! You can only restore, restart, quit the game"
+        " or view your inventory.");
+}
+
+return();

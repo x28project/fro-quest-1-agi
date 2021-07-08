@@ -1,0 +1,309 @@
+// ****************************************************************
+//
+// Logic 13 - Road Bend
+//
+// ****************************************************************
+
+
+#include "defines.txt"
+#include "custom.txt"
+
+#define fBirdFlying f70
+#define fEgoHillDown f71
+#define fEgoHillDownDone f72
+#define fPole f73
+#define fPoleToVortex f74
+#define fVortex f75
+#define fEgoVortexPull f76
+#define fEgoVortexPulling f77
+#define fEgoVortexPulled f78
+#define fEgoVortexReentered f79
+
+#define oEgoHillDown o54
+#define oBird o130
+#define oPoleOrVortex o131
+
+#define vPoleCount v100
+#define vVortexCount v101
+
+if (new_room){
+  load.pic(room_no);
+  draw.pic(room_no);
+  discard.pic(room_no);
+  set.horizon(0);
+
+  status.line.on();
+  accept.input();
+ 
+  // Bird
+  load.view(130);
+  animate.obj(oBird);
+  set.view(oBird,130);
+  set.loop(oBird,0);
+  set.cel(oBird,0);
+  ignore.objs(oBird);
+  ignore.horizon(oBird);
+  position(oBird,74,12);
+  end.of.loop(oBird,fBirdFlying);
+  draw(oBird);
+ 
+  // PoleOrVortex
+  load.view(131);
+  animate.obj(oPoleOrVortex);
+  set.view(oPoleOrVortex,131);
+  set.loop(oPoleOrVortex,0);
+  set.cel(oPoleOrVortex,0);
+  ignore.blocks(oPoleOrVortex);
+  ignore.objs(oPoleOrVortex);
+  position(oPoleOrVortex,85,95);
+  stop.cycling(oPoleOrVortex);
+  draw(oPoleOrVortex);
+  set(fPole);
+  vPoleCount = 0;
+  vVortexCount = 0;
+  
+  // Position
+  if (prev_room_no == 8) {
+    position(ego,64,48);
+  }
+  else {
+    if (prev_room_no == 7) {
+      v80 = 0;
+      if (old_ego_y < 70) {
+        old_ego_y = 70;
+      }
+      else {
+        if (old_ego_y > 154) {
+          old_ego_y = 154;
+        }
+      }
+      position.v(ego,v80,old_ego_y);
+    }
+    else {
+      if (prev_room_no == 15) {
+        position(ego,90,100);
+        reset(fPole);      
+        set(fVortex);
+        load.view(132);
+        animate.obj(egoAlt);
+        set.view(egoAlt,132);
+        set.loop(egoAlt,0);
+        set.cel(egoAlt,14);
+        position(egoAlt,89,100);
+        draw(egoAlt);
+        reverse.loop(egoAlt,fEgoVortexReentered);
+      }
+      else {
+        position(ego,72,100);
+      }
+    }
+  }
+  if (prev_room_no != 15) {
+    draw(ego);
+  }
+  
+  vCount = 0;
+  load.sound(13);
+  sound(13,fSoundDone);
+  
+  show.pic();
+}
+if (fSoundDone) {
+  if (vCount < 20) {
+    vCount++;
+  }
+  else {
+    vCount = 0;
+    reset(fSoundDone);
+    sound(13,fSoundDone);
+  }
+}
+if (fEgoVortexReentered) {
+  reset(fEgoVortexReentered);
+  erase(egoAlt);
+  ego_dir = 0;
+  draw(ego);
+}
+
+if ((said("look","pole")
+||   said("look","vortex")
+||   said("look","pole","or","vortex")
+||   said("look","vortex","or","pole"))) {
+  print("It's the infamous pole or vortex...");
+  print("...So that's what it is.");
+}
+if (said("look","bird")) {
+  print("A bird of prey circles in the distance.");
+}
+if (said("look","fence")) {
+  print("Looks like a dream.");
+  print("Actually, it blocks your way.");
+}
+if (said("look","bush")) {
+  print("Isn't that special. No, not really.");
+}
+if (said("look","rock")) {
+  print("A rock; mind you, one that does not roll.");
+}
+if (said("look","sky")) {
+  print("So blue... There is even a bird flying around and around and around and around and...");
+}
+if (said("look","clouds")) {
+  print("Happy little clouds. Clouds are very, very free.");
+}
+if (said("look","path")) {
+  print("It must lead somewhere.");
+}
+if (said("look","grass")) {
+  print("You feel that it's beneath you.");
+}
+if (said("look")) {
+  print("Where does that pathway go to?");
+  if (fPole) {
+    print("Hey, there's a pole!");
+  }
+  else {
+    if (vVortexCount > 0) {
+      print("Hey, there's a vortex!");
+    }
+    else {
+      print("Hey, there's a pole or vortex!");
+    }
+  }
+}
+
+if ((said("get","pole")
+||   said("get","vortex")
+||   said("get","pole","or","vortex")
+||   said("get","vortex","or","pole"))) {
+  print("Get it? More like it gets you.");
+}
+if (said("get","bird")) {
+  print("Talk about something being out of reach.");
+}
+
+// Bird
+if (fBirdFlying) {
+  reset(fBirdFlying);
+  current.loop(oBird,v_loop);
+  if (v_loop == 3) {
+    v_loop = 0;
+  }
+  else {
+    v_loop = v_loop + 1;
+  }
+  set.loop.v(oBird,v_loop);
+  set.cel(oBird,0);
+  end.of.loop(oBird,fBirdFlying);
+}
+
+// PoleOrVortex
+if (fPole) {
+  if (vPoleCount == 40) {
+    reset(fPole);
+    set(fPoleToVortex);
+    vPoleCount = 0;
+  }
+  else {
+    vPoleCount = vPoleCount + 1;
+  }
+}
+if (fPoleToVortex) {
+  reset(fPoleToVortex);
+  end.of.loop(oPoleOrVortex,fVortex);
+}
+if (fVortex) { 
+  if (vVortexCount == 10) {
+    reset(fVortex);
+    observe.blocks(ego);
+    ignore.objs(oPoleOrVortex);
+    set.loop(oPoleOrVortex,0);
+    last.cel(oPoleOrVortex,v_cel_last);
+    set.cel.v(oPoleOrVortex,v_cel_last);
+    reverse.loop(oPoleOrVortex,fPole);
+    vVortexCount = 0;
+  }
+  else {
+    reset(fVortex);
+    ignore.blocks(ego);
+    observe.objs(oPoleOrVortex);
+    set.loop(oPoleOrVortex,1);
+    set.cel(oPoleOrVortex,0);
+    end.of.loop(oPoleOrVortex,fVortex);
+    vVortexCount = vVortexCount + 1;
+  }
+}
+if (vVortexCount > 0
+&&  ego_touching_signal_line
+&&  new_ego_y > 92) {
+  if (!fEgoVortexPulling) {
+    set(fEgoVortexPull);
+  }
+}
+if (fEgoVortexPull) {
+  reset(fEgoVortexPull);
+  set(fEgoVortexPulling);
+  get.posn(ego,new_ego_x,new_ego_y);
+  load.view(132);
+  animate.obj(egoAlt);
+  set.view(egoAlt,132);
+  if (new_ego_x < 96) {
+    new_ego_x = new_ego_x - 1;
+    set.loop(egoAlt,0);
+  }
+  else {
+    new_ego_x = new_ego_x - 12;
+    set.loop(egoAlt,1);
+  }
+  set.cel(egoAlt,0);
+  position.v(egoAlt,new_ego_x,new_ego_y);
+  get.priority(ego,v_priority);
+  v_priority = v_priority + 1;
+  set.priority.v(egoAlt,v_priority);
+  ignore.blocks(egoAlt);
+  ignore.objs(egoAlt);
+  erase(ego);
+  draw(egoAlt);
+  end.of.loop(egoAlt,fEgoVortexPulled);
+  if (!fPoleOrVortexEnter) {
+    set(fPoleOrVortexEnter);
+    score++;
+  }
+}
+if (fEgoVortexPulled) {
+  reset(fEgoVortexPulling);
+  reset(fEgoVortexPulled);
+  new.room(15);
+}
+
+// EgoHillDown
+if (!fEgoHillDown
+&&  ego_touching_signal_line
+&&  new_ego_y < 48) {
+  get.posn(ego,new_ego_x,new_ego_y);
+  load.view(54);
+  animate.obj(oEgoHillDown);
+  set.view(oEgoHillDown,54);
+  last.cel(ego,v80);
+  v80 = v80 - 1;
+  set.cel.v(oEgoHillDown,v80);
+  new_ego_y = new_ego_y - 1;
+  position.v(oEgoHillDown,new_ego_x,new_ego_y);
+  ignore.blocks(oEgoHillDown);
+  draw(oEgoHillDown);
+  v80 = 2;
+  cycle.time(oEgoHillDown,v80);
+  end.of.loop(oEgoHillDown,fEgoHillDownDone);
+  erase(ego);
+  set(fEgoHillDown);
+}
+if (fEgoHillDownDone) {
+  reset(fEgoHillDownDone);
+  new.room(8);
+}
+
+if (ego_edge_code == left_edge) {
+  new.room(7);
+}
+
+return();

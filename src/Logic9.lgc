@@ -1,0 +1,256 @@
+// ****************************************************************
+//
+// Logic 9 - Home
+//
+// ****************************************************************
+
+
+#include "defines.txt"
+#include "custom.txt"
+
+#define oPizzaElemental o96
+#define oPizzaElementalZ o97
+
+if (new_room){
+  load.pic(room_no);
+  draw.pic(room_no);
+  discard.pic(room_no);
+  set.horizon(0);
+
+  status.line.on();
+  accept.input();
+
+  // Pick
+  if (!fPickGet) {
+    load.view(220);
+    animate.obj(oPick);
+    set.view(oPick,220);
+    set.cel(oPick,1);
+    set.priority(oPick,9);
+    position(oPick,79,86);
+    stop.cycling(oPick);
+    draw(oPick);
+  }
+
+  // GlassOfWater
+  if (!fGlassOfWaterGet) {
+    load.view(225);
+    animate.obj(oGlassOfWater);
+    set.view(oGlassOfWater,225);
+    set.loop(oGlassOfWater,1);
+    position(oGlassOfWater,138,94);
+    stop.cycling(oGlassOfWater);
+    draw(oGlassOfWater);
+  }
+
+  // Candelabra
+  if (!fCandelabraGet) {
+    load.view(228);
+    animate.obj(oCandelabra);
+    set.view(oCandelabra,228);
+    set.cel(oCandelabra,1);
+    position(oCandelabra,51,62);
+    stop.cycling(oCandelabra);
+    draw(oCandelabra);
+  }
+
+  // Position
+  ego_dir = up;
+  set.loop(ego,3);
+  position(ego,76,166);
+  
+  load.sound(9);
+  sound(9,fSoundDone);
+
+  draw(ego);
+  call(89);
+  show.pic();
+}
+if (fSoundDone) {
+  reset(fSoundDone);
+  sound(9,fSoundDone);
+}
+
+if (said("look","pick")) {
+  if (!fPickGet) {
+    print("Why is that pick not in your pocket?");
+  }
+  else {
+    print("It's in your pocket.");
+  }
+}
+if ((said("look","water")
+||   said("look","glass")
+||   said("look","glass","water"))) {
+  if (!fGlassOfWaterGet) {
+    print("You left a nice glass of water sitting next to the sink.");
+  }
+  else {
+    print("You see no glass of water.");
+  }
+}
+if (said("look","candelabra")) {
+  if (!fCandelabraGet) {
+    print("Didn't you expect to see one?");
+  }
+  else {
+    print("You are looking at an empty nightstand.");
+  }
+}
+if (said("look","sink")) {
+  print("You have running water?");
+  print("You better catch it!");
+}
+if (said("look","bed")) {
+  print("It's where you dream.");
+}
+if (said("look","door")) {
+  print("If you've seen one bathroom, you've seen them all.");
+}
+if (said("look","picture")) {
+  print("YOU THE MAN!");
+  print("Not conceited at all.");
+}
+if (said("look","closet")) {
+  print("That is where you keep you unmentionables.");
+  print("So let's not mention it again.");
+}
+if (said("look","window")) {
+  print("You see right through them.");
+}
+if (said("look")) {
+  print("A lovely 1 room rancher. "
+        "Located in a great neighborhood. Very modern. "
+        "1 bedroom, 1 bathroom, eat-in kitchen, all the amenities. "
+        "Please do not miss out on your chance to call this spectacular house your home.");
+  print("Hey! This is not the time to be pushing this house on people.");
+  if (!fPickGet) {
+    print("Your trusty pick resides on the table.");
+  }
+  if (!fGlassOfWaterGet) {
+    print("In your \"kitchen\" there is a glass of water on the counter.");
+  }
+  if (fEyeglassesShowElemental) {
+    print("There is a mouthwatering Pizza Elemental sleeping in your bed!");
+    print("Those sheets are gonna be greasy!");
+    print("And tasty!");
+  }
+}
+if (said("look","pizza")) {
+  if (fEyeglassesShowElemental) {
+    print("There is a mouthwatering Pizza Elemental sleeping in your bed!");
+    print("Those sheets are gonna be greasy!");
+    print("And tasty!");
+  }
+  else {
+    print("What? Where? Dreaming of food again? Are you that hungry?");
+  }
+}
+if (fEyeglassesShowElemental
+&&  (said("look","pizza","elemental")
+||   said("look","elemental"))) {
+  print("There is a mouthwatering Pizza Elemental sleeping in your bed!");
+  print("Those sheets are gonna be greasy!");
+  print("And tasty!");
+}
+if ((said("get","pizza")
+||   said("get","pizza","elemental"))) {
+  if (fEyeglassesShowElemental) {
+    print("You are not hungry...");
+    print("Even if you were, how would you feel about someone coming along and taking you for a snack!");
+    print("Leave the Pizza Elemental alone. You do not need it, but you are glad you've seen it.");
+  }
+  else {
+    print("What? Where? Dreaming of food again? Are you that hungry?");
+  }
+}
+if (said("open","door")) {
+  print("Do you have to go that badly?");
+  print("Maybe that is something you should do on your own time.");
+}
+if (said("open","closet")) {
+  print("You look great just the way you are.");
+  print("That's what mom tells you.");
+}
+
+// Pick
+if (said("get","pick")) {
+  if (!fPickGet) {
+    if (center.posn(ego,68,92,92,110)) {
+      print("How could you ever leave this behind? "
+            "You make a mental note to never abandon your pick again.");
+      if (!fPickGet) {
+        set(fPickGet);
+        score++;
+      }
+      erase(oPick);
+      get("Pick");
+      show.obj(220);
+    }
+    else {
+      print("It's over there. Move closer.");
+    }
+  }
+  else {
+    print("Don't you remember already getting your pick?");
+  }
+}
+
+// GlassOfWater
+if ((said("get","glass")
+||   said("get","water")
+||   said("get","glass","water"))) {
+  if (!fGlassOfWaterGet) {
+    if (right.posn(ego,128,104,140,128)) {
+      print("A cool, refreshing glass of water?");
+      print("Don't mind if you do. But you're not thirsty, so you save it for later.");
+      if (!fGlassOfWaterGet) {
+        set(fGlassOfWaterGet);
+        score++;
+      }
+      erase(oGlassOfWater);
+      get("Glass of Water");
+      show.obj(225);
+    }
+    else {
+      print("It's over by the sink. Move closer.");
+    }
+  }
+  else {
+    print("There are no more glasses. Wait, you only had one? I guess you don't entertain much.");
+  }
+}
+
+// Candelabra
+if (said("get","candelabra")) {
+  if (!fCandelabraGet) {
+    if (posn(ego,46,68,58,80)) {
+      print("You see no reason why you shouldn't be walking around with a candelabra.");
+      if (!fCandelabraGet) {
+        set(fCandelabraGet);
+        score++;
+      }
+      erase(oCandelabra);
+      get("Candelabra");
+      show.obj(228);
+    }
+    else {
+      print("It's next to the bed. Move closer.");
+    }
+  }
+  else {
+    print("You already retrieved the candelabra");
+  }
+}
+
+// Misc
+if ((said("sleep","rol")
+||   said("anyword","sleep"))) {
+  print("No. You feel quite rested.");
+}
+
+if (ego_edge_code == bottom_edge) {
+  new.room(2);
+}
+
+return();

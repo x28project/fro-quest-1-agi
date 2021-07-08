@@ -1,0 +1,449 @@
+// ****************************************************************
+//
+// Logic 5 - Neighbor
+//
+// ****************************************************************
+
+
+#include "defines.txt"
+#include "custom.txt"
+
+#define fBoxDoorOpen f70
+#define fEgoHillDown f71
+#define fEgoSmallWalking1 f72
+#define fEgoSmallWalking2 f73
+#define fEgoSmallWalking3 f74
+#define fEgoSmallWalking4 f75
+#define fEgoSmallWalked f76
+#define fEgoGettingDirt f77
+#define fEgoGettingDirtBend f78
+#define fEgoGotDirt f79
+#define fEgoGotDirtEarthElemental f80
+#define fEgoGettingEarthElemental f81
+#define fEgoGettingDoorBend f82
+
+#define oChimney o51
+#define oBoxDoor o52
+#define oEgoSmall o53
+#define oEgoHillDown o54
+
+if (new_room){
+  load.pic(room_no);
+  draw.pic(room_no);
+  discard.pic(room_no);
+  set.horizon(0);
+
+  status.line.on();
+  accept.input();
+
+  // Balloon
+  if (!fBalloonGone) {
+    load.view(226);
+    set.view(oBalloon,226);
+    set.loop(oBalloon,1);
+    position(oBalloon,89,139);
+    set.priority(oBalloon,14);
+    ignore.objs(oBalloon);
+    normal.cycle(oBalloon);
+    v80 = 4;
+    cycle.time(oBalloon,v80);
+    draw(oBalloon);
+  }
+
+  // Chimney
+  load.view(51);
+  animate.obj(oChimney);
+  set.view(oChimney,51);
+  position(oChimney,134,65);
+  set.priority(oChimney,7);
+  ignore.blocks(oChimney);
+  ignore.objs(oChimney);
+  v80 = 2;
+  cycle.time(oChimney,v80);
+  draw(oChimney);
+
+  // BoxDoor
+  load.view(52);
+  animate.obj(oBoxDoor);
+  set.view(oBoxDoor,52);
+  set.cel(oBoxDoor,0);
+  position(oBoxDoor,115,132);
+  ignore.blocks(oBoxDoor);
+  ignore.objs(oBoxDoor);
+  stop.cycling(oBoxDoor);
+  draw(oBoxDoor);
+
+  // Position
+  if (prev_room_no == 6) {
+    position(ego,96,54);
+  }
+  else {
+    if (prev_room_no == 2) {
+      v80 = 0;
+      if (old_ego_y < 124) {
+        old_ego_y = 124;
+      }
+      else {
+        if (old_ego_y > 160) {
+          old_ego_y = 160;
+        }
+      }
+      position.v(ego,v80,old_ego_y);
+    }
+    else {
+      if (prev_room_no == 10) {
+        position(ego,116,134);
+      }
+      else {
+        position(ego,120,140);
+      }
+    }
+  }
+  
+  load.sound(5);
+  sound(5,fSoundDone);
+
+  draw(ego);
+  call(89);
+  show.pic();
+}
+if (!fElementalEarthStarted
+&&  fSoundDone) {
+  reset(fSoundDone);
+  sound(5,fSoundDone);
+}
+
+if (said("look")) {
+  print("This is where the sidewalk ends. "
+        "From here a dirt path endures further into the distance. "
+        "A friendly neighbor of yours resides inside the large box.");
+  print("You need to find out who's his landscaper. What a nice job!");
+  if (!fBalloonGone) {
+    print("Just outside the box, an abandoned balloon quietly resists the wind.");
+  }
+  if (fEyeglassesShowElemental) {
+    print("There is an Earth Elemental taking some time to smell the roses.");
+  }
+}
+if ((said("look","box")
+||   said("look","house"))) {
+  print("Your neighbor's house. An inviting door flap beckons you.");
+}
+if (said("look","bush")) {
+  print("You need to find out who's his landscaper. What a nice job!");
+}
+if (said("look","garden")) {
+  print("You admire the garden... What a lovely garden.");
+  if (fEyeglassesShowElemental) {
+    print("There is an Earth Elemental taking some time to smell the roses.");
+  }
+}
+if (said("look","dirt")) {
+  print("This garden is a little too dirty for your taste.");
+  if (fEyeglassesShowElemental) {
+    print("There is an Earth Elemental taking some time to smell the roses.");
+  }
+}
+if (said("look","balloon")) {
+  if (!fBalloonGone) {
+    print("A lonely balloon yields to the breeze.");
+  }
+  else {
+    print("Are you dreaming of a party for your lonely self?");
+  }
+}
+if (said("look","water")) {
+  print("Water pools on the path. Don't worry it's not too deep.");
+}
+if (said("look","path")) {
+  print("The path has to lead somewhere.");
+}
+if ((said("look","chimney")
+||   said("look","smoke"))) {
+  print("A billowing chimney. Wondering when the last time it was swept? Don't.");
+}
+if (said("look","fence")) {
+  print("Looks like a dream.");
+}
+if (said("look","rock")) {
+  print("A rock. If only there was a hard place then you cloud try to fit in between the two. Luckily, there is not.");
+}
+if (said("look","sky")) {
+  print("It's blue (da ba dee).");
+}
+if (said("look","clouds")) {
+  print("Happy little clouds frolicking around that oh so majestic mountaintop. One word: picturesque.");
+}
+if (said("look","mountain")) {
+  print("The snow capped mountain sits off beyond the rolling hills. It sure is nice to see something other than just blue sky.");
+}
+if (said("look","hills")) {
+  print("They keep rolling and rolling and rolling...");
+  print("Oh wait, there is a path you can take. Roll on!");
+}
+if (said("look","path")) {
+  print("It must lead somewhere.");
+}
+if (said("look","grass")) {
+  print("You feel that it's beneath you.");
+}
+if (said("look","earth")) {
+  if (fEyeglassesShowElemental) {
+    print("A dirty, dirty Earth Elemental. Well, at least you could say it's well grounded.");
+  }
+  else {
+    print("It's usually right under you!");
+  }
+}
+if (fEyeglassesShowElemental
+&&  (said("look","earth","elemental")
+||   said("look","elemental"))) {
+  print("A dirty, dirty Earth Elemental. Well, at least you could say it's well grounded.");
+}
+
+// Water
+if (ego_on_water){
+  load.view(6);
+  set.view(ego,6);
+}
+else{
+  set.view(ego,0);
+}
+
+// BoxDoor
+if ((said("open","box","door")
+||   said("open","door"))) {
+  if (center.posn(ego,112,132,122,134)) {
+    
+    get.posn(ego,new_ego_x,new_ego_y);
+    load.view(58);
+    set.view(egoAlt,58);
+    set.loop(egoAlt,0);
+    set.cel(egoAlt,0);
+    position.v(egoAlt,new_ego_x,new_ego_y);
+    get.priority(ego,v_priority);
+    v_priority = v_priority + 1;
+    set.priority.v(egoAlt,v_priority);
+    ignore.blocks(egoAlt);
+    ignore.objs(egoAlt);
+    erase(ego);
+    draw(egoAlt);
+    end.of.loop(egoAlt,fEgoGettingDoorBend);
+  }
+  else {
+    print("The door is not here. It's over there.");
+  }
+}
+if (fEgoGettingDoorBend) {
+  reset(fEgoGettingDoorBend);
+  end.of.loop(oBoxDoor,fBoxDoorOpen);
+  if (!fBoxDoorOpened) {
+    set(fBoxDoorOpened);
+    score++;
+  }
+}
+if (fBoxDoorOpen) {
+  reset(fBoxDoorOpen);
+  reset(fEyeglassesShowElemental);
+  new.room(10);
+}
+
+// EgoSmall
+if (!fEgoHillDown
+&&  center.posn(ego,90,54,112,54)) {
+  get.dir(ego,v80);
+  if ((v80 == 1
+  ||   v80 == 2
+  ||   v80 == 8)) {
+    get.posn(ego,new_ego_x,new_ego_y);
+    load.view(54);
+    animate.obj(oEgoHillDown);
+    set.view(oEgoHillDown,54);
+    last.cel(ego,v80);
+    v80 = v80 - 1;
+    set.cel.v(oEgoHillDown,v80);
+    new_ego_y = new_ego_y - 2;
+    position.v(oEgoHillDown,new_ego_x,new_ego_y);
+    ignore.blocks(oEgoHillDown);
+    draw(oEgoHillDown);
+    v80 = 2;
+    cycle.time(oEgoHillDown,v80);
+    end.of.loop(oEgoHillDown,fEgoSmallWalking1);
+    erase(ego);
+    set(fEgoHillDown);
+  }
+}
+if (fEgoSmallWalking1) {
+  reset(fEgoSmallWalking1);
+  load.view(53);
+  animate.obj(oEgoSmall);
+  set.view(oEgoSmall,53);
+  position(oEgoSmall,97,53);
+  ignore.blocks(oEgoSmall);
+  ignore.objs(oEgoSmall);
+  v80 = 2;
+  cycle.time(oEgoSmall,v80);
+  v80 = 2;
+  step.time(oEgoSmall,v80);
+  draw(oEgoSmall);
+  end.of.loop(oEgoSmall,fEgoSmallWalking2);
+}
+if (fEgoSmallWalking2) {
+  reset(fEgoSmallWalking2);
+  set.loop(oEgoSmall,1);
+  normal.cycle(oEgoSmall);
+  v80 = 2;
+  cycle.time(oEgoSmall,v80);
+  move.obj(oEgoSmall,95,46,0,fEgoSmallWalking3);
+}
+if (fEgoSmallWalking3) {
+  reset(fEgoSmallWalking3);
+  move.obj(oEgoSmall,81,44,0,fEgoSmallWalking4);
+}
+if (fEgoSmallWalking4) {
+  reset(fEgoSmallWalking4);
+  move.obj(oEgoSmall,76,34,0,fEgoSmallWalked);
+}
+if (fEgoSmallWalked) {
+  reset(fEgoSmallWalked);
+  erase(oEgoSmall);
+  reset(fEyeglassesShowElemental);
+  new.room(6);
+}
+
+// Balloon
+if (said("get","balloon")) {
+  if (obj.in.room("Balloon",room_no)) {
+    if (center.posn(ego,80,148,96,160)) {
+      score++;
+      print("You untie the balloon from it's post.");
+      get("Balloon");
+      erase(oBalloon);
+      show.obj(226);
+      if (!fBalloonGone) {
+        set(fBalloonGone);
+        score++;
+      }
+    }
+    else {
+      print("If only you had longer arms, you could reach anything you wanted. Get closer.");
+    }
+  }
+  else {
+    print("There is no balloon to get.");
+  }
+}
+
+// Dirt
+if (said("get","flower")) {
+  print("You have no need for these flowers. "
+        "But wouldn't it feel nice to run your hands through the dirt?");
+}
+if ((said("get","earth","elemental")
+||   said("get","elemental"))) {
+  if (has("Earth Elemental")) {
+    print("You're already dirty enough!");
+    print("You could take a bath... But not here. Not now. Maybe in a sequel.");
+  }
+  else {
+    if (fEyeglassesShowElemental) {
+      set(fEgoGettingEarthElemental);
+    }
+    else {
+      print("You don't see that...");
+    }
+  }
+}
+if ((fEgoGettingEarthElemental
+||   said("get","dirt"))) {
+  reset(fEgoGettingEarthElemental);
+  if (has("Earth Elemental")) {
+    print("You're already dirty enough! You could take a bath... But not here. Not now. Maybe in a sequel.");
+  }
+  else {
+    if (center.posn(ego,126,136,154,158)) {
+      program.control();
+      prevent.input();
+      get.posn(ego,new_ego_x,new_ego_y);
+      if (new_ego_y > 144) {
+        move.obj(ego,134,145,1,fEgoGettingDirt);
+      }
+      else {
+        move.obj(ego,134,143,1,fEgoGettingDirt);
+      }
+    }
+    else {
+      print("The easiest way to reach the dirt is to be near it.");
+    }
+  }
+}
+if (fEgoGettingDirt) {
+  reset(fEgoGettingDirt);
+  set.loop(ego,0);
+  set.cel(ego,3);
+  set(fEgoGettingDirtBend);
+  get.posn(ego,new_ego_x,new_ego_y);
+  load.view(55);
+  set.view(egoAlt,55);
+  set.loop.v(egoAlt,v_loop);
+  set.cel(egoAlt,0);
+  new_ego_x = new_ego_x - 4;
+  position.v(egoAlt,new_ego_x,new_ego_y);
+  get.priority(ego,v_priority);
+  if (new_ego_y > 144) {
+    v_priority = v_priority + 1;
+  }
+  set.priority.v(egoAlt,v_priority);
+  normal.cycle(egoAlt);
+  ignore.blocks(egoAlt);
+  ignore.objs(egoAlt);
+  erase(ego);
+  draw(egoAlt);
+  end.of.loop(egoAlt,fEgoGotDirt);
+}
+if (fEgoGettingDirtBend) {
+  current.cel(egoAlt,v_cel);
+  if (v_cel == 9) {
+    stop.cycling(egoAlt);
+    reset(fEgoGettingDirtBend);
+    get("Dirt");
+    if (fElementalEarthSeen) {
+      set(fEgoGotDirtEarthElemental);
+      set.loop(oElemental,2);
+      set.cel(oElemental,0);
+      end.of.loop(oElemental,fElementalGone);
+    }
+    else {
+      show.obj(232);
+      start.cycling(egoAlt);
+    }
+  }
+}
+if (fEgoGotDirtEarthElemental
+&&  fElementalGone) {
+  reset(fEgoGotDirtEarthElemental);
+  reset(fEyeglassesShowElemental);
+  get("Earth Elemental");
+  show.obj(233);
+  if (!fElementalEarthGet) {
+    set(fElementalEarthGet);
+    score++;
+  }
+  start.cycling(egoAlt);
+  reverse.loop(oElementalEarthGround,fNothing);
+}
+if (fEgoGotDirt) {
+  reset(fEgoGettingDirtBend);
+  reset(fEgoGotDirt);
+  erase(egoAlt);
+  draw(ego);
+  accept.input();
+  player.control();
+}
+
+if (ego_edge_code == left_edge) {
+  reset(fEyeglassesShowElemental);
+  new.room(2);
+}
+
+return();

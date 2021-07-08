@@ -1,0 +1,521 @@
+// ****************************************************************
+//
+// Logic 12 - Sky
+//
+// ****************************************************************
+
+
+#include "defines.txt"
+#include "custom.txt"
+
+#define fEgoAirMiddle f70
+#define fCloud0ReachedBottom f71
+#define fCloud1ReachedBottom f72
+#define fCloud2ReachedBottom f73
+#define fCloud3ReachedBottom f74
+#define fCloud4ReachedBottom f75
+#define fCloud0Gone f76
+#define fCloud1Gone f77
+#define fCloud2Gone f78
+#define fCloud3Gone f79
+#define fCloud4Gone f80
+#define fBirdLaunch f81
+#define fBirdFlying1 f82
+#define fBirdFlyBy1 f83
+#define fBirdFlyBy2 f84
+#define fBirdFlyBy3 f85
+#define fBirdFlyByArms f86
+#define fBirdFlyByDone f87
+#define fEgoBodyBottom f88
+#define fEgoArmAirGone f89
+#define fEgoArmAirBottom f90
+#define fEgoArmRGone f91
+#define fEgoArmLBottom f92
+#define fEgoLegLBottom f93
+#define fEgoLegRBottom f94
+
+#define oCloud0 o120
+#define oCloud1 o121
+#define oCloud2 o122
+#define oCloud3 o123
+#define oCloud4 o124
+#define oBird o125
+#define oArmAir o126
+#define oArmL o127
+#define oLegL o128
+#define oLegR o129
+#define oBloodLegL o130
+#define oBloodLegR o131
+#define oBloodArmL o132
+#define oBloodArmR o133
+
+if (new_room){
+  load.pic(room_no);
+  draw.pic(room_no);
+  discard.pic(room_no);
+  set.horizon(0);
+
+  status.line.on();
+  accept.input();
+ 
+  // Clouds
+  load.view(120);
+  animate.obj(oCloud0);
+  set.view(oCloud0,120);
+  set.loop(oCloud0,0);
+  set.cel(oCloud0,0);
+  stop.cycling(oCloud0);
+  ignore.objs(oCloud0);
+  position(oCloud0,110,30);
+  draw(oCloud0);
+  
+  load.view(121);
+  animate.obj(oCloud1);
+  set.view(oCloud1,121);
+  set.loop(oCloud1,0);
+  set.cel(oCloud1,0);
+  stop.cycling(oCloud1);
+  ignore.objs(oCloud1);
+  position(oCloud1,20,40);
+  draw(oCloud1);
+  
+  load.view(122);
+  animate.obj(oCloud2);
+  set.view(oCloud2,122);
+  set.loop(oCloud2,0);
+  set.cel(oCloud2,0);
+  stop.cycling(oCloud2);
+  ignore.objs(oCloud2);
+  position(oCloud2,14,105);
+  draw(oCloud2);
+  
+  animate.obj(oCloud3);
+  set.view(oCloud3,122);
+  set.loop(oCloud3,1);
+  set.cel(oCloud3,0);
+  stop.cycling(oCloud3);
+  ignore.objs(oCloud3);
+  position(oCloud3,40,140);
+  draw(oCloud3);
+  
+  animate.obj(oCloud4);
+  set.view(oCloud4,122);
+  set.loop(oCloud4,2);
+  set.cel(oCloud4,0);
+  stop.cycling(oCloud4);
+  ignore.objs(oCloud4);
+  position(oCloud4,130,126);
+  draw(oCloud4);
+  
+  // Bird
+  load.view(123);
+  animate.obj(oBird);
+  set.view(oBird,123);
+  set.loop(oBird,1);
+  fix.loop(oBird);
+  set.priority(oBird,15);
+  ignore.objs(oBird);
+  
+  // Position
+  load.view(92);
+  animate.obj(egoAlt);
+  set.view(egoAlt,92);
+  set.loop(egoAlt,2);
+  set.cel(egoAlt,0);
+  normal.cycle(egoAlt);
+  position(egoAlt,72,167);
+  ignore.objs(egoAlt);
+  draw(egoAlt);
+  move.obj(egoAlt,72,103,1,fEgoAirMiddle);
+  
+  load.sound(12);
+  sound(12,fSoundDone);
+  
+  show.pic();
+}
+
+if (said("anyword","rol")) {
+  print("Everything is kinda up in the air right now...");
+  return();
+}
+
+if (fEgoAirMiddle) {
+  reset(fEgoAirMiddle);
+  move.obj(egoAlt,72,102,1,fNothing);
+  move.obj(oCloud0,110,167,1,fCloud0ReachedBottom);
+  move.obj(oCloud1,20,167,1,fCloud1ReachedBottom);
+  move.obj(oCloud2,14,167,1,fCloud2ReachedBottom);
+  move.obj(oCloud3,40,167,1,fCloud3ReachedBottom);
+  move.obj(oCloud4,130,167,1,fCloud4ReachedBottom);
+  set(fBirdLaunch);
+}
+
+// Clouds
+if (fCloud0ReachedBottom) {
+  reset(fCloud0ReachedBottom);
+  current.cel(oCloud0,v_cel);
+  if (v_cel < 17) {
+    if (v_cel == 0) {
+      start.cycling(oCloud0);
+    }
+    get.posn(oCloud0,v_x,v_y);
+    v_step = 1;
+    move.obj.v(oCloud0,v_x,v_y,v_step,fCloud0ReachedBottom);
+  }
+  else {
+    stop.cycling(oCloud0);
+    set(fCloud0Gone);
+  }
+}
+if (fCloud1ReachedBottom) {
+  reset(fCloud1ReachedBottom);
+  current.cel(oCloud1,v_cel);
+  if (v_cel < 12) {
+    if (v_cel == 0) {
+      start.cycling(oCloud1);
+    }
+    get.posn(oCloud1,v_x,v_y);
+    v_step = 1;
+    move.obj.v(oCloud1,v_x,v_y,v_step,fCloud1ReachedBottom);
+  }
+  else {
+    stop.cycling(oCloud1);
+    set(fCloud1Gone);
+  }
+}
+if (fCloud2ReachedBottom) {
+  reset(fCloud2ReachedBottom);
+  current.cel(oCloud2,v_cel);
+  if (v_cel < 18) {
+    if (v_cel == 0) {
+      start.cycling(oCloud2);
+    }
+    get.posn(oCloud2,v_x,v_y);
+    v_step = 1;
+    move.obj.v(oCloud2,v_x,v_y,v_step,fCloud2ReachedBottom);
+  }
+  else {
+    stop.cycling(oCloud2);
+    set(fCloud2Gone);
+  }
+}
+if (fCloud3ReachedBottom) {
+  reset(fCloud3ReachedBottom);
+  current.cel(oCloud3,v_cel);
+  if (v_cel < 13) {
+    if (v_cel == 0) {
+      start.cycling(oCloud3);
+    }
+    get.posn(oCloud3,v_x,v_y);
+    v_step = 1;
+    move.obj.v(oCloud3,v_x,v_y,v_step,fCloud3ReachedBottom);
+  }
+  else {
+    stop.cycling(oCloud3);
+    set(fCloud3Gone);
+  }
+}
+if (fCloud4ReachedBottom) {
+  reset(fCloud4ReachedBottom);
+  current.cel(oCloud4,v_cel);
+  if (v_cel < 17) {
+    if (v_cel == 0) {
+      start.cycling(oCloud4);
+    }
+    get.posn(oCloud4,v_x,v_y);
+    v_step = 1;
+    move.obj.v(oCloud4,v_x,v_y,v_step,fCloud4ReachedBottom);
+  }
+  else {
+    stop.cycling(oCloud4);
+    set(fCloud4Gone);
+  }
+}
+if (fCloud0Gone
+&&  fCloud1Gone
+&&  fCloud2Gone
+&&  fCloud3Gone
+&&  fCloud4Gone) {
+  reset(fCloud0Gone);
+  reset(fCloud1Gone);
+  reset(fCloud2Gone);
+  reset(fCloud3Gone);
+  reset(fCloud4Gone);
+}
+  
+// Bird
+if (fBirdLaunch) {
+  reset(fBirdLaunch);
+  current.loop(oBird,v_loop);
+  set.cel(oBird,0);
+  normal.cycle(oBird);
+  if (!fBirdFlyByArms) {
+    if (v_loop == 0) {  
+      position(oBird,159,26);
+      draw(oBird);
+      move.obj(oBird,147,26,1,fBirdFlyBy1);
+    }
+    else {
+      position(oBird,0,21);
+      draw(oBird);
+    }
+  }
+  else {
+    if (v_loop == 0) {  
+      position(oBird,159,15);
+      draw(oBird);
+      move.obj(oBird,147,15,1,fBirdFlyBy1);
+    }
+    else {
+      position(oBird,0,9);
+      draw(oBird);
+    }
+  }
+  set(fBirdFlying1);
+}
+// Bird Appearing
+if (fBirdFlying1) {
+  current.loop(oBird,v_loop);
+  if (!fBirdFlyByArms) {
+    if (v_loop == 0) {  
+      current.cel(oBird,v_cel);
+      if (v_cel == 11) {
+        stop.cycling(oBird);
+        reset(fBirdFlying1);
+        move.obj(oBird,83,91,4,fBirdFlyBy1);
+      }
+    }
+    else {
+      current.cel(oBird,v_cel);
+      if (v_cel == 11) {
+        stop.cycling(oBird);
+        reset(fBirdFlying1);
+        move.obj(oBird,69,91,4,fBirdFlyBy1);
+      }
+    }
+  }
+  else {
+    if (v_loop == 0) {  
+      current.cel(oBird,v_cel);
+      if (v_cel == 11) {
+        stop.cycling(oBird);
+        reset(fBirdFlying1);
+        move.obj(oBird,84,80,4,fBirdFlyBy1);
+      }
+    }
+    else {
+      current.cel(oBird,v_cel);
+      if (v_cel == 11) {
+        stop.cycling(oBird);
+        reset(fBirdFlying1);
+        move.obj(oBird,69,80,4,fBirdFlyBy1);
+      }
+    }
+  }
+}
+// Bird Contact
+if (fBirdFlyBy1) {
+  reset(fBirdFlyBy1);
+  current.loop(oBird,v_loop);
+  if (!fBirdFlyByArms) {
+    if (v_loop == 0) {  
+      move.obj(oBird,83,91,1,fBirdFlyBy2);
+    }
+    else {
+      move.obj(oBird,70,91,1,fBirdFlyBy2);
+    }
+  }
+  else {
+    if (v_loop == 0) {  
+      move.obj(oBird,84,80,1,fBirdFlyBy2);
+    }
+    else {
+      move.obj(oBird,69,80,1,fBirdFlyBy2);
+    }
+  }
+}
+// Bird Bite
+if (fBirdFlyBy2) {
+  reset(fBirdFlyBy2);
+  current.loop(oBird,v_loop);
+  if (!fBirdFlyByArms) {
+    if (v_loop == 0) {  
+      set.loop(egoAlt,4);
+      animate.obj(oLegR);
+      set.view(oLegR,92);
+      set.loop(oLegR,12);
+      set.cel(oLegR,0);
+      position(oLegR,82,99);
+      ignore.objs(oLegR);
+      stop.cycling(oLegR);
+      draw(oLegR);
+      move.obj(oLegR,82,167,4,fEgoLegRBottom);
+      
+      load.view(124);
+      animate.obj(oBloodLegR);
+      set.view(oBloodLegR,124);
+      set.loop(oBloodLegR,1);
+      set.cel(oBloodLegR,1);
+      set.priority(oBloodLegR,15);
+      ignore.objs(oBloodLegR);
+      position(oBloodLegR,34,167);
+      draw(oBloodLegR);
+      end.of.loop(oBloodLegR,fNothing);
+    }
+    else {
+      set.loop(egoAlt,3);
+      animate.obj(oLegL);
+      set.view(oLegL,92);
+      set.loop(oLegL,13);
+      set.cel(oLegL,0);
+      position(oLegL,78,99);
+      ignore.objs(oLegL);
+      stop.cycling(oLegL);
+      draw(oLegL);
+      move.obj(oLegL,78,167,4,fEgoLegLBottom);
+      
+      load.view(124);
+      animate.obj(oBloodLegL);
+      set.view(oBloodLegL,124);
+      set.loop(oBloodLegL,0);
+      set.cel(oBloodLegL,1);
+      set.priority(oBloodLegL,15);
+      ignore.objs(oBloodLegL);
+      position(oBloodLegL,30,167);
+      draw(oBloodLegL);
+      end.of.loop(oBloodLegL,fNothing);
+    }
+  }
+  else {
+    if (v_loop == 0) {
+      animate.obj(oArmAir);
+      set.view(oArmAir,92);
+      set.loop(oArmAir,7);
+      set.cel(oArmAir,0);
+      get.posn(egoAlt,new_ego_x,new_ego_y);
+      position.v(oArmAir,new_ego_x,new_ego_y);
+      set.priority(oArmAir,15);
+      ignore.objs(oArmAir);
+      draw(oArmAir);
+      set.loop(egoAlt,6);
+      new_ego_y = new_ego_y - 11;
+      position.v(egoAlt,new_ego_x,new_ego_y);
+      
+      get.posn(egoAlt,new_ego_x,new_ego_y);
+      new_ego_y = 167;
+      v_step = 4;
+      move.obj.v(egoAlt,new_ego_x,new_ego_y,v_step,fEgoBodyBottom);
+      
+      load.view(124);
+      animate.obj(oBloodArmR);
+      set.view(oBloodArmR,124);
+      set.loop(oBloodArmR,1);
+      set.cel(oBloodArmR,1);
+      set.priority(oBloodArmR,15);
+      ignore.objs(oBloodArmR);
+      position(oBloodArmR,35,156);
+      draw(oBloodArmR);
+      end.of.loop(oBloodArmR,fNothing);
+    }
+    else {
+      set.loop(egoAlt,5);
+      animate.obj(oArmL);
+      set.view(oArmL,92);
+      set.loop(oArmL,11);
+      set.cel(oArmL,0);
+      position(oArmL,77,83);
+      ignore.objs(oArmL);
+      stop.cycling(oArmL);
+      draw(oArmL);
+      move.obj(oArmL,77,167,4,fEgoArmLBottom);
+      
+      load.view(124);
+      animate.obj(oBloodArmL);
+      set.view(oBloodArmL,124);
+      set.loop(oBloodArmL,0);
+      set.cel(oBloodArmL,1);
+      set.priority(oBloodArmL,15);
+      ignore.objs(oBloodArmL);
+      position(oBloodArmL,29,156);
+      draw(oBloodArmL);
+      end.of.loop(oBloodArmL,fNothing);
+    }
+  }
+  if (v_loop == 0) {  
+    move.obj(oBird,0,167,4,fBirdFlyBy3);
+  }
+  else {
+    move.obj(oBird,159,167,4,fBirdFlyBy3);
+  }
+}
+// Bird Leaving
+if (fBirdFlyBy3) {
+  reset(fBirdFlyBy3);
+  current.loop(oBird,v_loop);
+  if (v_loop == 0) {  
+    set.loop(oBird,1);
+    if (!fBirdFlyByArms) {
+      set(fBirdFlyByArms);
+    }
+    else {
+      set(fBirdFlyByDone);
+    }
+  }
+  else {
+    set.loop(oBird,0);
+  }
+  erase(oBird);
+  if (!fBirdFlyByDone) {
+    set(fBirdLaunch);
+  }
+}
+// Bird Gone
+if (fBirdFlyByDone) {
+  reset(fBirdFlyByDone);
+  set.loop(oArmAir,8);
+  set.cel(oArmAir,0);
+  v_cycle = 10;
+  cycle.time(oArmAir,v_cycle);
+  end.of.loop(oArmAir,fEgoArmAirGone);
+}
+// Body Leaving
+if (fEgoLegLBottom) {
+  reset(fEgoLegLBottom);
+  normal.cycle(oLegL);
+  end.of.loop(oLegL,fNothing);
+}
+if (fEgoLegRBottom) {
+  reset(fEgoLegRBottom);
+  normal.cycle(oLegR);
+  end.of.loop(oLegR,fNothing);
+}
+if (fEgoArmLBottom) {
+  reset(fEgoArmLBottom);
+  normal.cycle(oArmL);
+  end.of.loop(oArmL,fNothing);
+}
+if (fEgoBodyBottom) {
+  reset(fEgoBodyBottom);
+  set.loop(egoAlt,9);
+  end.of.loop(egoAlt,fNothing);
+}
+if (fEgoArmAirGone) {
+  reset(fEgoArmAirGone);
+  get.posn(oArmAir,new_ego_x,new_ego_y);
+  new_ego_y = 167;
+  v_step = 4;
+  move.obj.v(oArmAir,new_ego_x,new_ego_y,v_step,fEgoArmAirBottom);
+}
+if (fEgoArmAirBottom) {
+  reset(fEgoArmAirBottom);
+  set.loop(oArmAir,10);
+  v_cycle = 1;
+  cycle.time(oArmAir,v_cycle);
+  end.of.loop(oArmAir,fEgoArmRGone);
+}
+if (fEgoArmRGone) {
+  reset(fEgoArmRGone);
+  new.room(8);
+}
+
+return();

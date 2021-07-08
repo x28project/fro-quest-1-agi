@@ -1,0 +1,96 @@
+// ****************************************************************************
+//
+// Logic 87: Game Over
+//
+// ****************************************************************************
+
+
+#include "defines.txt"
+#include "custom.txt"
+
+#define vGameOverRedY1 v119
+#define vGameOverRedY2 v120
+#define vGameOverRedYOffset1 v121
+#define vGameOverRedYOffset2 v122
+#define vGameOverRedX v123
+#define v_yTemp v124
+
+if (vGameOverRedY1 >= 0
+&&  vGameOverRedY1 <= 254
+&&  vGameOverRedY2 >= 0) {
+  if (vGameOverRedY1 == 0) {
+    load.view(19);
+    v_view = 19;
+    v_loop = 3;
+    v_cel = 0;
+    v_x = 0;
+    v_y = 0;
+    v_priority = 15;
+    v_margin = 4;
+  }
+  v_x = vGameOverRedX;
+  if (vGameOverRedY1 < 254) {
+    v_y = vGameOverRedY1;
+    v_yTemp = v_y;
+  }
+  else {
+    v_y = vGameOverRedY2;
+    v_yTemp = v_y;
+    v_yTemp = v_yTemp + 254;
+  }
+  if (vGameOverRedY1 < 254
+  &&  vGameOverRedYOffset1 <= 87) {
+    v_yTemp = v_yTemp - vGameOverRedYOffset1;
+  }
+  if (vGameOverRedY1 < 254
+  &&  vGameOverRedYOffset1 >= 88) {
+    vGameOverRedYOffset2 = vGameOverRedYOffset1;
+    vGameOverRedYOffset2 = vGameOverRedYOffset2 - 88;
+    v_yTemp = v_yTemp - 88;
+    v_yTemp = v_yTemp - vGameOverRedYOffset2;
+  }
+  if (vGameOverRedY1 == 254
+  &&  vGameOverRedYOffset1 >= 86) {
+    v_yTemp = v_yTemp - vGameOverRedYOffset1;
+  }
+  v_cel = 1;
+  if (v_yTemp == 0) {
+    v_cel = 0;
+  }
+  if (v_yTemp == 168) {
+    v_cel = 2;
+  }
+  if (vGameOverRedY1 < 254
+  &&  vGameOverRedYOffset1 <= 87
+  &&  v_y >= 0) {
+    if (v_yTemp <= 168) {
+      if (v_yTemp == 168) {
+        v_yTemp = v_yTemp - 1;
+      }
+      add.to.pic.v(v_view,v_loop,v_cel,v_x,v_yTemp,v_priority,v_margin);
+    }
+  }
+  if (vGameOverRedY1 < 254
+  &&  vGameOverRedYOffset1 >= 88
+  &&  v_y >= 88
+  &&  v_y < 255) {
+    if (v_yTemp <= 168) {
+      if (v_yTemp == 168) {
+        v_yTemp = v_yTemp - 1;
+      }
+      add.to.pic.v(v_view,v_loop,v_cel,v_x,v_yTemp,v_priority,v_margin);
+    }
+  }
+  if (vGameOverRedY1 == 254
+  &&  vGameOverRedYOffset1 >= 86
+  &&  v_y < 74) {
+    if (v_yTemp <= 168) {
+      if (v_yTemp == 168) {
+        v_yTemp = v_yTemp - 1;
+      }
+      add.to.pic.v(v_view,v_loop,v_cel,v_x,v_yTemp,v_priority,v_margin);
+    }
+  }
+}
+
+return();

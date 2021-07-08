@@ -1,0 +1,82 @@
+// ****************************************************************************
+//
+// Logic 89: Halo handler
+//
+// ****************************************************************************
+
+
+#include "defines.txt"
+#include "custom.txt"
+
+#define fEgoHaloAppeared f51
+#define fEgoMaterialized1 f52
+#define fEgoMaterialized2 f53
+#define fEgoFroBuilt1 f54
+#define fEgoFroBuilt2 f55
+#define fEgoHaloPutAway f56
+  
+// EgoHaloPutAway
+if (fEgoHaloToAppear) {
+  reset(fEgoHaloToAppear);
+  load.view(14);
+  animate.obj(egoHaloPutAway);
+  set.view(egoHaloPutAway,14);
+  set.loop(egoHaloPutAway,0);
+  set.cel(egoHaloPutAway,0);
+  ignore.blocks(egoHaloPutAway);
+  position.v(egoHaloPutAway,new_ego_x,new_ego_y);
+  get.priority(ego,v_priority);
+  set.priority.v(egoHaloPutAway,v_priority);
+  draw(egoHaloPutAway);
+  end.of.loop(egoHaloPutAway,fEgoHaloAppeared);
+}
+if (fEgoHaloAppeared) {
+  reset(fEgoHaloAppeared);
+  set.loop(egoHaloPutAway,1);
+  set.cel(egoHaloPutAway,0);
+  end.of.loop(egoHaloPutAway,fEgoMaterialized1);
+}
+if (fEgoMaterialized1) {
+  reset(fEgoMaterialized1);
+  set.loop(egoHaloPutAway,2);
+  set.cel(egoHaloPutAway,0);
+  end.of.loop(egoHaloPutAway,fEgoFroBuilt2);
+}
+if (fEgoMaterialized2) {
+  reset(fEgoMaterialized2);
+  set.loop(egoHaloPutAway,3);
+  set.cel(egoHaloPutAway,0);
+  end.of.loop(egoHaloPutAway,fEgoFroBuilt1);
+}
+if (fEgoFroBuilt1) {
+  reset(fEgoFroBuilt1);
+  set.loop(egoHaloPutAway,4);
+  set.cel(egoHaloPutAway,0);
+  end.of.loop(egoHaloPutAway,fEgoFroBuilt2);
+}
+if (fEgoFroBuilt2) {
+  reset(fEgoFroBuilt2);
+  set.loop(egoHaloPutAway,5);
+  set.cel(egoHaloPutAway,0);
+  end.of.loop(egoHaloPutAway,fEgoHaloPutAway);
+}
+if (fEgoHaloPutAway) {
+  reset(fEgoHaloPutAway);
+  reset(fEgoSuicideEscapeLimbo);
+  erase(egoHaloPutAway);
+  set.loop(ego,2);
+  set.cel(ego,0);
+  draw(ego);
+  ego_dir = 0;
+  if (!has("Halo")) {
+    get("Halo");
+  }
+  if (prev_room_no == 14) {
+    set(fEgoBackFromLimbo);
+  }
+  player.control();
+  accept.input();
+  death_type = 0;
+}
+
+return();

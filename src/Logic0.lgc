@@ -1,0 +1,638 @@
+// ****************************************************************************
+//
+// Logic 0: Main logic
+//
+// ****************************************************************************
+
+
+#include "defines.txt"
+#include "custom.txt"
+
+//get("Eyeglasses");
+
+
+if (error_code > 0) {
+  call(98);     // error handler - IMPORTANT
+}
+
+if (room_no == 0) {
+  call(91);    // initialization
+
+  //set(debug_active);     // this line adds the debug menu to the menu erase this line
+                         // before distributing your game.
+
+  if (game_restarted) {
+    disable.item(menu_fileseparator);
+    set(menu_enabled);
+    reset(disable_game_functions);
+    new.room(1); // go to first room here
+  }
+  else {
+    set.menu("FQ1");
+    set.menu.item("About      ", menu_about);
+    set.menu.item("Help   <F1>", menu_help);
+    set.menu.item("Hint   <ALT+H>", menu_hint);
+    if (debug_active) {
+      set.menu.item("Debug Help ", menu_debughelp);
+    }
+    set.menu("File");
+    set.menu.item("Save     <F5>", menu_save);
+    set.menu.item("Restore  <F7>", menu_restore);
+    set.menu.item("-------------", menu_fileseparator);
+    set.menu.item("Restart  <F9>", menu_restart);
+    set.menu.item("Quit     <Alt+Z>", menu_quit);
+    set.menu("Action");
+    set.menu.item("See Object  <F4>", menu_seeobject);
+    set.menu.item("Inventory   <Tab>", menu_inventory);
+    set.menu("Special");
+    set.menu.item("Sound On/Off  <F2>", menu_soundonoff);
+    if (v20 == 0 &&
+        v26 < 2) {
+    set.menu.item("Color/BW      <Ctrl+R>",menu_color);
+    }
+    set.menu.item("Clock On/Off  <F6>", menu_clock);
+    set.menu.item("Joystick      <Ctrl+J>", menu_joystick);
+    set.menu.item("Pause         <Esc>", menu_pause);
+    set.menu("Speed");
+    set.menu.item("Normal ", menu_normalspeed);
+    set.menu.item("Slow   ", menu_slowspeed);
+    set.menu.item("Fast   ", menu_fastspeed);
+    set.menu.item("Fastest", menu_fastestspeed);
+    set.menu.item("---------", menu_fileseparator);
+    set.menu.item("Faster ", menu_fasterspeed);
+    set.menu.item("Slower ", menu_slowerspeed);
+    if (debug_active) {
+      set.menu("Debug");
+      set.menu.item("Ego Info   <Alt+E>", key_ego);
+      set.menu.item("Pri Screen <Alt+P>", key_priority);
+      set.menu.item("Memory     <Alt+M>", key_memory);
+      set.menu.item("Obj Info   <Alt+I>", key_object);
+      set.menu.item("Coords     <Alt+X>", key_coords);
+      set.menu.item("Get All           ", menu_gimme);
+    }
+    submit.menu();
+    disable.item(menu_fileseparator);
+    set(disable_game_functions);
+    new.room(1);    // intro/opening screen
+  }
+}
+else {
+  call(97);
+}
+
+if (new_room) {          // First interpreter cycle in a new room
+                         // Note: Everything other than logic 0 is discarded
+                         // from memory when new.room is executed
+  load.logics(90);       // Load game specific functions logic into memory
+  clear.lines(24,24,0);  // clear bottom line of screen (remove ego's coords if shown)
+  animate.obj(ego);
+  load.view.v(ego_view_no);
+  set.view.v(ego, ego_view_no);
+  observe.objs(ego);
+  old_clock_seconds = 255;   // make sure clock gets updated this cycle
+                             // on this cycle (if turned on)
+}
+
+if (death_type > 0) {    // player is dead
+  call(94);    // death handler
+  goto(End);
+}
+
+if (!disable_game_functions) {
+  if (controller(key_activiate_menu)) {
+    menu.input();
+  }
+}
+
+if (controller(menu_about)) {
+  print(game_about_message);
+  print(game_about_message_soundtrack);
+}
+
+if ((controller(menu_fastestspeed) ||
+     said("fastest") ||
+     said("fastest", "speed"))) {
+  cycle_delay = 0;    // no delay between interpreter cycles
+}
+
+if ((controller(menu_fastspeed) ||
+     said("fast") ||
+     said("fast", "speed"))) {
+  cycle_delay = 1;    // 1/20th of a second delay between interpreter cycles
+}
+
+if ((controller(menu_normalspeed) ||
+     said("normal") ||
+     said("normal", "speed"))) {
+  cycle_delay = 2;    // 2/20ths of a second delay between interpreter cycles
+}
+
+if ((controller(menu_slowspeed) ||
+     said("slow") ||
+     said("slow", "speed"))) {
+  cycle_delay = 4;    // 4/20ths of a second delay between interpreter cycles
+}
+
+if ((controller(menu_fasterspeed) ||
+     said("faster") ||
+     said("faster", "speed"))) {
+  cycle_delay--;    // increase delay between interpreter cycles
+}
+
+if ((controller(menu_slowerspeed) ||
+     said("slower") ||
+     said("slower", "speed"))) {
+  cycle_delay++;    // decrease delay between interpreter cycles
+}
+
+if (controller(key_decreasevolume)) {
+  sound_volume--;  // decrease volume
+}
+
+if (controller(key_increasevolume) && sound_volume < 15) {
+  sound_volume++;  // increase volume
+}
+
+if (controller(menu_soundonoff)) {
+  toggle(sound_on);
+}
+
+if (!disable_game_functions) {
+
+  if (controller(menu_color)) {
+    toggle.monitor();
+  }
+
+  if (controller(menu_debughelp)) {
+    call(93);
+  }
+
+  if (!debug_active) {
+    if (controller(key_debug)) {
+      set(debug_active);
+      print(game_version_message);
+      version();
+      load.logics(99);    // load debug logic into memory
+    }
+  }
+
+  if ((controller(menu_save) ||
+       said("save", "game") ||
+       said("save"))) {
+    stop.sound();
+    save.game();
+  }
+
+  if ((controller(menu_restore) ||
+       said("restore", "game") ||
+       said("restore"))) {
+    stop.sound();
+    restore.game();
+  }
+
+  if ((controller(menu_restart) ||
+       said("restart", "game") ||
+       said("restart"))) {
+    restart.game();
+  }
+
+  if ((controller(menu_help) ||
+       said("help"))) {
+    call(92);
+  }
+
+  if ((controller(menu_hint)
+  ||   said("hint"))) {
+    call(86);
+  }
+
+  if (controller(key_echoline)) {
+    echo.line();
+  }
+
+  if (controller(key_clearinputline)) {
+    cancel.line();
+  }
+
+  if (controller(menu_joystick)) {
+    init.joy();
+  }
+
+  if ((controller(menu_pause) ||
+       said("pause", "game") ||
+       said("pause"))) {
+    pause();
+  }
+
+  if ((controller(menu_inventory) ||
+       said("inventory"))) {
+    status();
+  }
+
+  if ((controller(menu_seeobject) ||
+       controller(key_seeobject) ||
+       said("look", "inventory"))) {
+    set(inventory_select_enabled);    // enable choice of inventory item in inventory screen
+    status();   // show inventory screen - player selects an inventory item
+    if (selected_inventory_item > 0 &&
+        selected_inventory_item != 255) {       // note: selected_inventory_item is set to 255
+                                                // if ESC is pressed in the inventory screen.
+      // player has chosen an object (value of selected_inventory_item). We now display this object.
+
+      v255 = selected_inventory_item;
+      v255 += 219;
+      show.obj.v(v255);
+
+      // NOTE: If you have several objects, it is easier to give them
+      // consecutive view numbers. Then you can do the following (view
+      // numbers start at 220 for this example):
+      //   v255 = selected_inventory_item; v255 += 219;
+      //   show.obj.v(v255);
+      // If you do this, you don't have to have separate statements for each
+      // object.
+
+    }
+    reset(inventory_select_enabled);   // disable choice of inventory item in inventory screen
+  }
+
+  if ((controller(menu_quit) ||
+       said("quit", "game") ||
+       said("quit"))) {
+    stop.sound();
+    quit(0);
+  }
+}
+
+get.posn(ego, new_ego_x, new_ego_y);       // get ego's current position
+
+if (ego_dir == old_ego_dir &&
+    new_ego_x == old_ego_x &&
+    new_ego_y == old_ego_y) {
+  // ego hasn't moved or changed direction since last cycle
+  stop.cycling(ego);
+}
+else {
+  if (!never_animate_ego) {
+    start.cycling(ego);
+  }
+}
+
+old_ego_x = new_ego_x;
+old_ego_y = new_ego_y;
+old_ego_dir = ego_dir;
+
+if (always_animate_ego) {
+  start.cycling(ego);
+}
+else {
+  if ((ego_dir == stopped || never_animate_ego)) {
+    stop.cycling(ego);
+  }
+}
+
+if ((said("clock") || controller(menu_clock))) {
+  toggle(clock_active);
+  if (!clock_active) {
+    status.line.on();         // remove clock text from status line
+  }
+  else {
+    old_clock_seconds = 255;  // make sure clock gets updated this cycle
+  }
+}
+
+if (clock_active && !disable_game_functions) {
+  if (old_clock_seconds != clock_seconds) {
+    set.text.attribute(0,15);
+    display(0, 18, " %v13:%v12|2:%v11|2 ");     // update clock
+    set.text.attribute(15,0);
+    old_clock_seconds = clock_seconds;
+  }
+}
+
+
+if (isset(game_restored)) {    // first cycle since restore game executed
+  clear.lines(23, 24, 0);
+  reset(debug_active);
+  disable.item(menu_fileseparator);
+}
+
+// ****************************************************************************
+//
+// Global custom before call.v(room.no)
+//
+// ****************************************************************************
+
+if (new_room) {
+
+  // ReInit flags 40 to 149 (not 101, 102)
+  v80 = 40;
+  lResetFlags:
+  reset.v(v80);
+  v80++;
+  if (v80 == 101) {
+    v80 = 103;
+  }
+  if (v80 < 150) {
+    goto(lResetFlags);
+  }
+
+  // Reinit varaibles 80 to 109
+  v80 = 81;
+  lResetVariables:
+  lindirectn(v80,0);
+  v80++;
+  if (v80 < 110) {
+    goto(lResetVariables);
+  }
+  v80 = 0;
+  vHaloOffset_y = 0;
+  vHaloOffset_x = 0;
+  vFaceTalkCount = 0;
+
+  // EgoAlt
+  animate.obj(egoAlt);
+  set.view(egoAlt,0);
+  set.loop(egoAlt,0);
+  set.cel(egoAlt,0);
+  v_cycle = 1;
+  cycle.time(egoAlt,v_cycle);
+  fix.loop(egoAlt);
+
+  // EgoHalo
+  if (fEgoHaloWearing) {
+    set(fEgoHaloCreate);
+  }
+}
+
+if (!new_room
+&&  fEgoHaloCreate) {
+  set(fEgoHaloWearing);
+  call(89);
+}
+
+// ****************************************************************************
+
+call.v(room_no);    // IMPORTANT: This calls the logic for the current room - this
+                    // is not done automatically by the interpreter so it has to be
+                    // called manually by logic 0. Logic 0 cycles round and on each
+                    // cycle the current room's logic is called, so it is also
+                    // executed with each cycle.
+
+// ****************************************************************************
+//
+// Global custom after call.v(room.no)
+//
+// ****************************************************************************
+
+get.posn(ego, new_ego_x, new_ego_y);
+
+// Snowman
+if (fSnowmanHatted
+&&  !fSnowmanMelted
+&&  vSnowmanCount2 < 37) {
+  vSnowmanCount1++;
+  if (vSnowmanCount1 >= 200) {
+    vSnowmanCount1 = 0;
+    vSnowmanCount2++;
+  }
+}
+
+// Elementals
+if (!fElementalsAll
+&&  has("Fire Elemental")
+&&  has("Earth Elemental")
+&&  has("Air Elemental")
+&&  has("Water Elemental")
+&&  has("Heart Elemental")) {
+  set(fElementalsAll);
+  print("Congratulations!");
+  print("You have all the necessary elementals.");
+  print("Why don't you try to 'combine' the 'elementals'.");
+}
+
+// EgoSuper
+if (said("combine","elementals")) {
+  if (has("Fire Elemental")
+  &&  has("Earth Elemental")
+  &&  has("Air Elemental")
+  &&  has("Water Elemental")
+  &&  has("Heart Elemental")) {
+    program.control();
+    prevent.input();
+    print("By your powers combed together...");
+    load.view(15);
+    animate.obj(egoAlt);
+    set.view(egoAlt,15);
+    set.loop(egoAlt,0);
+    set.cel(egoAlt,0);
+    position.v(egoAlt,new_ego_x,new_ego_y);
+    get.priority(ego,v_priority);
+    set.priority.v(egoAlt,v_priority);
+    normal.cycle(egoAlt);
+    erase(ego);
+    draw(egoAlt);
+    end.of.loop(egoAlt,fElementalsCombined1);
+    vSuperFroCount = 0;
+  }
+  else {
+    if (!has("Fire Elemental")
+    &&  !has("Earth Elemental")
+    &&  !has("Air Elemental")
+    &&  !has("Water Elemental")
+    &&  !has("Heart Elemental")) {
+      print("Combine what? I think you might be missing something...");
+    }
+    else {
+      print("You do not have all the necessary elements...");
+    }
+  }
+}
+if (fElementalsCombined1) {
+  reset(fElementalsCombined1);
+  vSuperFroCount = 0;
+  set.loop(egoAlt,1);
+  set.cel(egoAlt,0);
+  end.of.loop(egoAlt,fElementalsCombined2);
+}
+if (fElementalsCombined2
+&&  prev_room_no != 14) {
+  reset(fElementalsCombined2);
+  print("With no evildoers to bring to justice, the power fades...");
+  set.loop(egoAlt,2);
+  set.cel(egoAlt,0);
+  end.of.loop(egoAlt,fElementalsCombined3);
+}
+if (fElementalsCombined2
+&&  prev_room_no == 14) {
+  reset(fElementalsCombined2);
+  set.loop(egoAlt,3);
+  set.cel(egoAlt,0);
+  end.of.loop(egoAlt,fElementalsCombined4);
+  if (!fEgoWins) {
+    set(fEgoWins);
+    score++;
+  }
+}
+if (fElementalsCombined3) {
+  reset(fElementalsCombined3);
+  erase(egoAlt);
+  draw(ego);
+  accept.input();
+  player.control();
+}
+if (fElementalsCombined4) {
+  reset(fElementalsCombined4);
+  load.view(16);
+  set.view(ego,16);
+  erase(egoAlt);
+  draw(ego);
+  set(fEgoSuper);
+  accept.input();
+  player.control();
+}
+
+// Suicide
+if ((said("kill","self")
+||   said("use","kit")
+||   said("use","emergency","kit")
+||   said("use","emergency","suicide","kit")
+||   said("open","kit")
+||   said("open","emergency","kit")
+||   said("open","emergency","suicide","kit"))) {
+  if (room_no == 15) {
+    print("For once you feel at peace. Use the kit at some other time... in some other place.");
+  }
+  else {
+    program.control();
+    prevent.input();
+    print("Ahh yes. \n\n\"The Emergency Suicide Kit\" \n\nIt's rumored to be the big hit this holiday season.");
+    print("At least now you'll know if it really works.");
+
+    // EgoSuicide
+    load.view(1);
+    animate.obj(egoAlt);
+    set.view(egoAlt,1);
+    if (new_ego_x > 0) {
+      new_ego_x = new_ego_x - 1;
+    }
+    new_ego_y = new_ego_y - 1;
+    position.v(egoAlt,new_ego_x,new_ego_y);
+    get.priority(ego,v_priority);
+    set.priority.v(egoAlt,v_priority);
+    normal.cycle(egoAlt);
+    v_cycle = 2;
+    cycle.time(egoAlt,v_cycle);
+    erase(ego);
+    draw(egoAlt);
+    stop.cycling(egoAlt);
+    end.of.loop(egoAlt,fEgoSuicide);
+  }
+}
+if (room_no == 14) {
+  current.view(egoAlt,v_view);
+  if (v_view == 1) {
+    current.cel(egoAlt,v_cel);
+    if (v_cel == 24) {
+      load.sound(103);
+      sound(103,fSoundDone);
+      set(fSoundDoneNoReplay);
+    }
+  }
+}
+if (fEgoSuicide) {
+  reset(fEgoSuicide);
+
+  // EgoSuicideFall
+  load.view(2);
+  set.view(egoAlt,2);
+  normal.cycle(egoAlt);
+  draw(egoAlt);
+  print("Hmmm... I guess there's really no going back now.");
+  stop.cycling(egoAlt);
+  end.of.loop(egoAlt,fEgoSuicideDead);
+}
+if (fEgoSuicideDead) {
+  reset(fEgoSuicideDead);
+  death_type = 1;
+  if (!fDeathSuicide) {
+    set(fDeathSuicide);
+    score++;
+  }
+}
+
+// ScoreUp1
+if (vScoreOld != score) {
+  set.text.attribute(10,0);
+  display(24,32,                                "Score +1");
+  set.text.attribute(15,0);
+  vScoreOld = score;
+  vScoreTimer = 21;
+}
+else {
+  if (vScoreTimer > 0) {
+    if (vScoreTimer == 1) {
+      clear.lines(24,24,0);
+    }
+    vScoreTimer--;
+  }
+}
+
+// EgoHalo
+if (fEgoHaloCreate) {
+  reset(fEgoHaloCreate);
+  distance(ego,egoAlt,v_distance);
+  if (v_distance < 255) {
+    current.view(egoAlt,v_view);
+    current.loop(egoAlt,v_loop);
+    current.cel(egoAlt,v_cel);
+    get.priority(egoAlt,v_priority);
+    get.posn(egoAlt,v_x,v_y);
+    v_margin = 4;
+    erase(egoAlt);
+    set.loop(egoAlt,0);
+    set.cel(egoAlt,0);
+    add.to.pic.v(v_view,v_loop,v_cel,v_x,v_y,v_priority,v_margin);
+  }
+}
+if (fEgoHaloWearing) {
+  call(89);
+}
+
+// ****************************************************************************
+
+if (debug_active) {
+  call(99);    // debug logic
+}
+
+call(90);      // game specific functions
+
+if (input_recieved &&  unknown_word_no > 0) {
+  reset(input_recieved);
+  if (unknown_word_no == 1) {
+    print("I don't understand \"%w1\"");
+  }
+  if (unknown_word_no == 2) {
+    print("\"%w2\" is not in my vocabulary.");
+  }
+  if (unknown_word_no == 3) {
+    print("What is \"%w3\"");
+  }
+  if (unknown_word_no == 4) {
+    print("I don't understand \"%w4\"");
+  }
+  if (unknown_word_no == 5) {
+    print("\"%w5\" is not in my vocabulary.");
+  }
+  if (unknown_word_no == 6) {
+    print("What is \"%w6\"");
+  }
+}
+
+if (input_recieved &&
+    !input_parsed) {     // no command has been recognized
+  print("I don't understand your request.");
+  reset(input_recieved);
+}
+
+End:
+return();
