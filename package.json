@@ -1,0 +1,20 @@
+{
+  "name": "fro-quest-1-agi",
+  "version": "1.0.0",
+  "description": "Fro Quest 1 (FQ1) AGI",
+  "keywords": [
+    "Fro",
+    "Quest",
+    "Fro Quest",
+    "FroQuest",
+    "FQ",
+    "FQ1",
+    "X28 Project",
+    "X28Project",
+    "Sierra",
+    "AGI"
+  ],
+  "private": true,
+  "author": "X28 Project <x28project@gmail.com> (http://www.x28project.com)",
+  "license": "CC-BY-NC-ND-4.0"
+}
